@@ -37,9 +37,23 @@ export default function Home() {
   // Zoom state
   const [zoomLevel, setZoomLevel] = useState(1);
   
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+  
   // Animation states
   const [showCelebration, setShowCelebration] = useState(false);
   const [cardsLoading, setCardsLoading] = useState(false);
+  
+  // Detect mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   const [printSettings, setPrintSettings] = useState<PrintSettings>({
     grid: '3x3', // Default grid, kullanıcı değiştirebilir
@@ -1031,39 +1045,41 @@ Variants: _p1, _p2 (Parallel), _aa (Alt Art), _sp (Special)`}
                 </button>
               </div>
 
-              {/* Zoom Controls */}
-              <div className="zoom-controls">
-                <button 
-                  className="zoom-button" 
-                  onClick={handleZoomOut}
-                  disabled={zoomLevel <= 0.5}
-                  title="Zoom Out"
-                >
-                  −
-                </button>
-                <span className="zoom-level">{Math.round(zoomLevel * 100)}%</span>
-                <button 
-                  className="zoom-button" 
-                  onClick={handleZoomIn}
-                  disabled={zoomLevel >= 2}
-                  title="Zoom In"
-                >
-                  +
-                </button>
-                <button 
-                  className="zoom-reset-button" 
-                  onClick={handleZoomReset}
-                  title="Reset Zoom"
-                >
-                  Reset
-                </button>
-              </div>
+              {/* Zoom Controls - Hidden on mobile */}
+              {!isMobile && (
+                <div className="zoom-controls">
+                  <button 
+                    className="zoom-button" 
+                    onClick={handleZoomOut}
+                    disabled={zoomLevel <= 0.5}
+                    title="Zoom Out"
+                  >
+                    −
+                  </button>
+                  <span className="zoom-level">{Math.round(zoomLevel * 100)}%</span>
+                  <button 
+                    className="zoom-button" 
+                    onClick={handleZoomIn}
+                    disabled={zoomLevel >= 2}
+                    title="Zoom In"
+                  >
+                    +
+                  </button>
+                  <button 
+                    className="zoom-reset-button" 
+                    onClick={handleZoomReset}
+                    title="Reset Zoom"
+                  >
+                    Reset
+                  </button>
+                </div>
+              )}
 
               {/* Preview Grid */}
               <div className="preview-grid-wrapper">
                 <div 
                   className={`preview-grid preview-grid-3x3`}
-                  style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'top center' }}
+                  style={isMobile ? {} : { transform: `scale(${zoomLevel})`, transformOrigin: 'top center' }}
                 >
                   {previewCards.map((card, index) => (
                     <div 
