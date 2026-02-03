@@ -673,12 +673,12 @@ export class PDFGenerator {
     }
   }
 
-  // Proxy ile görsel yükleme
+  // Proxy ile görsel yükleme (client-side only, no API routes in static export)
   private async fetchImageViaProxy(url: string): Promise<Uint8Array> {
     const proxyUrls = [
-      `/api/img?src=${encodeURIComponent(url)}`, // Next.js API route
       `https://corsproxy.io/?${encodeURIComponent(url)}`,
-      `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+      url // Try direct URL as fallback
     ];
 
     for (const proxyUrl of proxyUrls) {
