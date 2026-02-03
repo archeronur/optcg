@@ -24,9 +24,9 @@ git push -u origin main
 4. Build ayarlarını yapın:
 
 #### Build Settings:
-- **Framework preset**: `Next.js`
-- **Build command**: `npm run build`
-- **Build output directory**: `.next`
+- **Framework preset**: `None` (veya boş bırakın)
+- **Build command**: `npm run pages:build`
+- **Build output directory**: `.vercel/output/static`
 - **Root directory**: `/` (root)
 
 #### Environment Variables (gerekirse):
@@ -34,10 +34,12 @@ git push -u origin main
 
 ### 3. Build Komutları
 
-Cloudflare Pages otomatik olarak Next.js'i algılar ve build eder. Eğer manuel ayar yapmak isterseniz:
+Cloudflare Pages için Next.js projelerinde `@cloudflare/next-on-pages` paketi kullanılmalıdır. Manuel ayarlar:
 
-- **Build command**: `npm run build`
-- **Build output directory**: `.next`
+- **Build command**: `npm run pages:build`
+- **Build output directory**: `.vercel/output/static`
+
+**ÖNEMLİ**: Normal `npm run build` komutu Cloudflare Pages için çalışmaz. Mutlaka `npm run pages:build` kullanın!
 
 ### 4. Deploy
 

@@ -9,7 +9,7 @@
     "lint": "next lint",
     "perf": "next build && next start",
     "test:perf": "node -e \"console.log('🚀 Performance test başlatılıyor...')\"",
-    "pages:build": "npx @cloudflare/next-on-pages"
+    "pages:build": "next build && opennext build"
   },
   "dependencies": {
     "@types/node": "^20.0.0",
@@ -17,6 +17,7 @@
     "@types/react-dom": "^18.2.0",
     "fuse.js": "^7.0.0",
     "next": "15.5.2",
+    "opennextjs": "^3.5.0",
     "papaparse": "^5.4.1",
     "pdf-lib": "^1.17.1",
     "react": "^18.2.0",
@@ -24,7 +25,6 @@
     "typescript": "^5.0.0"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "latest",
     "@types/papaparse": "^5.3.14",
     "eslint": "^8.0.0",
     "eslint-config-next": "15.0.0",
