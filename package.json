@@ -24,7 +24,7 @@
     "typescript": "^5.0.0"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "^1.15.0",
+    "@cloudflare/next-on-pages": "latest",
     "@types/papaparse": "^5.3.14",
     "eslint": "^8.0.0",
     "eslint-config-next": "14.0.0",
