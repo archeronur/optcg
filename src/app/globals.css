@@ -1348,30 +1348,54 @@ body::before {
   }
   
   .preview-grid-wrapper {
-    max-height: none;
-    overflow: visible;
-    padding: 0;
+    max-height: none !important;
+    overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    padding: 0 !important;
     background: transparent;
     border: none;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    height: auto !important;
+    display: block !important;
   }
   
   /* Disable scale transform on mobile for better visibility */
   .preview-grid-wrapper .preview-grid {
     transform: none !important;
     width: 100% !important;
+    max-width: 100% !important;
+    padding: 12px !important;
+    gap: 10px !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
   }
   
   .card-slot {
-    min-height: 100px;
+    min-height: 130px !important;
     font-size: 9px;
-    aspect-ratio: 63.5 / 88.9;
+    aspect-ratio: 63.5 / 88.9 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
   
   /* Ensure cards are visible on mobile */
   .card-slot img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    display: block !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
   }
   
   /* Smaller buttons on very small screens */
@@ -1449,40 +1473,43 @@ body::before {
   
   /* Preview section container mobile */
   .preview-section-container {
-    padding: 8px;
+    padding: 12px;
     margin-top: 12px;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    overflow: visible;
-    overflow-x: visible;
-    overflow-y: visible;
+    overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
     position: relative;
     min-height: auto;
-    max-height: none;
+    max-height: none !important;
+    display: block !important;
   }
   
   .preview-section-container h3 {
     font-size: 1.1rem;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     padding: 0 4px;
     width: 100%;
     box-sizing: border-box;
   }
   
-  /* Preview grid wrapper mobile - full width, no restrictions */
+  /* Preview grid wrapper mobile - full width, no restrictions, ensure all cards visible */
   .preview-grid-wrapper {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
     overflow: visible !important;
     overflow-x: visible !important;
     overflow-y: visible !important;
-    box-sizing: border-box;
-    position: relative;
-    min-height: auto;
+    box-sizing: border-box !important;
+    position: relative !important;
+    min-height: auto !important;
     max-height: none !important;
+    height: auto !important;
+    display: block !important;
   }
   
   /* Preview grid mobile - ensure full visibility, no scale, all rows visible */
@@ -1490,7 +1517,7 @@ body::before {
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 auto !important;
-    padding: 10px !important;
+    padding: 12px !important;
     box-sizing: border-box !important;
     transform: none !important;
     min-height: auto !important;
@@ -1498,27 +1525,32 @@ body::before {
     height: auto !important;
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 8px !important;
+    gap: 10px !important;
     overflow: visible !important;
     overflow-x: visible !important;
     overflow-y: visible !important;
+    position: relative !important;
   }
   
   /* Prevent grid items from shrinking */
   .preview-grid > * {
     min-width: 0 !important;
+    max-width: 100% !important;
   }
   
   /* Card slots mobile - ensure proper sizing and visibility */
   .card-slot {
     width: 100% !important;
-    min-height: 120px !important;
+    min-height: 130px !important;
     aspect-ratio: 63.5 / 88.9 !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
-    position: relative;
+    position: relative !important;
     min-width: 0 !important;
     flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
   
   /* Ensure card images are visible and not compressed */
@@ -1531,6 +1563,7 @@ body::before {
     max-width: 100% !important;
     max-height: 100% !important;
     flex-shrink: 0 !important;
+    position: relative !important;
   }
   
   /* Zoom controls mobile - hidden via JS, but keep styles */
@@ -2227,16 +2260,23 @@ body::before {
     align-items: flex-end; /* Bottom aligned on mobile */
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
   
   .modal-content {
-    max-width: 100%;
+    max-width: 100% !important;
+    width: 100% !important;
     max-height: 95vh;
     border-radius: 20px 20px 0 0;
     margin: 0;
     animation: slideUpMobile 0.3s ease;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    position: relative;
   }
   
   @keyframes slideUpMobile {
@@ -2251,43 +2291,119 @@ body::before {
   }
   
   .modal-body {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
     gap: 20px;
-    padding: 20px;
+    padding: 20px !important;
     overflow: visible;
     max-height: none;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .modal-image-section {
     padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .modal-card-image {
-    max-height: 300px;
+    max-height: 350px;
     max-width: 100%;
+    width: auto;
+    height: auto;
+  }
+  
+  .modal-card-name-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e9ecef;
+    margin-bottom: 16px;
   }
   
   .modal-card-name {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    width: 100%;
+    line-height: 1.3;
+  }
+  
+  .modal-card-details {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .detail-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e9ecef;
+    width: 100%;
   }
   
   .detail-label {
-    min-width: 100px;
+    min-width: auto;
+    width: 100%;
     font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #495057;
   }
   
   .detail-value {
+    font-size: 15px;
+    width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+  }
+  
+  .modal-info-section {
+    width: 100%;
+    box-sizing: border-box;
+    gap: 16px;
+  }
+  
+  .modal-card-text {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 16px;
+  }
+  
+  .modal-card-text p {
     font-size: 14px;
+    line-height: 1.6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .art-variants-section {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 16px;
+  }
+  
+  .variants-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
   }
   
   .modal-close {
-    width: 44px; /* Touch-friendly */
-    height: 44px;
+    width: 48px; /* Touch-friendly */
+    height: 48px;
     font-size: 28px;
-    top: 10px;
-    right: 10px;
+    top: 12px;
+    right: 12px;
+    z-index: 1001;
   }
   
   .zoom-controls {
@@ -2334,52 +2450,110 @@ body::before {
   .modal-content {
     max-height: 100vh;
     border-radius: 20px 20px 0 0;
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
   }
   
   .modal-body {
-    padding: 15px;
-    gap: 15px;
+    padding: 16px !important;
+    gap: 16px;
     max-height: calc(100vh - 100px);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .modal-image-section {
-    padding: 15px;
+    padding: 16px;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .modal-card-image {
-    max-height: 250px;
+    max-height: 300px;
     max-width: 100%;
+    width: auto;
+    height: auto;
+  }
+  
+  .modal-card-name-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+    margin-bottom: 14px;
   }
   
   .modal-card-name {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    width: 100%;
+    line-height: 1.3;
+  }
+  
+  .modal-info-section {
+    width: 100%;
+    box-sizing: border-box;
+    gap: 14px;
   }
   
   .detail-row {
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
-    padding: 10px 0;
+    gap: 6px;
+    padding: 12px 0;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .detail-label {
     min-width: auto;
+    width: 100%;
     font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #495057;
   }
   
   .detail-value {
+    font-size: 14px;
+    width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+  }
+  
+  .modal-card-text {
+    padding: 14px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .modal-card-text p {
     font-size: 13px;
+    line-height: 1.6;
+  }
+  
+  .art-variants-section {
+    padding: 14px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .variants-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
   }
   
   .modal-close {
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
-    top: 8px;
-    right: 8px;
+    width: 44px;
+    height: 44px;
+    font-size: 26px;
+    top: 10px;
+    right: 10px;
   }
   
   .skeleton-grid {
