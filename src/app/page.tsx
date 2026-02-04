@@ -547,73 +547,31 @@ export default function Home() {
                    variant.image_uris.large || 
                    variant.image_uris.full ||
                    variant.image_uris.normal;
-        return (url && url.trim() !== '' && url !== 'null' && url !== 'undefined') ? url : null;
+        // Check if URL is valid (not null, undefined, empty, or string 'null'/'undefined')
+        if (!url || typeof url !== 'string') return null;
+        const trimmed = url.trim();
+        if (trimmed === '' || trimmed === 'null' || trimmed === 'undefined') return null;
+        // Check if it's a valid URL format
+        try {
+          new URL(trimmed);
+          return trimmed;
+        } catch {
+          return null;
+        }
       };
       
-      // Filter out variants without valid image URLs
+      // Filter out variants without valid image URLs (but show them if URL exists, even if it might fail to load)
+      // We'll let the onError handler in the img tag hide failed images instead of pre-filtering
       const variantsWithImageUrls = enrichedVariants.filter(variant => {
         const imageUrl = getImageUrl(variant);
         return !!imageUrl;
       });
       
-      // Preload images in parallel and verify they load successfully
-      const imageVerificationPromises = variantsWithImageUrls.map(async (variant): Promise<Card | null> => {
-        const imageUrl = getImageUrl(variant);
-        if (!imageUrl) return null;
-        
-        return new Promise<Card | null>((resolve) => {
-          const img = new Image();
-          let resolved = false;
-          
-          // Timeout after 3 seconds
-          const timeout = setTimeout(() => {
-            if (!resolved) {
-              resolved = true;
-              console.warn(`[Variant Filter] Image timeout for ${variant.id}: ${imageUrl.substring(0, 50)}...`);
-              resolve(null);
-            }
-          }, 3000);
-          
-          img.onload = () => {
-            if (!resolved) {
-              resolved = true;
-              clearTimeout(timeout);
-              // Verify image actually loaded (naturalWidth/Height > 0)
-              if (img.naturalWidth > 0 && img.naturalHeight > 0) {
-                resolve(variant);
-              } else {
-                console.warn(`[Variant Filter] Invalid image dimensions for ${variant.id}`);
-                resolve(null);
-              }
-            }
-          };
-          
-          img.onerror = () => {
-            if (!resolved) {
-              resolved = true;
-              clearTimeout(timeout);
-              console.warn(`[Variant Filter] Image load failed for ${variant.id}: ${imageUrl.substring(0, 50)}...`);
-              resolve(null);
-            }
-          };
-          
-          // Set crossOrigin to avoid CORS issues
-          img.crossOrigin = 'anonymous';
-          img.src = imageUrl;
-        });
-      });
+      console.log(`[Variant Filter] Found ${variantsWithImageUrls.length}/${enrichedVariants.length} variants with image URLs`);
       
-      // Wait for all image verifications (with timeout)
-      const verificationResults = await Promise.all(imageVerificationPromises);
-      
-      // Filter out null results (variants with failed image loads)
-      const validVariants = verificationResults.filter(
-        (variant): variant is Card => variant !== null
-      );
-      
-      console.log(`[Variant Filter] Loaded ${validVariants.length}/${variantsWithImageUrls.length} variants with valid images`);
-      
-      setCardVariants(validVariants);
+      // Show all variants with valid URLs - let browser handle image loading errors
+      // The onError handler in the img tag will hide cards that fail to load
+      setCardVariants(variantsWithImageUrls);
       setIsLoadingVariants(false);
     }).catch(err => {
       console.error('Error loading variants:', err);

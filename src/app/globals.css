@@ -1120,6 +1120,8 @@ body::before {
     overflow-x: visible;
     overflow-y: visible;
     position: relative;
+    min-height: auto;
+    max-height: none;
   }
   
   .tabs {
@@ -1453,7 +1455,11 @@ body::before {
     max-width: 100%;
     box-sizing: border-box;
     overflow: visible;
+    overflow-x: visible;
+    overflow-y: visible;
     position: relative;
+    min-height: auto;
+    max-height: none;
   }
   
   .preview-section-container h3 {
@@ -1470,12 +1476,16 @@ body::before {
     max-width: 100%;
     margin: 0;
     padding: 0;
-    overflow: visible;
+    overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
     box-sizing: border-box;
     position: relative;
+    min-height: auto;
+    max-height: none !important;
   }
   
-  /* Preview grid mobile - ensure full visibility, no scale */
+  /* Preview grid mobile - ensure full visibility, no scale, all rows visible */
   .preview-grid {
     width: 100% !important;
     max-width: 100% !important;
@@ -1485,10 +1495,13 @@ body::before {
     transform: none !important;
     min-height: auto !important;
     max-height: none !important;
+    height: auto !important;
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     gap: 8px !important;
     overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
   }
   
   /* Prevent grid items from shrinking */
@@ -1630,8 +1643,8 @@ body::before {
 }
 
 .preview-grid-wrapper {
-  overflow: auto;
-  max-height: 600px;
+  overflow: visible;
+  max-height: none;
   padding: 10px;
   background: #fafafa;
   border-radius: 12px;
@@ -2194,6 +2207,8 @@ body::before {
   .modal-overlay {
     padding: 0;
     align-items: flex-end; /* Bottom aligned on mobile */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   
   .modal-content {
@@ -2202,6 +2217,8 @@ body::before {
     border-radius: 20px 20px 0 0;
     margin: 0;
     animation: slideUpMobile 0.3s ease;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   
   @keyframes slideUpMobile {
@@ -2219,6 +2236,8 @@ body::before {
     grid-template-columns: 1fr;
     gap: 20px;
     padding: 20px;
+    overflow: visible;
+    max-height: none;
   }
   
   .modal-image-section {
