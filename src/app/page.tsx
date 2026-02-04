@@ -540,7 +540,18 @@ export default function Home() {
         return variant;
       });
       
-      setCardVariants(enrichedVariants);
+      // Filter out variants without images
+      const variantsWithImages = enrichedVariants.filter(variant => {
+        const hasImage = variant.image_uris && (
+          variant.image_uris.small || 
+          variant.image_uris.large || 
+          variant.image_uris.full ||
+          variant.image_uris.normal
+        );
+        return hasImage;
+      });
+      
+      setCardVariants(variantsWithImages);
       setIsLoadingVariants(false);
     }).catch(err => {
       console.error('Error loading variants:', err);
@@ -1330,7 +1341,11 @@ Variants: _p1, _p2 (Parallel), _aa (Alt Art), _sp (Special)`}
                               src={variant.image_uris.small || variant.image_uris.large} 
                               alt={`${variant.name} - ${variant.variantLabel || 'Standard'}`}
                               onError={(e) => {
-                                (e.target as HTMLImageElement).src = '/images/card-back.jpg';
+                                // Hide the variant card if image fails to load
+                                const cardElement = (e.target as HTMLImageElement).closest('.variant-card');
+                                if (cardElement) {
+                                  (cardElement as HTMLElement).style.display = 'none';
+                                }
                               }}
                             />
                             <div className="variant-info">
