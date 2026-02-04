@@ -46,6 +46,9 @@ export default function Home() {
   
   // Detect mobile on mount and resize
   useEffect(() => {
+    // Check if we're in browser environment
+    if (typeof window === 'undefined') return;
+    
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
@@ -122,6 +125,8 @@ export default function Home() {
   
   // Register Service Worker
   useEffect(() => {
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') return;
+    
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
         .then((registration) => {

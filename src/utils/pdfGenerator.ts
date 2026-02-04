@@ -56,39 +56,54 @@ export class PDFGenerator {
       return;
     }
     
-    // Paralel yükleme yap
-    const preloadPromises = Array.from(imageUrls).map(async (imageUrl, index) => {
-      try {
-        // Her iterasyonda abort signal kontrolü
-        if (this.abortSignal?.aborted) {
-          throw new Error('Operation aborted');
-        }
-        
-        this.preloadQueue.add(imageUrl);
-        progressCallback?.(index + 1, imageUrls.size, `Görsel yükleniyor: ${index + 1}/${imageUrls.size}`);
-        
-        const imageData = await this.getCardImageBytes(imageUrl);
-        
-        if (imageData && imageData.length > 1000) {
-          this.imageCache.set(imageUrl, imageData);
-          progressCallback?.(index + 1, imageUrls.size, `Görsel yüklendi: ${index + 1}/${imageUrls.size}`);
-        } else {
-          throw new Error('Invalid image data');
-        }
-        
-              } catch (error: any) {
+    // Batch yükleme - her seferinde 10 görsel paralel yükle (daha hızlı)
+    const imageUrlsArray = Array.from(imageUrls);
+    const batchSize = 10;
+    let loadedCount = 0;
+    
+    for (let i = 0; i < imageUrlsArray.length; i += batchSize) {
+      if (this.abortSignal?.aborted) {
+        throw new Error('Operation aborted');
+      }
+      
+      const batch = imageUrlsArray.slice(i, i + batchSize);
+      
+      // Batch içindeki görselleri paralel yükle
+      const batchPromises = batch.map(async (imageUrl) => {
+        try {
+          if (this.abortSignal?.aborted) {
+            throw new Error('Operation aborted');
+          }
+          
+          this.preloadQueue.add(imageUrl);
+          
+          const imageData = await this.getCardImageBytes(imageUrl);
+          
+          if (imageData && imageData.length > 1000) {
+            this.imageCache.set(imageUrl, imageData);
+            loadedCount++;
+            progressCallback?.(loadedCount, imageUrls.size, `Görsel yüklendi: ${loadedCount}/${imageUrls.size}`);
+            return true;
+          } else {
+            throw new Error('Invalid image data');
+          }
+        } catch (error: any) {
           if (error.message === 'Operation aborted') {
             throw error;
           }
-          console.error(`Failed to preload image ${index + 1}:`, imageUrl, error);
+          console.error(`Failed to preload image:`, imageUrl, error);
           this.failedImages.add(imageUrl);
-          progressCallback?.(index + 1, imageUrls.size, `Görsel yüklenemedi: ${index + 1}/${imageUrls.size}`);
+          loadedCount++;
+          progressCallback?.(loadedCount, imageUrls.size, `Görsel yüklenemedi: ${loadedCount}/${imageUrls.size}`);
+          return false;
         } finally {
-        this.preloadQueue.delete(imageUrl);
-      }
-    });
-    
-    await Promise.allSettled(preloadPromises);
+          this.preloadQueue.delete(imageUrl);
+        }
+      });
+      
+      // Batch'i bekle
+      await Promise.allSettled(batchPromises);
+    }
     
     console.log(`Preloading completed. Success: ${this.imageCache.size}, Failed: ${this.failedImages.size}`);
   }
@@ -105,10 +120,10 @@ export class PDFGenerator {
         throw new Error('Operation aborted');
       }
       
-      // Cache'leri temizle
+      // Cache'leri temizle (sadece failed images ve queue, imageCache'i koru - daha hızlı)
       this.failedImages.clear();
-      this.imageCache.clear();
       this.preloadQueue.clear();
+      // imageCache'i temizleme - önceki yüklemelerden kalan görselleri kullanabiliriz
 
       // Görselleri önceden yükle
       console.log('Starting image preloading...');
@@ -542,47 +557,97 @@ export class PDFGenerator {
 
   private async drawCard(page: PDFPage, card: DeckCard, x: number, y: number, width: number, height: number): Promise<void> {
     try {
-      // Kart görselini yükle
-      const imageUrl = card.card.image_uris.full || card.card.image_uris.large || card.card.image_uris.small;
+      // Kart görselini yükle - tüm URL seçeneklerini dene
+      let imageUrl = card.card.image_uris.full || card.card.image_uris.large || card.card.image_uris.small;
       
       if (!imageUrl || imageUrl === 'null' || imageUrl === 'undefined') {
+        console.warn(`No image URL for card: ${card.card.name}`);
         this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
         return;
       }
 
-      // Başarısız görselleri tekrar deneme
-      if (this.failedImages.has(imageUrl)) {
-        this.failedImages.delete(imageUrl);
+      // URL'yi temizle ve doğrula
+      imageUrl = imageUrl.trim();
+      if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
+        console.warn(`Invalid image URL format: ${imageUrl}`);
+        this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
+        return;
       }
 
-      // Cache'den kontrol et
+      // Cache'den kontrol et - öncelikle cache kullan
       if (this.imageCache.has(imageUrl)) {
         const cachedImageData = this.imageCache.get(imageUrl)!;
         
-        try {
-          await this.embedBinaryImage(page, cachedImageData, imageUrl, x, y, width, height);
-          return;
-        } catch (embedError) {
+        // Cache'deki veriyi doğrula
+        if (cachedImageData && cachedImageData.length > 1000) {
+          try {
+            await this.embedBinaryImage(page, cachedImageData, imageUrl, x, y, width, height);
+            return; // Başarılı, çık
+          } catch (embedError) {
+            console.error(`Failed to embed cached image for ${card.card.name}:`, embedError);
+            // Cache'deki veri hatalı, sil ve yeniden yükle
+            this.imageCache.delete(imageUrl);
+          }
+        } else {
+          // Cache'deki veri geçersiz, sil
           this.imageCache.delete(imageUrl);
         }
       }
       
-      // Yeni görsel yükle
+      // Başarısız görselleri tekrar deneme (sadece bir kez)
+      if (this.failedImages.has(imageUrl)) {
+        console.warn(`Skipping previously failed image: ${imageUrl.substring(0, 50)}...`);
+        this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
+        return;
+      }
+      
+      // Yeni görsel yükle - tüm yöntemleri dene
+      let imageData: Uint8Array | null = null;
+      let lastError: Error | null = null;
+      
       try {
-        const imageData = await this.getCardImageBytes(imageUrl);
+        imageData = await this.getCardImageBytes(imageUrl);
+      } catch (error: any) {
+        lastError = error;
+        console.error(`Image loading failed for ${card.card.name} (${imageUrl.substring(0, 50)}...):`, error);
         
-        if (imageData && imageData.length > 1000) {
-          // Cache'e kaydet
-          this.imageCache.set(imageUrl, imageData);
+        // Alternatif URL'leri dene
+        const alternativeUrls = [
+          card.card.image_uris.full,
+          card.card.image_uris.large,
+          card.card.image_uris.small
+        ].filter(url => url && url !== imageUrl);
+        
+        for (const altUrl of alternativeUrls) {
+          if (!altUrl || altUrl === imageUrl) continue;
           
-          // PDF'e ekle
-          await this.embedBinaryImage(page, imageData, imageUrl, x, y, width, height);
-        } else {
-          throw new Error('Invalid image data received');
+          try {
+            console.log(`Trying alternative URL for ${card.card.name}: ${altUrl.substring(0, 50)}...`);
+            imageData = await this.getCardImageBytes(altUrl);
+            imageUrl = altUrl; // Başarılı URL'i kullan
+            break;
+          } catch (altError) {
+            console.log(`Alternative URL also failed:`, altError);
+            continue;
+          }
         }
+      }
+      
+      if (imageData && imageData.length > 1000) {
+        // Cache'e kaydet
+        this.imageCache.set(imageUrl, imageData);
         
-      } catch (error) {
-        console.error('Image loading failed:', error);
+        // PDF'e ekle
+        try {
+          await this.embedBinaryImage(page, imageData, imageUrl, x, y, width, height);
+          console.log(`Successfully embedded image for ${card.card.name}`);
+        } catch (embedError) {
+          console.error(`Failed to embed image for ${card.card.name}:`, embedError);
+          this.failedImages.add(imageUrl);
+          this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
+        }
+      } else {
+        console.error(`Invalid image data for ${card.card.name}:`, lastError);
         this.failedImages.add(imageUrl);
         this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
       }
@@ -593,24 +658,160 @@ export class PDFGenerator {
     }
   }
 
+  // Next.js API route üzerinden görsel yükleme (server-side proxy)
+  private async loadImageViaAPI(url: string): Promise<Uint8Array> {
+    try {
+      const apiUrl = `/api/image-proxy?url=${encodeURIComponent(url)}`;
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'image/*'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`API proxy failed: ${response.status}`);
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      const uint8Array = new Uint8Array(arrayBuffer);
+
+      if (uint8Array.length < 1000) {
+        throw new Error('Image data too small from API');
+      }
+
+      return uint8Array;
+    } catch (error) {
+      throw new Error(`API proxy error: ${error}`);
+    }
+  }
+
+  // Canvas kullanarak görsel yükleme (CORS bypass - crossOrigin olmadan)
+  private async loadImageViaCanvas(url: string): Promise<Uint8Array> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      // crossOrigin kullanmadan dene (tainted canvas ama çalışabilir)
+      
+      // Timeout ekle
+      const timeout = setTimeout(() => {
+        reject(new Error('Image load timeout'));
+      }, 8000);
+      
+      img.onload = async () => {
+        clearTimeout(timeout);
+        try {
+          // Canvas oluştur
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          
+          if (!ctx) {
+            reject(new Error('Could not get canvas context'));
+            return;
+          }
+          
+          // Görseli canvas'a çiz (tainted canvas olabilir)
+          try {
+            ctx.drawImage(img, 0, 0);
+          } catch (drawError: any) {
+            // Tainted canvas hatası - crossOrigin ile tekrar dene
+            if (drawError.name === 'SecurityError' || drawError.message?.includes('tainted')) {
+              reject(new Error('Canvas tainted - CORS required'));
+              return;
+            }
+            throw drawError;
+          }
+          
+          // Canvas'ı blob'a çevir
+          canvas.toBlob(async (blob) => {
+            if (!blob) {
+              reject(new Error('Canvas toBlob returned null'));
+              return;
+            }
+            
+            // Blob'u Uint8Array'e çevir
+            const arrayBuffer = await blob.arrayBuffer();
+            const uint8Array = new Uint8Array(arrayBuffer);
+            
+            if (uint8Array.length > 1000) {
+              resolve(uint8Array);
+            } else {
+              reject(new Error('Image data too small'));
+            }
+          }, 'image/png'); // PNG formatında al (daha güvenilir)
+          
+        } catch (error) {
+          reject(error);
+        }
+      };
+      
+      img.onerror = (error) => {
+        clearTimeout(timeout);
+        reject(new Error(`Image load error: ${error}`));
+      };
+      
+      img.src = url;
+    });
+  }
+
   // Ana görsel yükleme metodu - CORS güvenli
   private async getCardImageBytes(url: string): Promise<Uint8Array> {
+    // Önce cache'den kontrol et
+    if (this.imageCache.has(url)) {
+      const cached = this.imageCache.get(url)!;
+      if (cached && cached.length > 1000) {
+        return cached;
+      }
+      // Cache'deki veri geçersiz, sil
+      this.imageCache.delete(url);
+    }
+
     const retryCount = this.retryCount.get(url) || 0;
     
     if (retryCount >= this.maxRetries) {
       throw new Error(`Maximum retries exceeded for ${url}`);
     }
 
+    // Önce Next.js API route yöntemini dene (server-side proxy - en güvenilir)
     try {
-      // Önce cache'den kontrol et
-      if (this.imageCache.has(url)) {
-        return this.imageCache.get(url)!;
+      console.log(`Trying API proxy for: ${url.substring(0, 50)}...`);
+      const imageData = await this.loadImageViaAPI(url);
+      
+      if (imageData && imageData.length > 1000) {
+        this.imageCache.set(url, imageData);
+        return imageData;
       }
+    } catch (apiError) {
+      console.log(`API proxy failed for ${url}, trying other methods:`, apiError);
+    }
 
+    // Canvas yöntemini dene (CORS bypass)
+    if (typeof document !== 'undefined' && typeof Image !== 'undefined') {
+      try {
+        console.log(`Trying canvas method for: ${url.substring(0, 50)}...`);
+        const imageData = await this.loadImageViaCanvas(url);
+        
+        if (imageData && imageData.length > 1000) {
+          this.imageCache.set(url, imageData);
+          return imageData;
+        }
+      } catch (canvasError) {
+        console.log(`Canvas method failed for ${url}, trying fetch:`, canvasError);
+      }
+    }
+
+    try {
       // Direct fetch ile dene
       const imageData = await this.fetchImageDirectly(url);
-      this.imageCache.set(url, imageData);
-      return imageData;
+      
+      // Veriyi doğrula
+      if (imageData && imageData.length > 1000) {
+        this.imageCache.set(url, imageData);
+        return imageData;
+      } else {
+        throw new Error('Image data too small or invalid');
+      }
 
     } catch (error) {
       console.log(`Direct fetch failed for ${url}, attempt ${retryCount + 1}/${this.maxRetries}:`, error);
@@ -619,12 +820,22 @@ export class PDFGenerator {
       this.retryCount.set(url, retryCount + 1);
       
       // Proxy ile dene
-      try {
-        const imageData = await this.fetchImageViaProxy(url);
-        this.imageCache.set(url, imageData);
-        return imageData;
-      } catch (proxyError) {
-        console.error(`Proxy fetch also failed for ${url}:`, proxyError);
+      if (retryCount < 2) {
+        try {
+          const imageData = await this.fetchImageViaProxy(url);
+          
+          // Veriyi doğrula
+          if (imageData && imageData.length > 1000) {
+            this.imageCache.set(url, imageData);
+            return imageData;
+          } else {
+            throw new Error('Proxy image data too small or invalid');
+          }
+        } catch (proxyError) {
+          console.error(`Proxy fetch also failed for ${url}:`, proxyError);
+          throw new Error(`Failed to load image after ${retryCount + 1} attempts`);
+        }
+      } else {
         throw new Error(`Failed to load image after ${retryCount + 1} attempts`);
       }
     }
@@ -633,29 +844,48 @@ export class PDFGenerator {
   // Direct fetch - CORS güvenli
   private async fetchImageDirectly(url: string): Promise<Uint8Array> {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 saniye timeout
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 saniye timeout
 
     try {
-      const response = await fetch(url, {
-        mode: 'cors',
-        credentials: 'omit',
-        signal: controller.signal,
-        headers: {
-          'Accept': 'image/*,image/jpeg,image/png,image/webp',
-          'Cache-Control': 'no-cache',
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
-      });
+      // Önce no-cors modunu dene (CORS sorunlarını bypass eder)
+      let response: Response;
+      try {
+        response = await fetch(url, {
+          mode: 'no-cors',
+          credentials: 'omit',
+          signal: controller.signal,
+          cache: 'no-cache'
+        });
+      } catch (noCorsError) {
+        // no-cors başarısız olursa cors modunu dene
+        response = await fetch(url, {
+          mode: 'cors',
+          credentials: 'omit',
+          signal: controller.signal,
+          headers: {
+            'Accept': 'image/*,image/jpeg,image/png,image/webp',
+            'Cache-Control': 'no-cache',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+          }
+        });
+      }
 
       clearTimeout(timeoutId);
 
-      if (!response.ok) {
+      // no-cors modunda response.ok her zaman false olabilir, bu yüzden kontrol etme
+      if (response.type === 'opaque') {
+        // Opaque response - veriyi al ve kullan
+        console.log('Received opaque response (no-cors mode)');
+      } else if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.startsWith('image/')) {
-        throw new Error(`Invalid content type: ${contentType}`);
+      // no-cors modunda content-type kontrol edilemez
+      if (response.type !== 'opaque') {
+        const contentType = response.headers.get('content-type');
+        if (contentType && !contentType.startsWith('image/')) {
+          console.warn(`Unexpected content type: ${contentType}, continuing anyway`);
+        }
       }
 
       const arrayBuffer = await response.arrayBuffer();
@@ -673,38 +903,47 @@ export class PDFGenerator {
     }
   }
 
-  // Proxy ile görsel yükleme (client-side only, no API routes in static export)
+  // Proxy ile görsel yükleme (client-side fallback)
   private async fetchImageViaProxy(url: string): Promise<Uint8Array> {
+    // Daha fazla proxy servisi ekle
     const proxyUrls = [
-      `https://corsproxy.io/?${encodeURIComponent(url)}`,
       `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-      url // Try direct URL as fallback
+      `https://corsproxy.io/?${encodeURIComponent(url)}`,
+      `https://cors-anywhere.herokuapp.com/${url}`, // Not: Bu servis production'da çalışmayabilir
+      url // Try direct URL as last resort
     ];
 
     for (const proxyUrl of proxyUrls) {
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 saniye timeout
+        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 saniye timeout
 
         const response = await fetch(proxyUrl, {
           signal: controller.signal,
+          mode: 'cors',
           headers: {
-            'Accept': 'image/*,image/jpeg,image/png,image/webp'
+            'Accept': 'image/*,image/jpeg,image/png,image/webp',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
           }
         });
 
         clearTimeout(timeoutId);
 
-        if (response.ok) {
+        if (response.ok || response.type === 'opaque') {
           const arrayBuffer = await response.arrayBuffer();
           const uint8Array = new Uint8Array(arrayBuffer);
 
           if (uint8Array.length > 1000) {
+            console.log(`Successfully loaded via proxy: ${proxyUrl.substring(0, 50)}...`);
             return uint8Array;
           }
         }
-      } catch (error) {
-        console.log(`Proxy failed: ${proxyUrl}`, error);
+      } catch (error: any) {
+        if (error.name === 'AbortError') {
+          console.log(`Proxy timeout: ${proxyUrl.substring(0, 50)}...`);
+        } else {
+          console.log(`Proxy failed: ${proxyUrl.substring(0, 50)}...`, error.message);
+        }
         continue;
       }
     }
@@ -715,36 +954,79 @@ export class PDFGenerator {
   // Binary görseli PDF'e göm - CORS güvenli
   private async embedBinaryImage(page: PDFPage, imageData: Uint8Array, imageUrl: string, x: number, y: number, width: number, height: number): Promise<void> {
     try {
-      let pdfImage;
-      const lowerUrl = imageUrl.toLowerCase();
+      // Önce binary format kontrolü yap (daha güvenilir)
+      const isJPEGFormat = this.isJPEG(imageData);
+      const isPNGFormat = this.isPNG(imageData);
       
-      // Format tespiti ve embedding
-      if (lowerUrl.includes('.jpg') || lowerUrl.includes('.jpeg') || this.isJPEG(imageData)) {
+      let pdfImage;
+      
+      // Format tespiti - önce binary kontrol, sonra URL kontrol
+      if (isJPEGFormat) {
         try {
           pdfImage = await this.pdfDoc.embedJpg(imageData);
         } catch (jpegError) {
-          pdfImage = await this.pdfDoc.embedPng(imageData);
+          console.warn('JPEG embedding failed, trying PNG:', jpegError);
+          try {
+            pdfImage = await this.pdfDoc.embedPng(imageData);
+          } catch (pngError) {
+            throw new Error(`Both JPEG and PNG embedding failed. JPEG error: ${jpegError}, PNG error: ${pngError}`);
+          }
         }
-      } else if (lowerUrl.includes('.png') || this.isPNG(imageData)) {
+      } else if (isPNGFormat) {
         try {
           pdfImage = await this.pdfDoc.embedPng(imageData);
         } catch (pngError) {
-          pdfImage = await this.pdfDoc.embedJpg(imageData);
+          console.warn('PNG embedding failed, trying JPEG:', pngError);
+          try {
+            pdfImage = await this.pdfDoc.embedJpg(imageData);
+          } catch (jpegError) {
+            throw new Error(`Both PNG and JPEG embedding failed. PNG error: ${pngError}, JPEG error: ${jpegError}`);
+          }
         }
       } else {
-        // Format belirlenemezse her ikisini de dene
-        try {
-          pdfImage = await this.pdfDoc.embedJpg(imageData);
-        } catch {
-          pdfImage = await this.pdfDoc.embedPng(imageData);
+        // Format belirlenemezse URL'den tahmin et, sonra her ikisini de dene
+        const lowerUrl = imageUrl.toLowerCase();
+        if (lowerUrl.includes('.jpg') || lowerUrl.includes('.jpeg')) {
+          try {
+            pdfImage = await this.pdfDoc.embedJpg(imageData);
+          } catch {
+            pdfImage = await this.pdfDoc.embedPng(imageData);
+          }
+        } else if (lowerUrl.includes('.png')) {
+          try {
+            pdfImage = await this.pdfDoc.embedPng(imageData);
+          } catch {
+            pdfImage = await this.pdfDoc.embedJpg(imageData);
+          }
+        } else {
+          // Her ikisini de dene
+          try {
+            pdfImage = await this.pdfDoc.embedJpg(imageData);
+          } catch {
+            try {
+              pdfImage = await this.pdfDoc.embedPng(imageData);
+            } catch (error) {
+              throw new Error(`Image format could not be determined and both JPEG and PNG embedding failed: ${error}`);
+            }
+          }
         }
       }
 
-      // PDF sayfasına çiz
+      // PDF sayfasına çiz - görselin başarıyla embed edildiğinden emin ol
+      if (!pdfImage) {
+        throw new Error('PDF image object is null after embedding');
+      }
+      
       page.drawImage(pdfImage, { x, y, width, height });
+      
+      // Debug log
+      console.log(`Successfully embedded image: ${imageUrl.substring(0, 50)}...`);
       
     } catch (error) {
       console.error('Image embedding failed:', error);
+      console.error('Image URL:', imageUrl);
+      console.error('Image data length:', imageData.length);
+      console.error('Image data first bytes:', Array.from(imageData.slice(0, 10)));
       throw error;
     }
   }
