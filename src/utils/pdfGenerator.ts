@@ -667,49 +667,75 @@ export class PDFGenerator {
         : '';
       const apiUrl = `${baseUrl}/api/image-proxy?url=${encodeURIComponent(url)}`;
       
-      console.log(`Loading image via API: ${apiUrl.substring(0, 100)}...`);
+      console.log(`[API] Loading image via API: ${apiUrl.substring(0, 100)}...`);
       
       // Create abort controller for timeout
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 saniye timeout
+      const timeoutId = setTimeout(() => controller.abort(), 35000); // 35 saniye timeout (Cloudflare Pages için daha uzun)
       
       try {
         const response = await fetch(apiUrl, {
           method: 'GET',
           headers: {
-            'Accept': 'image/*',
-            'Cache-Control': 'no-cache'
+            'Accept': 'image/*,image/jpeg,image/png,image/webp',
+            'Cache-Control': 'no-cache',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
           },
-          signal: controller.signal
+          signal: controller.signal,
+          // Add credentials for better compatibility
+          credentials: 'omit',
+          mode: 'cors'
         });
 
         clearTimeout(timeoutId);
 
+        // Check if response is ok or if it's an error response
         if (!response.ok) {
-          const errorText = await response.text().catch(() => 'Unknown error');
-          console.error(`API proxy failed: ${response.status} - ${errorText}`);
-          throw new Error(`API proxy failed: ${response.status} ${response.statusText}`);
+          let errorText = 'Unknown error';
+          try {
+            // Try to get error message from response
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+              const errorJson = await response.json().catch(() => null);
+              if (errorJson && errorJson.error) {
+                errorText = errorJson.error;
+              }
+            } else {
+              errorText = await response.text().catch(() => `HTTP ${response.status}`);
+            }
+          } catch (e) {
+            errorText = `HTTP ${response.status} ${response.statusText}`;
+          }
+          console.error(`[API] API proxy failed: ${response.status} - ${errorText}`);
+          throw new Error(`API proxy failed: ${response.status} - ${errorText}`);
+        }
+
+        // Check content type
+        const contentType = response.headers.get('content-type');
+        if (contentType && !contentType.startsWith('image/') && !contentType.includes('application/octet-stream')) {
+          console.warn(`[API] Unexpected content type: ${contentType}, but continuing...`);
         }
 
         const arrayBuffer = await response.arrayBuffer();
         const uint8Array = new Uint8Array(arrayBuffer);
 
         if (uint8Array.length < 1000) {
-          console.error(`Image data too small from API: ${uint8Array.length} bytes`);
-          throw new Error('Image data too small from API');
+          console.error(`[API] Image data too small from API: ${uint8Array.length} bytes`);
+          throw new Error(`Image data too small from API: ${uint8Array.length} bytes`);
         }
 
-        console.log(`Successfully loaded image via API: ${uint8Array.length} bytes`);
+        console.log(`[API] ✅ Successfully loaded image via API: ${uint8Array.length} bytes`);
         return uint8Array;
       } catch (fetchError: any) {
         clearTimeout(timeoutId);
         if (fetchError.name === 'AbortError' || controller.signal.aborted) {
           throw new Error('Request timeout');
         }
-        throw fetchError;
+        // Re-throw with more context
+        throw new Error(`Fetch error: ${fetchError.message || fetchError}`);
       }
     } catch (error: any) {
-      console.error(`API proxy error for ${url}:`, error);
+      console.error(`[API] API proxy error for ${url.substring(0, 50)}:`, error);
       throw new Error(`API proxy error: ${error.message || error}`);
     }
   }
@@ -803,20 +829,32 @@ export class PDFGenerator {
 
     // Önce Next.js API route yöntemini dene (server-side proxy - en güvenilir)
     // Cloudflare Pages'de bu yöntem edge runtime'da çalışır
-    try {
-      console.log(`[Image Load] Trying API proxy for: ${url.substring(0, 50)}...`);
-      const imageData = await this.loadImageViaAPI(url);
-      
-      if (imageData && imageData.length > 1000) {
-        console.log(`[Image Load] ✅ API proxy success: ${imageData.length} bytes`);
-        this.imageCache.set(url, imageData);
-        return imageData;
-      } else {
-        console.warn(`[Image Load] ⚠️ API proxy returned invalid data: ${imageData?.length || 0} bytes`);
+    // Retry mekanizması ile 2 kez dene
+    for (let apiRetry = 0; apiRetry < 2; apiRetry++) {
+      try {
+        console.log(`[Image Load] Trying API proxy (attempt ${apiRetry + 1}/2) for: ${url.substring(0, 50)}...`);
+        const imageData = await this.loadImageViaAPI(url);
+        
+        if (imageData && imageData.length > 1000) {
+          console.log(`[Image Load] ✅ API proxy success: ${imageData.length} bytes`);
+          this.imageCache.set(url, imageData);
+          return imageData;
+        } else {
+          console.warn(`[Image Load] ⚠️ API proxy returned invalid data: ${imageData?.length || 0} bytes`);
+          if (apiRetry < 1) {
+            // Wait a bit before retry
+            await new Promise(resolve => setTimeout(resolve, 500));
+            continue;
+          }
+        }
+      } catch (apiError: any) {
+        console.warn(`[Image Load] ❌ API proxy failed (attempt ${apiRetry + 1}/2) for ${url.substring(0, 50)}:`, apiError.message || apiError);
+        if (apiRetry < 1) {
+          // Wait a bit before retry
+          await new Promise(resolve => setTimeout(resolve, 500));
+          continue;
+        }
       }
-    } catch (apiError: any) {
-      console.warn(`[Image Load] ❌ API proxy failed for ${url.substring(0, 50)}:`, apiError.message || apiError);
-      // Continue to other methods
     }
 
     // Canvas yöntemini dene (CORS bypass)
