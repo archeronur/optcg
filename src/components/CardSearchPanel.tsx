@@ -104,12 +104,20 @@ export default function CardSearchPanel({ onAddCard, existingCards }: CardSearch
       setSelectedCard(null);
       setAddCount(1);
       setSearchQuery('');
+      setSearchResults([]);
+      setShowDropdown(false);
+      // Clear input focus
+      searchInputRef.current?.blur();
     }
   };
   
   // Quick add card from dropdown
   const handleQuickAdd = (card: Card) => {
     onAddCard(card, 1);
+    // Clear search after quick add
+    setSearchQuery('');
+    setSearchResults([]);
+    setShowDropdown(false);
   };
   
   // Get existing count for a card
