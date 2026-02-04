@@ -1369,6 +1369,16 @@ Variants: _p1, _p2 (Parallel), _aa (Alt Art), _sp (Special)`}
                                   (cardElement as HTMLElement).style.display = 'none';
                                 }
                               }}
+                              onLoad={(e) => {
+                                // Verify image loaded successfully - hide if dimensions are invalid
+                                const img = e.target as HTMLImageElement;
+                                if (img.naturalWidth === 0 || img.naturalHeight === 0) {
+                                  const cardElement = img.closest('.variant-card');
+                                  if (cardElement) {
+                                    (cardElement as HTMLElement).style.display = 'none';
+                                  }
+                                }
+                              }}
                             />
                             <div className="variant-info">
                               <span className={`variant-label ${variant.variant ? `variant-${variant.variant}` : ''}`}>
