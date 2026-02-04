@@ -9,8 +9,9 @@
     "lint": "next lint",
     "perf": "next build && next start",
     "test:perf": "node -e \"console.log('🚀 Performance test başlatılıyor...')\"",
-    "pages:build": "npx @cloudflare/next-on-pages@1",
-    "prepages:build": "next build"
+    "pages:build": "npx @cloudflare/next-on-pages@latest",
+    "prepages:build": "next build",
+    "pages:deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static"
   },
   "dependencies": {
     "@types/node": "^20.0.0",
@@ -25,7 +26,7 @@
     "typescript": "^5.0.0"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "^1.0.0",
+    "@cloudflare/next-on-pages": "^1.15.0",
     "@types/papaparse": "^5.3.14",
     "eslint": "^8.0.0",
     "eslint-config-next": "15.0.0"

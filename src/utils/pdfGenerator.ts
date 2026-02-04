@@ -661,18 +661,26 @@ export class PDFGenerator {
   // Next.js API route üzerinden görsel yükleme (server-side proxy) - Cloudflare Pages optimized
   private async loadImageViaAPI(url: string): Promise<Uint8Array> {
     try {
-      // Cloudflare Pages: Use relative URL first, fallback to absolute
+      // Cloudflare Pages: Detect environment and use appropriate URL
       let baseUrl = '';
       if (typeof window !== 'undefined') {
         baseUrl = window.location.origin;
+        // Cloudflare Pages: Ensure we use the correct origin
+        // If we're on Cloudflare Pages, use the current origin
+        if (baseUrl.includes('.pages.dev') || baseUrl.includes('cloudflarepages.com')) {
+          // Already correct
+        }
       } else if (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_BASE_URL) {
         baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
       }
       
-      // Use relative URL if baseUrl is empty (works in Cloudflare Pages)
+      // Cloudflare Pages: Always use absolute URL for API calls
+      // Relative URLs may not work correctly in Cloudflare Pages
       const apiUrl = baseUrl 
         ? `${baseUrl}/api/image-proxy?url=${encodeURIComponent(url)}`
-        : `/api/image-proxy?url=${encodeURIComponent(url)}`;
+        : (typeof window !== 'undefined' 
+          ? `${window.location.origin}/api/image-proxy?url=${encodeURIComponent(url)}`
+          : `/api/image-proxy?url=${encodeURIComponent(url)}`);
       
       console.log(`[API] Loading image via API: ${apiUrl.substring(0, 100)}...`);
       

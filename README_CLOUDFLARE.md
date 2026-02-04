@@ -28,7 +28,12 @@ git push -u origin main
 - **Build command**: `npm run pages:build`
 - **Build output directory**: `.vercel/output/static`
 - **Root directory**: `/` (root)
-- **Node.js version**: `22.x` (or latest)
+- **Node.js version**: `20.x` veya `22.x` (latest recommended)
+
+#### ÖNEMLİ Build Ayarları:
+- Mutlaka `npm run pages:build` kullanın (normal `npm run build` çalışmaz)
+- Build output directory: `.vercel/output/static` olmalı
+- Node.js versiyonu 20+ olmalı
 
 #### Environment Variables (gerekirse):
 - Şu an için environment variable gerekmiyor
@@ -66,6 +71,19 @@ Cloudflare Pages otomatik olarak:
 ### API Route Çalışmıyorsa:
 - Edge Runtime kullanıldığından emin olun (`export const runtime = 'edge'`)
 - Cloudflare Pages Functions limitlerini kontrol edin
+- API route'ların `/api/` klasöründe olduğundan emin olun
+- CORS header'larının doğru ayarlandığını kontrol edin
+
+### PDF Görsel Yükleme Sorunları:
+- Image proxy API route'unun çalıştığını kontrol edin: `/api/image-proxy`
+- Browser console'da network hatalarını kontrol edin
+- Cloudflare Pages logs'larında API route hatalarını kontrol edin
+- Timeout sürelerinin yeterli olduğundan emin olun (30-40 saniye)
+
+### Mobil Görünüm Sorunları:
+- `is-mobile` class'ının doğru eklendiğini kontrol edin
+- CSS media queries'in çalıştığını kontrol edin
+- Viewport meta tag'lerinin doğru olduğunu kontrol edin
 
 ## 🎉 Başarılı Deploy Sonrası
 
