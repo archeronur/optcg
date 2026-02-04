@@ -6,6 +6,7 @@ import { DeckParser } from '@/utils/deckParser';
 import { optcgAPI } from '@/services/api';
 import { translationService } from '@/utils/translations';
 import { debounce, throttle, createCleanup } from '@/utils/performance';
+import { downloadPDF } from '@/utils/downloadHelper';
 import CardSearchPanel from '@/components/CardSearchPanel';
 
 export default function Home() {
@@ -393,60 +394,22 @@ export default function Home() {
       
       console.log('PDF generated, size:', pdfBytes.length, 'bytes');
       
-      // Download PDF - fix Blob format
-      try {
-        // Safely convert Uint8Array to Blob
-        const blob = new Blob([pdfBytes.slice()], { type: 'application/pdf' });
-        console.log('Blob created:', blob.size, 'bytes');
-        
-        // Create download link
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `onepiece-deck-${Date.now()}.pdf`;
-        a.style.display = 'none';
-        
-        // Add link to DOM and click
-        document.body.appendChild(a);
-        a.click();
-        
-        // Cleanup
-        setTimeout(() => {
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        }, 100);
-        
-        console.log('PDF download started');
-        showSuccess('PDF generated successfully');
+      // Download PDF using improved download helper
+      const filename = `onepiece-deck-${Date.now()}.pdf`;
+      const downloadResult = await downloadPDF(pdfBytes, filename);
+      
+      if (downloadResult.success) {
+        console.log(`PDF downloaded successfully using ${downloadResult.method}`);
+        showSuccess('PDF generated and downloaded successfully');
         
         // Show celebration animation
         setShowCelebration(true);
-        
-      } catch (downloadError) {
-        console.error('PDF download error:', downloadError);
-        
-        // Alternative download method - data URL
-        try {
-          const base64 = btoa(String.fromCharCode.apply(null, Array.from(pdfBytes)));
-          const dataUrl = `data:application/pdf;base64,${base64}`;
-          
-          const a = document.createElement('a');
-          a.href = dataUrl;
-          a.download = `onepiece-deck-${Date.now()}.pdf`;
-          a.style.display = 'none';
-          
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          
-          showSuccess('PDF generated successfully');
-          
-          // Show celebration animation
-          setShowCelebration(true);
-        } catch (fallbackError) {
-          console.error('Fallback download also failed:', fallbackError);
-          showError('PDF could not be downloaded. Please try again.');
-        }
+      } else {
+        console.error('PDF download failed:', downloadResult.error);
+        showError(
+          downloadResult.error || 
+          'PDF could not be downloaded. Please check your browser settings or try a different browser.'
+        );
       }
       
     } catch (err: any) {
