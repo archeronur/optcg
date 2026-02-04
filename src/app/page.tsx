@@ -540,65 +540,85 @@ export default function Home() {
         return variant;
       });
       
-      // Filter out variants without image URLs first
+      // Helper function to check if image URL is valid
+      const getImageUrl = (variant: Card): string | null => {
+        if (!variant.image_uris) return null;
+        const url = variant.image_uris.small || 
+                   variant.image_uris.large || 
+                   variant.image_uris.full ||
+                   variant.image_uris.normal;
+        return (url && url.trim() !== '' && url !== 'null' && url !== 'undefined') ? url : null;
+      };
+      
+      // Filter out variants without valid image URLs
       const variantsWithImageUrls = enrichedVariants.filter(variant => {
-        if (!variant.image_uris) return false;
-        const imageUrl = variant.image_uris.small || 
-                        variant.image_uris.large || 
-                        variant.image_uris.full ||
-                        variant.image_uris.normal;
-        return !!imageUrl && imageUrl.trim() !== '';
+        const imageUrl = getImageUrl(variant);
+        return !!imageUrl;
       });
       
-      // Preload images and filter out variants with failed image loads
-      const imageLoadPromises = variantsWithImageUrls.map(async (variant) => {
-        const imageUrl = variant.image_uris.small || 
-                        variant.image_uris.large || 
-                        variant.image_uris.full ||
-                        variant.image_uris.normal;
-        
+      // Preload images in parallel and verify they load successfully
+      const imageVerificationPromises = variantsWithImageUrls.map(async (variant): Promise<Card | null> => {
+        const imageUrl = getImageUrl(variant);
         if (!imageUrl) return null;
         
-        try {
-          // Try to load the image to verify it exists
+        return new Promise<Card | null>((resolve) => {
           const img = new Image();
-          const loadPromise = new Promise<boolean>((resolve) => {
-            const timeout = setTimeout(() => {
-              resolve(false);
-            }, 5000); // 5 second timeout
-            
-            img.onload = () => {
-              clearTimeout(timeout);
-              resolve(true);
-            };
-            
-            img.onerror = () => {
-              clearTimeout(timeout);
-              resolve(false);
-            };
-            
-            // Set src after setting up handlers
-            img.src = imageUrl;
-          });
+          let resolved = false;
           
-          const loaded = await loadPromise;
-          return loaded ? variant : null;
-        } catch (error) {
-          console.warn(`Failed to verify image for variant ${variant.id}:`, error);
-          return null;
-        }
+          // Timeout after 3 seconds
+          const timeout = setTimeout(() => {
+            if (!resolved) {
+              resolved = true;
+              console.warn(`[Variant Filter] Image timeout for ${variant.id}: ${imageUrl.substring(0, 50)}...`);
+              resolve(null);
+            }
+          }, 3000);
+          
+          img.onload = () => {
+            if (!resolved) {
+              resolved = true;
+              clearTimeout(timeout);
+              // Verify image actually loaded (naturalWidth/Height > 0)
+              if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+                resolve(variant);
+              } else {
+                console.warn(`[Variant Filter] Invalid image dimensions for ${variant.id}`);
+                resolve(null);
+              }
+            }
+          };
+          
+          img.onerror = () => {
+            if (!resolved) {
+              resolved = true;
+              clearTimeout(timeout);
+              console.warn(`[Variant Filter] Image load failed for ${variant.id}: ${imageUrl.substring(0, 50)}...`);
+              resolve(null);
+            }
+          };
+          
+          // Set crossOrigin to avoid CORS issues
+          img.crossOrigin = 'anonymous';
+          img.src = imageUrl;
+        });
       });
       
-      // Wait for all image loads and filter out null results
-      const loadedVariants = (await Promise.all(imageLoadPromises)).filter(
+      // Wait for all image verifications (with timeout)
+      const verificationResults = await Promise.all(imageVerificationPromises);
+      
+      // Filter out null results (variants with failed image loads)
+      const validVariants = verificationResults.filter(
         (variant): variant is Card => variant !== null
       );
       
-      setCardVariants(loadedVariants);
+      console.log(`[Variant Filter] Loaded ${validVariants.length}/${variantsWithImageUrls.length} variants with valid images`);
+      
+      setCardVariants(validVariants);
       setIsLoadingVariants(false);
     }).catch(err => {
       console.error('Error loading variants:', err);
       setIsLoadingVariants(false);
+      setCardVariants([]);
     });
   }, []);
 
