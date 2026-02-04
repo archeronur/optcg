@@ -661,28 +661,56 @@ export class PDFGenerator {
   // Next.js API route üzerinden görsel yükleme (server-side proxy)
   private async loadImageViaAPI(url: string): Promise<Uint8Array> {
     try {
-      const apiUrl = `/api/image-proxy?url=${encodeURIComponent(url)}`;
-      const response = await fetch(apiUrl, {
-        method: 'GET',
-        headers: {
-          'Accept': 'image/*'
+      // Use absolute URL for API route to ensure it works in Cloudflare Pages
+      const baseUrl = typeof window !== 'undefined' 
+        ? window.location.origin 
+        : '';
+      const apiUrl = `${baseUrl}/api/image-proxy?url=${encodeURIComponent(url)}`;
+      
+      console.log(`Loading image via API: ${apiUrl.substring(0, 100)}...`);
+      
+      // Create abort controller for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 saniye timeout
+      
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: {
+            'Accept': 'image/*',
+            'Cache-Control': 'no-cache'
+          },
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          const errorText = await response.text().catch(() => 'Unknown error');
+          console.error(`API proxy failed: ${response.status} - ${errorText}`);
+          throw new Error(`API proxy failed: ${response.status} ${response.statusText}`);
         }
-      });
 
-      if (!response.ok) {
-        throw new Error(`API proxy failed: ${response.status}`);
+        const arrayBuffer = await response.arrayBuffer();
+        const uint8Array = new Uint8Array(arrayBuffer);
+
+        if (uint8Array.length < 1000) {
+          console.error(`Image data too small from API: ${uint8Array.length} bytes`);
+          throw new Error('Image data too small from API');
+        }
+
+        console.log(`Successfully loaded image via API: ${uint8Array.length} bytes`);
+        return uint8Array;
+      } catch (fetchError: any) {
+        clearTimeout(timeoutId);
+        if (fetchError.name === 'AbortError' || controller.signal.aborted) {
+          throw new Error('Request timeout');
+        }
+        throw fetchError;
       }
-
-      const arrayBuffer = await response.arrayBuffer();
-      const uint8Array = new Uint8Array(arrayBuffer);
-
-      if (uint8Array.length < 1000) {
-        throw new Error('Image data too small from API');
-      }
-
-      return uint8Array;
-    } catch (error) {
-      throw new Error(`API proxy error: ${error}`);
+    } catch (error: any) {
+      console.error(`API proxy error for ${url}:`, error);
+      throw new Error(`API proxy error: ${error.message || error}`);
     }
   }
 
@@ -774,16 +802,21 @@ export class PDFGenerator {
     }
 
     // Önce Next.js API route yöntemini dene (server-side proxy - en güvenilir)
+    // Cloudflare Pages'de bu yöntem edge runtime'da çalışır
     try {
-      console.log(`Trying API proxy for: ${url.substring(0, 50)}...`);
+      console.log(`[Image Load] Trying API proxy for: ${url.substring(0, 50)}...`);
       const imageData = await this.loadImageViaAPI(url);
       
       if (imageData && imageData.length > 1000) {
+        console.log(`[Image Load] ✅ API proxy success: ${imageData.length} bytes`);
         this.imageCache.set(url, imageData);
         return imageData;
+      } else {
+        console.warn(`[Image Load] ⚠️ API proxy returned invalid data: ${imageData?.length || 0} bytes`);
       }
-    } catch (apiError) {
-      console.log(`API proxy failed for ${url}, trying other methods:`, apiError);
+    } catch (apiError: any) {
+      console.warn(`[Image Load] ❌ API proxy failed for ${url.substring(0, 50)}:`, apiError.message || apiError);
+      // Continue to other methods
     }
 
     // Canvas yöntemini dene (CORS bypass)

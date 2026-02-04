@@ -2,6 +2,32 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'edge';
 
+// Edge runtime compatible timeout helper
+async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number = 20000): Promise<Response> {
+  const controller = new AbortController();
+  
+  // Create timeout promise
+  const timeoutId = setTimeout(() => {
+    controller.abort();
+  }, timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error: any) {
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError' || controller.signal.aborted) {
+      throw new Error('Request timeout');
+    }
+    throw error;
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -45,25 +71,22 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Görseli fetch et (timeout ile)
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 saniye timeout
-
+    // Görseli fetch et (timeout ile - edge runtime compatible)
     let response: Response;
     try {
-      response = await fetch(imageUrl, {
+      response = await fetchWithTimeout(imageUrl, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
           'Accept': 'image/*,image/jpeg,image/png,image/webp',
           'Referer': url.origin
-        },
-        signal: controller.signal
-      });
-      clearTimeout(timeoutId);
+        }
+      }, 20000); // 20 saniye timeout (Cloudflare Pages için daha uzun)
     } catch (error: any) {
-      clearTimeout(timeoutId);
-      if (error.name === 'AbortError') {
-        throw new Error('Request timeout');
+      if (error.message === 'Request timeout') {
+        return NextResponse.json(
+          { error: 'Request timeout' },
+          { status: 504 }
+        );
       }
       throw error;
     }
