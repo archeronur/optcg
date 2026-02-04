@@ -140,14 +140,17 @@ export default function CardSearchPanel({ onAddCard, existingCards }: CardSearch
             onFocus={() => searchResults.length > 0 && setShowDropdown(true)}
           />
           {isSearching && <div className="search-spinner" />}
-          {searchQuery && !isSearching && (
+          {searchQuery && (
             <button 
               className="search-clear-btn" 
               onClick={() => {
                 setSearchQuery('');
                 setSearchResults([]);
                 setShowDropdown(false);
+                searchInputRef.current?.focus();
               }}
+              type="button"
+              title="Clear search"
             >
               ×
             </button>

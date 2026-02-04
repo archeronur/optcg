@@ -2509,23 +2509,33 @@ body::before {
 .search-clear-btn {
   position: absolute;
   right: 14px;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border: none;
   background: #e9ecef;
   color: #6c757d;
   border-radius: 50%;
-  font-size: 18px;
+  font-size: 20px;
+  font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
+  z-index: 10;
+  line-height: 1;
+  padding: 0;
+  flex-shrink: 0;
 }
 
 .search-clear-btn:hover {
-  background: #dee2e6;
-  color: #333;
+  background: #ff6b6b;
+  color: white;
+  transform: scale(1.1);
+}
+
+.search-clear-btn:active {
+  transform: scale(0.95);
 }
 
 .autocomplete-dropdown {
