@@ -38,15 +38,20 @@ export default function Home() {
   // Zoom state
   const [zoomLevel, setZoomLevel] = useState(1);
   
-  // Mobile detection - improved detection with multiple checks
+  // Mobile detection - SSR-safe with initial check
+  // Initialize with false to prevent hydration mismatch, will be set correctly on client
   const [isMobile, setIsMobile] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
   
   // Animation states
   const [showCelebration, setShowCelebration] = useState(false);
   const [cardsLoading, setCardsLoading] = useState(false);
   
-  // Enhanced mobile detection on mount and resize
+  // Enhanced mobile detection - SSR-safe for Cloudflare Pages
   useEffect(() => {
+    // Mark as hydrated
+    setIsHydrated(true);
+    
     // Check if we're in browser environment
     if (typeof window === 'undefined') return;
     
@@ -56,9 +61,8 @@ export default function Home() {
       
       // Multiple checks for better mobile detection
       const isMobileWidth = width <= 768;
-      const isMobileHeight = height <= 1024;
-      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-      const isMobileUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isTouchDevice = 'ontouchstart' in window || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+      const isMobileUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent || '');
       
       // Consider mobile if width is small OR (touch device AND mobile user agent)
       const isMobileDevice = isMobileWidth || (isTouchDevice && isMobileUserAgent && width <= 1024);
@@ -66,38 +70,39 @@ export default function Home() {
       setIsMobile(isMobileDevice);
       
       // Add mobile class to body and html for CSS targeting
-      if (isMobileDevice) {
-        document.body.classList.add('is-mobile');
-        document.documentElement.classList.add('is-mobile');
-      } else {
-        document.body.classList.remove('is-mobile');
-        document.documentElement.classList.remove('is-mobile');
+      if (typeof document !== 'undefined') {
+        if (isMobileDevice) {
+          document.body.classList.add('is-mobile');
+          document.documentElement.classList.add('is-mobile');
+        } else {
+          document.body.classList.remove('is-mobile');
+          document.documentElement.classList.remove('is-mobile');
+        }
       }
     };
     
-    // Initial check - use a small delay to ensure DOM is ready
-    const initialCheck = () => {
+    // Initial check - immediate for better UX
+    checkMobile();
+    
+    // Also check after a short delay to catch any late initialization (Cloudflare Pages specific)
+    const delayedCheck = setTimeout(() => {
       checkMobile();
-    };
-    
-    // Check immediately
-    initialCheck();
-    
-    // Also check after a short delay to catch any late initialization
-    const delayedCheck = setTimeout(initialCheck, 100);
+    }, 50);
     
     // Listen for resize events with debounce
-    let resizeTimeout: NodeJS.Timeout;
+    let resizeTimeout: NodeJS.Timeout | null = null;
     const handleResize = () => {
-      clearTimeout(resizeTimeout);
+      if (resizeTimeout) clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(checkMobile, 150);
     };
     
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('orientationchange', () => {
-      // Delay check after orientation change to allow viewport to update
+    window.addEventListener('resize', handleResize, { passive: true });
+    
+    // Handle orientation change
+    const handleOrientationChange = () => {
       setTimeout(checkMobile, 200);
-    });
+    };
+    window.addEventListener('orientationchange', handleOrientationChange, { passive: true });
     
     // Also check on touch events (for better detection)
     const handleTouch = () => {
@@ -106,12 +111,31 @@ export default function Home() {
     
     window.addEventListener('touchstart', handleTouch, { once: true, passive: true });
     
+    // Visual viewport API for better mobile detection (if available)
+    if (window.visualViewport) {
+      const handleViewportChange = () => {
+        checkMobile();
+      };
+      window.visualViewport.addEventListener('resize', handleViewportChange);
+      
+      return () => {
+        clearTimeout(delayedCheck);
+        if (resizeTimeout) clearTimeout(resizeTimeout);
+        window.removeEventListener('resize', handleResize);
+        window.removeEventListener('orientationchange', handleOrientationChange);
+        window.removeEventListener('touchstart', handleTouch);
+        if (window.visualViewport) {
+          window.visualViewport.removeEventListener('resize', handleViewportChange);
+        }
+      };
+    }
+    
     return () => {
       clearTimeout(delayedCheck);
+      if (resizeTimeout) clearTimeout(resizeTimeout);
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('orientationchange', checkMobile);
+      window.removeEventListener('orientationchange', handleOrientationChange);
       window.removeEventListener('touchstart', handleTouch);
-      clearTimeout(resizeTimeout);
     };
   }, []);
   

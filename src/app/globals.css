@@ -9,28 +9,52 @@ body {
   max-width: 100vw;
   overflow-x: hidden;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* Cloudflare Pages SSR-safe: Force mobile-friendly initial state */
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
-/* Mobile detection class - applied via JavaScript */
+/* Cloudflare Pages: Ensure mobile-first rendering */
+@media (max-width: 768px) {
+  html,
+  body {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+}
+
+/* Mobile detection class - applied via JavaScript (Cloudflare Pages compatible) */
 html.is-mobile,
 body.is-mobile {
   -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
   touch-action: manipulation;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Cloudflare Pages: Force mobile layout */
+  width: 100% !important;
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
 }
 
 html.is-mobile {
-  overflow-x: hidden;
+  overflow-x: hidden !important;
   position: relative;
+  /* Prevent horizontal scroll on Cloudflare Pages */
+  overflow-y: auto;
 }
 
 body.is-mobile {
-  background-attachment: scroll; /* Better performance on mobile */
-  overflow-x: hidden;
+  background-attachment: scroll !important; /* Better performance on mobile */
+  overflow-x: hidden !important;
   position: relative;
-  width: 100%;
-  max-width: 100vw;
+  width: 100% !important;
+  max-width: 100vw !important;
+  /* Cloudflare Pages: Prevent layout shift */
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 /* Mobile-specific preview grid styles */
@@ -1114,16 +1138,18 @@ body::before {
 }
 
 @media (max-width: 768px) {
-  /* Touch-friendly improvements */
+  /* Touch-friendly improvements - Cloudflare Pages compatible */
   * {
     -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
   }
   
   html, body {
-    width: 100%;
-    max-width: 100vw;
-    overflow-x: hidden;
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
     position: relative;
+    /* Cloudflare Pages: Prevent layout shift */
+    box-sizing: border-box;
   }
   
   html.is-mobile,
@@ -1134,11 +1160,25 @@ body::before {
   }
   
   body {
-    background-attachment: scroll; /* Better performance on mobile */
+    background-attachment: scroll !important; /* Better performance on mobile */
+    /* Cloudflare Pages: Ensure full width */
+    margin: 0;
+    padding: 0;
   }
   
   body.is-mobile {
     background-attachment: scroll !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+  
+  /* Cloudflare Pages: Force container to respect mobile width */
+  .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 10px !important;
+    box-sizing: border-box !important;
+    margin: 0 auto !important;
   }
   
   .main-layout {
@@ -1146,10 +1186,10 @@ body::before {
     gap: 20px;
     padding: 15px;
     border-radius: 16px;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    overflow-x: hidden;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
     margin: 0 auto;
   }
   
