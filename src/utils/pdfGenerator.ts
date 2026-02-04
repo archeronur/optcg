@@ -658,36 +658,54 @@ export class PDFGenerator {
     }
   }
 
-  // Next.js API route üzerinden görsel yükleme (server-side proxy)
+  // Next.js API route üzerinden görsel yükleme (server-side proxy) - Cloudflare Pages optimized
   private async loadImageViaAPI(url: string): Promise<Uint8Array> {
     try {
-      // Use absolute URL for API route to ensure it works in Cloudflare Pages
-      const baseUrl = typeof window !== 'undefined' 
-        ? window.location.origin 
-        : '';
-      const apiUrl = `${baseUrl}/api/image-proxy?url=${encodeURIComponent(url)}`;
+      // Cloudflare Pages: Use relative URL first, fallback to absolute
+      let baseUrl = '';
+      if (typeof window !== 'undefined') {
+        baseUrl = window.location.origin;
+      } else if (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_BASE_URL) {
+        baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+      }
+      
+      // Use relative URL if baseUrl is empty (works in Cloudflare Pages)
+      const apiUrl = baseUrl 
+        ? `${baseUrl}/api/image-proxy?url=${encodeURIComponent(url)}`
+        : `/api/image-proxy?url=${encodeURIComponent(url)}`;
       
       console.log(`[API] Loading image via API: ${apiUrl.substring(0, 100)}...`);
       
-      // Create abort controller for timeout
+      // Create abort controller for timeout (Cloudflare Pages compatible)
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 35000); // 35 saniye timeout (Cloudflare Pages için daha uzun)
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        const timeoutId = setTimeout(() => {
+          controller.abort();
+          reject(new Error('Request timeout'));
+        }, 40000); // 40 saniye timeout (Cloudflare Pages için optimize edildi)
+        
+        controller.signal.addEventListener('abort', () => {
+          clearTimeout(timeoutId);
+        });
+      });
       
       try {
-        const response = await fetch(apiUrl, {
+        const fetchPromise = fetch(apiUrl, {
           method: 'GET',
           headers: {
-            'Accept': 'image/*,image/jpeg,image/png,image/webp',
+            'Accept': 'image/*,image/jpeg,image/png,image/webp,image/avif',
             'Cache-Control': 'no-cache',
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
           },
           signal: controller.signal,
-          // Add credentials for better compatibility
+          // Cloudflare Pages: Add credentials for better compatibility
           credentials: 'omit',
-          mode: 'cors'
+          mode: 'cors',
+          // Cloudflare Pages: Add redirect handling
+          redirect: 'follow'
         });
-
-        clearTimeout(timeoutId);
+        
+        const response = await Promise.race([fetchPromise, timeoutPromise]);
 
         // Check if response is ok or if it's an error response
         if (!response.ok) {
@@ -727,8 +745,7 @@ export class PDFGenerator {
         console.log(`[API] ✅ Successfully loaded image via API: ${uint8Array.length} bytes`);
         return uint8Array;
       } catch (fetchError: any) {
-        clearTimeout(timeoutId);
-        if (fetchError.name === 'AbortError' || controller.signal.aborted) {
+        if (fetchError.name === 'AbortError' || controller.signal.aborted || fetchError.message === 'Request timeout') {
           throw new Error('Request timeout');
         }
         // Re-throw with more context

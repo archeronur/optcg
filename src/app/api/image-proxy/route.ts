@@ -2,30 +2,71 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'edge';
 
-// Edge runtime compatible timeout helper
-async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number = 20000): Promise<Response> {
+// Edge runtime compatible timeout helper (Cloudflare Pages optimized)
+async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number = 30000): Promise<Response> {
   const controller = new AbortController();
   
-  // Create timeout promise
-  const timeoutId = setTimeout(() => {
-    controller.abort();
-  }, timeoutMs);
+  // Cloudflare Edge Runtime: Use AbortController with timeout
+  // Note: setTimeout works in Cloudflare Edge Runtime but we use a more compatible approach
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    // Use setTimeout if available (works in Cloudflare Edge Runtime)
+    if (typeof setTimeout !== 'undefined') {
+      timeoutId = setTimeout(() => {
+        controller.abort();
+        reject(new Error('Request timeout'));
+      }, timeoutMs);
+    } else {
+      // Fallback: Use a promise that never resolves (timeout handled by Cloudflare)
+      // Cloudflare Workers have a default timeout of 30s
+      reject(new Error('Timeout not supported in this runtime'));
+    }
+  });
 
   try {
-    const response = await fetch(url, {
+    const fetchPromise = fetch(url, {
       ...options,
-      signal: controller.signal
+      signal: controller.signal,
+      // Cloudflare Pages: Add headers for better compatibility
+      headers: {
+        ...options.headers,
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      }
     });
     
-    clearTimeout(timeoutId);
+    const response = await Promise.race([fetchPromise, timeoutPromise]);
+    
+    // Cleanup timeout if fetch succeeded
+    if (timeoutId !== null) {
+      clearTimeout(timeoutId);
+    }
+    
     return response;
   } catch (error: any) {
-    clearTimeout(timeoutId);
-    if (error.name === 'AbortError' || controller.signal.aborted) {
+    // Cleanup timeout on error
+    if (timeoutId !== null) {
+      clearTimeout(timeoutId);
+    }
+    
+    if (error.name === 'AbortError' || controller.signal.aborted || error.message === 'Request timeout') {
       throw new Error('Request timeout');
     }
     throw error;
   }
+}
+
+// Cloudflare Pages: Handle OPTIONS for CORS preflight
+export async function OPTIONS(request: NextRequest) {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Accept',
+      'Access-Control-Max-Age': '86400',
+    },
+  });
 }
 
 export async function GET(request: NextRequest) {
@@ -71,16 +112,24 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Görseli fetch et (timeout ile - edge runtime compatible)
+    // Görseli fetch et (timeout ile - edge runtime compatible, Cloudflare Pages optimized)
     let response: Response;
     try {
       response = await fetchWithTimeout(imageUrl, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-          'Accept': 'image/*,image/jpeg,image/png,image/webp',
-          'Referer': url.origin
+          'Accept': 'image/*,image/jpeg,image/png,image/webp,image/avif',
+          'Referer': url.origin,
+          'Accept-Language': 'en-US,en;q=0.9',
+          // Cloudflare Pages: Add cache control
+          'Cache-Control': 'no-cache'
+        },
+        // Cloudflare Pages: Ensure CORS is handled
+        cf: {
+          cacheTtl: 86400, // Cache for 24 hours
+          cacheEverything: false
         }
-      }, 20000); // 20 saniye timeout (Cloudflare Pages için daha uzun)
+      }, 30000); // 30 saniye timeout (Cloudflare Pages için optimize edildi)
     } catch (error: any) {
       if (error.message === 'Request timeout') {
         return NextResponse.json(
@@ -116,15 +165,20 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // CORS header'ları ekle
+    // CORS header'ları ekle (Cloudflare Pages optimized)
     return new NextResponse(uint8Array, {
       status: 200,
       headers: {
         'Content-Type': contentType || 'image/png',
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Cache-Control': 'public, max-age=31536000, immutable'
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Accept',
+        'Access-Control-Max-Age': '86400',
+        'Cache-Control': 'public, max-age=86400, s-maxage=86400, immutable',
+        // Cloudflare Pages: Add Vary header for better caching
+        'Vary': 'Accept-Encoding',
+        // Cloudflare Pages: Add CORS preflight support
+        'X-Content-Type-Options': 'nosniff'
       }
     });
 
