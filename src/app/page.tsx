@@ -516,7 +516,7 @@ export default function Home() {
     
     // Load card variants
     setIsLoadingVariants(true);
-    optcgAPI.getCardVariants(card.card.id).then(variants => {
+    optcgAPI.getCardVariants(card.card.id).then(async (variants) => {
       // Remove duplicate variants by ID
       const uniqueVariants = variants.filter((variant, index, self) => 
         index === self.findIndex(v => v.id === variant.id)
@@ -540,18 +540,61 @@ export default function Home() {
         return variant;
       });
       
-      // Filter out variants without images
-      const variantsWithImages = enrichedVariants.filter(variant => {
-        const hasImage = variant.image_uris && (
-          variant.image_uris.small || 
-          variant.image_uris.large || 
-          variant.image_uris.full ||
-          variant.image_uris.normal
-        );
-        return hasImage;
+      // Filter out variants without image URLs first
+      const variantsWithImageUrls = enrichedVariants.filter(variant => {
+        if (!variant.image_uris) return false;
+        const imageUrl = variant.image_uris.small || 
+                        variant.image_uris.large || 
+                        variant.image_uris.full ||
+                        variant.image_uris.normal;
+        return !!imageUrl && imageUrl.trim() !== '';
       });
       
-      setCardVariants(variantsWithImages);
+      // Preload images and filter out variants with failed image loads
+      const imageLoadPromises = variantsWithImageUrls.map(async (variant) => {
+        const imageUrl = variant.image_uris.small || 
+                        variant.image_uris.large || 
+                        variant.image_uris.full ||
+                        variant.image_uris.normal;
+        
+        if (!imageUrl) return null;
+        
+        try {
+          // Try to load the image to verify it exists
+          const img = new Image();
+          const loadPromise = new Promise<boolean>((resolve) => {
+            const timeout = setTimeout(() => {
+              resolve(false);
+            }, 5000); // 5 second timeout
+            
+            img.onload = () => {
+              clearTimeout(timeout);
+              resolve(true);
+            };
+            
+            img.onerror = () => {
+              clearTimeout(timeout);
+              resolve(false);
+            };
+            
+            // Set src after setting up handlers
+            img.src = imageUrl;
+          });
+          
+          const loaded = await loadPromise;
+          return loaded ? variant : null;
+        } catch (error) {
+          console.warn(`Failed to verify image for variant ${variant.id}:`, error);
+          return null;
+        }
+      });
+      
+      // Wait for all image loads and filter out null results
+      const loadedVariants = (await Promise.all(imageLoadPromises)).filter(
+        (variant): variant is Card => variant !== null
+      );
+      
+      setCardVariants(loadedVariants);
       setIsLoadingVariants(false);
     }).catch(err => {
       console.error('Error loading variants:', err);
@@ -1340,8 +1383,9 @@ Variants: _p1, _p2 (Parallel), _aa (Alt Art), _sp (Special)`}
                             <img 
                               src={variant.image_uris.small || variant.image_uris.large} 
                               alt={`${variant.name} - ${variant.variantLabel || 'Standard'}`}
+                              loading="lazy"
                               onError={(e) => {
-                                // Hide the variant card if image fails to load
+                                // Hide the variant card if image fails to load (backup safety)
                                 const cardElement = (e.target as HTMLImageElement).closest('.variant-card');
                                 if (cardElement) {
                                   (cardElement as HTMLElement).style.display = 'none';
