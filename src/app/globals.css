@@ -1049,6 +1049,13 @@ body::before {
     -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
   }
   
+  html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    position: relative;
+  }
+  
   body {
     background-attachment: scroll; /* Better performance on mobile */
   }
@@ -1059,12 +1066,15 @@ body::before {
     padding: 15px;
     border-radius: 16px;
     width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
     overflow-x: hidden;
+    margin: 0 auto;
   }
   
   .header {
     margin-bottom: 20px;
+    padding: 0 10px;
   }
   
   .header h1 {
@@ -1078,6 +1088,10 @@ body::before {
   
   .container {
     padding: 10px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
   
   .input-section,
@@ -1086,13 +1100,19 @@ body::before {
     min-height: auto;
     border-radius: 12px;
     overflow: visible;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
   /* Preview section mobile - ensure full visibility */
   .preview-section {
     width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
     overflow-x: visible;
+    overflow-y: visible;
+    position: relative;
   }
   
   .tabs {
@@ -1151,9 +1171,11 @@ body::before {
     gap: 6px;
     padding: 10px;
     width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    margin: 0 auto;
   }
   
   .preview-grid-wrapper {
@@ -1163,8 +1185,11 @@ body::before {
     background: transparent;
     border: none;
     width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
     -webkit-overflow-scrolling: touch;
+    position: relative;
+    margin: 0;
   }
   
   /* Disable scale transform on mobile for better visibility */
@@ -1172,6 +1197,9 @@ body::before {
     transform: none !important;
     width: 100% !important;
     max-width: 100% !important;
+    margin: 0 !important;
+    padding: 10px !important;
+    box-sizing: border-box !important;
   }
   
   /* Ensure card slots are properly sized on mobile */
@@ -1179,6 +1207,8 @@ body::before {
     width: 100%;
     min-height: 100px;
     aspect-ratio: 63.5 / 88.9;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
   /* Input improvements */
@@ -1399,36 +1429,44 @@ body::before {
     padding: 8px;
     margin-top: 12px;
     width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
     overflow: visible;
+    position: relative;
   }
   
   .preview-section-container h3 {
     font-size: 1.1rem;
     margin-bottom: 10px;
     padding: 0 4px;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   /* Preview grid wrapper mobile - full width, no restrictions */
   .preview-grid-wrapper {
     width: 100%;
+    max-width: 100%;
     margin: 0;
     padding: 0;
-    max-width: 100%;
     overflow: visible;
     box-sizing: border-box;
+    position: relative;
   }
   
   /* Preview grid mobile - ensure full visibility, no scale */
   .preview-grid {
     width: 100% !important;
     max-width: 100% !important;
-    margin: 0 !important;
+    margin: 0 auto !important;
     padding: 8px !important;
     box-sizing: border-box !important;
     transform: none !important;
     min-height: auto !important;
     max-height: none !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
   }
   
   /* Card slots mobile - ensure proper sizing and visibility */
@@ -1436,8 +1474,9 @@ body::before {
     width: 100% !important;
     min-height: 120px !important;
     aspect-ratio: 63.5 / 88.9 !important;
-    max-width: 100%;
-    box-sizing: border-box;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    position: relative;
   }
   
   /* Ensure card images are visible */
@@ -1446,6 +1485,7 @@ body::before {
     height: 100% !important;
     object-fit: contain !important;
     display: block !important;
+    max-width: 100% !important;
   }
   
   /* Zoom controls mobile - hidden via JS, but keep styles */
@@ -1576,6 +1616,17 @@ body::before {
     padding: 0;
     background: transparent;
     border: none;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    position: relative;
+  }
+  
+  /* Ensure preview section doesn't overflow */
+  .preview-section-container {
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
   }
 }
 
