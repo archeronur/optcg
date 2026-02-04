@@ -2256,6 +2256,8 @@ body::before {
     padding: 20px;
     overflow: visible;
     max-height: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   
   .modal-image-section {
