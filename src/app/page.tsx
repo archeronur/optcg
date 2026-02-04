@@ -38,25 +38,81 @@ export default function Home() {
   // Zoom state
   const [zoomLevel, setZoomLevel] = useState(1);
   
-  // Mobile detection
+  // Mobile detection - improved detection with multiple checks
   const [isMobile, setIsMobile] = useState(false);
   
   // Animation states
   const [showCelebration, setShowCelebration] = useState(false);
   const [cardsLoading, setCardsLoading] = useState(false);
   
-  // Detect mobile on mount and resize
+  // Enhanced mobile detection on mount and resize
   useEffect(() => {
     // Check if we're in browser environment
     if (typeof window === 'undefined') return;
     
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+      const width = window.innerWidth;
+      const height = window.screen.height;
+      
+      // Multiple checks for better mobile detection
+      const isMobileWidth = width <= 768;
+      const isMobileHeight = height <= 1024;
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const isMobileUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      // Consider mobile if width is small OR (touch device AND mobile user agent)
+      const isMobileDevice = isMobileWidth || (isTouchDevice && isMobileUserAgent && width <= 1024);
+      
+      setIsMobile(isMobileDevice);
+      
+      // Add mobile class to body and html for CSS targeting
+      if (isMobileDevice) {
+        document.body.classList.add('is-mobile');
+        document.documentElement.classList.add('is-mobile');
+      } else {
+        document.body.classList.remove('is-mobile');
+        document.documentElement.classList.remove('is-mobile');
+      }
     };
     
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    // Initial check - use a small delay to ensure DOM is ready
+    const initialCheck = () => {
+      checkMobile();
+    };
+    
+    // Check immediately
+    initialCheck();
+    
+    // Also check after a short delay to catch any late initialization
+    const delayedCheck = setTimeout(initialCheck, 100);
+    
+    // Listen for resize events with debounce
+    let resizeTimeout: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(checkMobile, 150);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', () => {
+      // Delay check after orientation change to allow viewport to update
+      setTimeout(checkMobile, 200);
+    });
+    
+    // Also check on touch events (for better detection)
+    const handleTouch = () => {
+      checkMobile();
+    };
+    
+    window.addEventListener('touchstart', handleTouch, { once: true, passive: true });
+    
+    return () => {
+      clearTimeout(delayedCheck);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', checkMobile);
+      window.removeEventListener('touchstart', handleTouch);
+      clearTimeout(resizeTimeout);
+    };
   }, []);
   
   const [printSettings, setPrintSettings] = useState<PrintSettings>({
@@ -1076,9 +1132,9 @@ Variants: _p1, _p2 (Parallel), _aa (Alt Art), _sp (Special)`}
               )}
 
               {/* Preview Grid */}
-              <div className="preview-grid-wrapper">
+              <div className={`preview-grid-wrapper ${isMobile ? 'mobile-view' : ''}`}>
                 <div 
-                  className={`preview-grid preview-grid-3x3`}
+                  className={`preview-grid preview-grid-3x3 ${isMobile ? 'mobile-grid' : ''}`}
                   style={isMobile ? {} : { transform: `scale(${zoomLevel})`, transformOrigin: 'top center' }}
                 >
                   {previewCards.map((card, index) => (
