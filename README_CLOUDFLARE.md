@@ -28,6 +28,7 @@ git push -u origin main
 - **Build command**: `npm run pages:build`
 - **Build output directory**: `.vercel/output/static`
 - **Root directory**: `/` (root)
+- **Node.js version**: `22.x` (or latest)
 
 #### Environment Variables (gerekirse):
 - Şu an için environment variable gerekmiyor
