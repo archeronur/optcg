@@ -54,14 +54,17 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: nu
 }
 
 // Cloudflare Pages: Handle OPTIONS for CORS preflight
+// CRITICAL: This allows browser to make CORS requests for PDF image loading
 export async function OPTIONS(request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Accept',
+      'Access-Control-Allow-Headers': '*',
       'Access-Control-Max-Age': '86400',
+      // Add cache control for preflight
+      'Cache-Control': 'public, max-age=86400'
     },
   });
 }
@@ -211,19 +214,24 @@ export async function GET(request: NextRequest) {
     });
 
     // CORS header'ları ekle (Cloudflare Pages optimized)
+    // CRITICAL: These headers ensure images can be fetched from client-side PDF generation
     return new NextResponse(uint8Array, {
       status: 200,
       headers: {
         'Content-Type': contentType || 'image/png',
+        // CRITICAL: CORS headers for PDF generation
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Accept',
+        'Access-Control-Allow-Headers': '*',
         'Access-Control-Max-Age': '86400',
-        'Cache-Control': 'public, max-age=86400, s-maxage=86400, immutable',
+        // Cache control - allow caching but ensure fresh images for PDF generation
+        'Cache-Control': 'public, max-age=3600, s-maxage=3600',
         // Cloudflare Pages: Add Vary header for better caching
         'Vary': 'Accept-Encoding',
         // Cloudflare Pages: Add CORS preflight support
-        'X-Content-Type-Options': 'nosniff'
+        'X-Content-Type-Options': 'nosniff',
+        // Ensure content length is set
+        'Content-Length': uint8Array.length.toString()
       }
     });
 

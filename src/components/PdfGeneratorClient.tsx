@@ -77,37 +77,79 @@ export const PdfGeneratorClient = forwardRef<PdfGeneratorClientRef, PdfGenerator
       let loadedCount = 0;
       const totalCount = imageUrls.size;
 
-      for (const imageUrl of imageUrls) {
-        if (abortSignal?.aborted) {
-          throw new Error('Operation aborted');
-        }
+      // DEBUG: Log first 5 image URLs before preload
+      const imageUrlsArray = Array.from(imageUrls);
+      console.log('[PdfGeneratorClient] DEBUG: First 5 image URLs before preload:', 
+        imageUrlsArray.slice(0, 5).map(url => url.substring(0, 80))
+      );
 
-        try {
-          const absoluteUrl = toAbsoluteUrl(imageUrl);
-          const result = await getImageAsDataUri(absoluteUrl, {
-            preferProxy: true,
-            timeoutMs: 40000,
-            cache: true,
-          });
+      // Process images with concurrency limit (8 parallel requests)
+      const concurrencyLimit = 8;
+      const imageUrlsArray2 = Array.from(imageUrls);
+      
+      for (let i = 0; i < imageUrlsArray2.length; i += concurrencyLimit) {
+        const batch = imageUrlsArray2.slice(i, i + concurrencyLimit);
+        
+        await Promise.allSettled(
+          batch.map(async (imageUrl) => {
+            if (abortSignal?.aborted) {
+              throw new Error('Operation aborted');
+            }
 
-          // CRITICAL ASSERTION: Result must be base64 data URL
-          if (!result.dataUri || !result.dataUri.startsWith('data:image/')) {
-            throw new Error(`Image preload failed: result is not base64 data URL`);
-          }
+            try {
+              // CRITICAL: Normalize URL to absolute before preloading
+              const absoluteUrl = toAbsoluteUrl(imageUrl);
+              
+              console.log(`[PdfGeneratorClient] Preloading image ${loadedCount + 1}/${totalCount}:`, {
+                original: imageUrl.substring(0, 60),
+                absolute: absoluteUrl.substring(0, 60)
+              });
 
-          imageDataMap.set(imageUrl, result.dataUri);
-          loadedCount++;
+              const result = await getImageAsDataUri(absoluteUrl, {
+                preferProxy: true,
+                timeoutMs: 40000,
+                cache: true,
+              });
 
-          onProgress?.(loadedCount, totalCount, `Loading image ${loadedCount}/${totalCount}...`);
-          console.log(`[PdfGeneratorClient] Preloaded ${loadedCount}/${totalCount}: ${imageUrl.substring(0, 50)}...`);
-        } catch (error: any) {
-          console.error(`[PdfGeneratorClient] Failed to preload image:`, {
-            imageUrl: imageUrl.substring(0, 50),
-            error: error?.message || error
-          });
-          // Continue with other images - failed images will show placeholder
-        }
+              // CRITICAL ASSERTION: Result must be base64 data URL
+              if (!result.dataUri || !result.dataUri.startsWith('data:image/')) {
+                throw new Error(`Image preload failed: result is not base64 data URL. Got: ${result.dataUri?.substring(0, 50)}`);
+              }
+
+              // Store both original URL and absolute URL mappings
+              imageDataMap.set(imageUrl, result.dataUri);
+              imageDataMap.set(absoluteUrl, result.dataUri);
+              
+              loadedCount++;
+
+              onProgress?.(loadedCount, totalCount, `Loading image ${loadedCount}/${totalCount}...`);
+              console.log(`[PdfGeneratorClient] ✓ Preloaded ${loadedCount}/${totalCount}: ${imageUrl.substring(0, 50)}... (via ${result.via})`);
+            } catch (error: any) {
+              console.error(`[PdfGeneratorClient] ✗ Failed to preload image:`, {
+                imageUrl: imageUrl.substring(0, 60),
+                error: error?.message || error,
+                errorName: error?.name
+              });
+              // Continue with other images - failed images will show placeholder
+              loadedCount++;
+              onProgress?.(loadedCount, totalCount, `Failed to load image ${loadedCount}/${totalCount}...`);
+            }
+          })
+        );
       }
+
+      // DEBUG: Log first 5 image URLs after preload (should be base64)
+      const sampleUrls = imageUrlsArray.slice(0, 5);
+      console.log('[PdfGeneratorClient] DEBUG: First 5 image URLs after preload:', 
+        sampleUrls.map(url => {
+          const dataUri = imageDataMap.get(url);
+          return {
+            original: url.substring(0, 60),
+            isBase64: dataUri?.startsWith('data:image/') || false,
+            preview: dataUri?.substring(0, 50) + '...' || 'NOT FOUND'
+          };
+        })
+      );
 
       console.log(`[PdfGeneratorClient] Preload complete: ${imageDataMap.size}/${totalCount} images ready`);
       return imageDataMap;
@@ -126,15 +168,35 @@ export const PdfGeneratorClient = forwardRef<PdfGeneratorClientRef, PdfGenerator
       const generator = new PDFGenerator(printSettings, abortSignal);
 
       // Replace image URLs in card data with base64 data URIs
+      // CRITICAL: Try both original URL and absolute URL to ensure we find the preloaded image
+      const { toAbsoluteUrl } = await import('@/utils/url');
+      
       const cardsWithBase64Images: DeckCard[] = cardData.map(deckCard => {
         const originalUrl = deckCard.card.image_uris.full || 
                            deckCard.card.image_uris.large || 
                            deckCard.card.image_uris.small;
         
-        const base64DataUri = originalUrl ? imageDataMap.get(originalUrl) : null;
+        if (!originalUrl) {
+          console.warn(`[PdfGeneratorClient] No image URL for card: ${deckCard.card.name}`);
+          return deckCard;
+        }
 
-        if (base64DataUri) {
+        // Try to find base64 data URI - check both original and absolute URL
+        let base64DataUri = imageDataMap.get(originalUrl);
+        
+        if (!base64DataUri) {
+          // Try absolute URL
+          try {
+            const absoluteUrl = toAbsoluteUrl(originalUrl);
+            base64DataUri = imageDataMap.get(absoluteUrl);
+          } catch (urlError) {
+            console.warn(`[PdfGeneratorClient] Failed to normalize URL for lookup:`, originalUrl);
+          }
+        }
+
+        if (base64DataUri && base64DataUri.startsWith('data:image/')) {
           // Create new card object with base64 image
+          console.log(`[PdfGeneratorClient] Replaced image URL with base64 for: ${deckCard.card.name}`);
           return {
             ...deckCard,
             card: {
@@ -146,9 +208,11 @@ export const PdfGeneratorClient = forwardRef<PdfGeneratorClientRef, PdfGenerator
               },
             },
           };
+        } else {
+          console.warn(`[PdfGeneratorClient] No base64 data URI found for card: ${deckCard.card.name}, URL: ${originalUrl.substring(0, 50)}`);
+          // Return card with original URL - PDFGenerator will try to load it
+          return deckCard;
         }
-
-        return deckCard;
       });
 
       // Generate PDF using pdf-lib (data-driven, no DOM)

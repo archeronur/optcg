@@ -647,17 +647,66 @@ export class PDFGenerator {
 
   private async drawCard(page: PDFPage, card: DeckCard, x: number, y: number, width: number, height: number): Promise<void> {
     try {
-      // Kart görselini yükle - tüm URL seçeneklerini dene
+      // CRITICAL FIX: Check if image is already a base64 data URI (from preload)
+      // This is the PRIMARY path - images should be preloaded as base64 before PDF generation
       let imageUrl = card.card.image_uris.full || card.card.image_uris.large || card.card.image_uris.small;
       
       if (!imageUrl || imageUrl === 'null' || imageUrl === 'undefined') {
-        console.warn(`No image URL for card: ${card.card.name}`);
+        console.warn(`[drawCard] No image URL for card: ${card.card.name}`);
         this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
         return;
       }
 
-      // URL'yi temizle ve normalize et - CRITICAL for Cloudflare Pages
       imageUrl = imageUrl.trim();
+
+      // CRITICAL: If image is already a base64 data URI, use it directly
+      // This is the expected path after preloading
+      if (imageUrl.startsWith('data:image/')) {
+        console.log(`[drawCard] Using base64 data URI directly for ${card.card.name}`, {
+          dataUriLength: imageUrl.length,
+          dataUriPreview: imageUrl.substring(0, 60) + '...'
+        });
+        try {
+          // Convert data URI to Uint8Array for pdf-lib
+          const base64Data = imageUrl.split(',')[1];
+          if (!base64Data) {
+            throw new Error('Invalid data URI format: no comma separator');
+          }
+          
+          // Decode base64 to binary (chunked for large images)
+          const binaryString = atob(base64Data);
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          
+          // Validate bytes
+          if (bytes.length < 1000) {
+            throw new Error(`Image data too small: ${bytes.length} bytes (expected >= 1000)`);
+          }
+          
+          console.log(`[drawCard] Converted base64 to bytes: ${bytes.length} bytes for ${card.card.name}`);
+          
+          // Embed directly
+          await this.embedBinaryImage(page, bytes, imageUrl, x, y, width, height);
+          console.log(`[drawCard] ✓ Successfully embedded base64 data URI for ${card.card.name}`);
+          return;
+        } catch (dataUriError: any) {
+          console.error(`[drawCard] ✗ Failed to embed base64 data URI:`, {
+            cardName: card.card.name,
+            error: dataUriError?.message || dataUriError,
+            errorName: dataUriError?.name,
+            dataUriLength: imageUrl.length,
+            dataUriPreview: imageUrl.substring(0, 80) + '...'
+          });
+          this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
+          return;
+        }
+      }
+
+      // FALLBACK: If not base64, try to load from cache or fetch
+      // This should rarely happen if preloading worked correctly
+      console.warn(`[drawCard] Image is not base64 data URI, attempting to load: ${imageUrl.substring(0, 50)}...`);
       
       // Ensure absolute URL - critical for prod environments
       const originalUrl = imageUrl;
@@ -737,7 +786,7 @@ export class PDFGenerator {
       }
 
     } catch (error) {
-      console.error(`Kart çizim hatası (${card.card.name}):`, error);
+      console.error(`[drawCard] Kart çizim hatası (${card.card.name}):`, error);
       this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
     }
   }
