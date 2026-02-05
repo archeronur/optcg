@@ -145,60 +145,36 @@ export async function getImageAsDataUri(inputUrl: string, options: GetImageAsDat
     return { ...cached, fromCache: true };
   }
 
-  // STRATEGY CHANGE: Try direct fetch FIRST (Cloudflare Edge Runtime handles CORS better)
-  // Then fallback to proxy if direct fails
-  let lastError: Error | null = null;
-  
-  // 1) Try direct fetch first (Cloudflare Edge Runtime is more permissive with CORS)
-  console.log('[getImageAsDataUri] Attempting direct fetch first:', absoluteSourceUrl);
-  try {
-    const { bytes, contentType } = await fetchBytes(absoluteSourceUrl, timeoutMs);
-    console.log('[getImageAsDataUri] Direct fetch SUCCESS:', absoluteSourceUrl, 'bytes:', bytes.length);
-    
-    if (bytes.length < 1000) {
-      throw new Error('Image bytes too small');
-    }
-
-    const finalType = forcedContentType || (contentType && contentType.startsWith('image/') ? contentType : sniffContentType(bytes));
-    const dataUri = `data:${finalType};base64,${toBase64(bytes)}`;
-    const result: ImageDataUriResult = {
-      finalUrl: absoluteSourceUrl,
-      contentType: finalType,
-      bytes,
-      dataUri,
-      fromCache: false,
-      via: 'direct',
-    };
-    if (cache) inMemoryCache.set(cacheKey, result);
-    return result;
-  } catch (directError: any) {
-    lastError = directError;
-    console.warn('[getImageAsDataUri] Direct fetch failed, trying proxy:', {
-      sourceUrl: absoluteSourceUrl,
-      error: directError?.message || directError,
-      errorName: directError?.name,
-      isCors: directError?.message?.includes('CORS') || directError?.message?.includes('cross-origin')
-    });
-  }
-
-  // 2) Fallback to proxy if direct fetch failed
+  // MANDATORY FIX: Always use same-origin proxy FIRST to avoid CORS/canvas taint issues
+  // This ensures images are fetched server-side and become same-origin
   if (preferProxy) {
     const proxyPath = `/api/image-proxy?url=${encodeURIComponent(absoluteSourceUrl)}`;
     const siteOrigin = getSiteOrigin();
+    // CRITICAL: Ensure absolute URL for proxy (same-origin guarantee)
     const proxyUrl = toAbsoluteUrl(proxyPath, siteOrigin);
     
-    console.log('[getImageAsDataUri] Attempting proxy fetch:', proxyUrl, 'origin:', siteOrigin);
+    console.log('[getImageAsDataUri] Using same-origin proxy:', {
+      proxyUrl,
+      sourceUrl: absoluteSourceUrl,
+      origin: siteOrigin
+    });
     
     try {
       const { bytes, contentType } = await fetchBytes(proxyUrl, timeoutMs);
-      console.log('[getImageAsDataUri] Proxy fetch SUCCESS:', proxyUrl, 'bytes:', bytes.length);
+      console.log('[getImageAsDataUri] Proxy SUCCESS:', {
+        proxyUrl,
+        bytes: bytes.length,
+        contentType
+      });
       
       if (bytes.length < 1000) {
-        throw new Error('Image bytes too small');
+        throw new Error(`Image bytes too small: ${bytes.length} bytes`);
       }
 
+      // Convert to base64 data URL (guaranteed same-origin, zero network dependency)
       const finalType = forcedContentType || (contentType && contentType.startsWith('image/') ? contentType : sniffContentType(bytes));
       const dataUri = `data:${finalType};base64,${toBase64(bytes)}`;
+      
       const result: ImageDataUriResult = {
         finalUrl: proxyUrl,
         contentType: finalType,
@@ -207,19 +183,57 @@ export async function getImageAsDataUri(inputUrl: string, options: GetImageAsDat
         fromCache: false,
         via: 'api-proxy',
       };
-      if (cache) inMemoryCache.set(cacheKey, result);
+      
+      if (cache) {
+        inMemoryCache.set(cacheKey, result);
+        console.log('[getImageAsDataUri] Cached result for:', absoluteSourceUrl);
+      }
+      
       return result;
     } catch (proxyError: any) {
-      console.error('[getImageAsDataUri] Proxy also failed:', {
+      console.error('[getImageAsDataUri] Proxy failed, trying direct fetch as fallback:', {
         proxyUrl,
         sourceUrl: absoluteSourceUrl,
         error: proxyError?.message || proxyError,
-        errorName: proxyError?.name
+        errorName: proxyError?.name,
+        status: proxyError?.message?.match(/HTTP (\d+)/)?.[1]
       });
       
-      // Both methods failed - throw the most descriptive error
-      const errorMessage = `Failed to fetch image: Direct fetch error: ${lastError?.message || 'unknown'}, Proxy error: ${proxyError?.message || 'unknown'}`;
-      throw new Error(errorMessage);
+      // Fallback to direct fetch if proxy fails (e.g., proxy route not available)
+      try {
+        console.log('[getImageAsDataUri] Attempting direct fetch as fallback:', absoluteSourceUrl);
+        const { bytes, contentType } = await fetchBytes(absoluteSourceUrl, timeoutMs);
+        
+        if (bytes.length < 1000) {
+          throw new Error(`Image bytes too small: ${bytes.length} bytes`);
+        }
+
+        const finalType = forcedContentType || (contentType && contentType.startsWith('image/') ? contentType : sniffContentType(bytes));
+        const dataUri = `data:${finalType};base64,${toBase64(bytes)}`;
+        
+        const result: ImageDataUriResult = {
+          finalUrl: absoluteSourceUrl,
+          contentType: finalType,
+          bytes,
+          dataUri,
+          fromCache: false,
+          via: 'direct',
+        };
+        
+        if (cache) inMemoryCache.set(cacheKey, result);
+        
+        console.log('[getImageAsDataUri] Direct fetch SUCCESS (fallback):', absoluteSourceUrl);
+        return result;
+      } catch (directError: any) {
+        console.error('[getImageAsDataUri] Both proxy and direct fetch failed:', {
+          proxyError: proxyError?.message || proxyError,
+          directError: directError?.message || directError,
+          sourceUrl: absoluteSourceUrl
+        });
+        
+        // Throw comprehensive error
+        throw new Error(`Failed to fetch image via proxy and direct: Proxy: ${proxyError?.message || 'unknown'}, Direct: ${directError?.message || 'unknown'}`);
+      }
     }
   }
 

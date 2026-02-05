@@ -125,10 +125,11 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Görseli fetch et (timeout ile - edge runtime compatible, Cloudflare Pages optimized)
+    // MANDATORY: Fetch image server-side (same-origin guarantee, avoids CORS)
+    // Cloudflare Edge Runtime fetches from external API, returns as binary
     let response: Response;
     try {
-      console.log('[image-proxy] Fetching image:', imageUrl);
+      console.log('[image-proxy] Fetching image server-side:', imageUrl);
       response = await fetchWithTimeout(imageUrl, {
         method: 'GET',
         // NOTE (Edge runtime): keep headers minimal & safe.
@@ -138,7 +139,7 @@ export async function GET(request: NextRequest) {
         redirect: 'follow',
         // Cloudflare Pages: Don't include credentials
         credentials: 'omit'
-      }, 30000); // 30 saniye timeout (Cloudflare Pages için optimize edildi)
+      }, 45000); // 45 saniye timeout (increased for Cloudflare Pages stability)
       
       console.log('[image-proxy] Fetch response:', {
         url: imageUrl,

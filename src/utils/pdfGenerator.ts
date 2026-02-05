@@ -39,6 +39,8 @@ export class PDFGenerator {
     this.retryCount.clear();
   }
 
+  // MANDATORY FIX: Preload ALL images and wait until they're fully loaded before PDF generation
+  // This ensures images are converted to base64 data URLs (zero network dependency during PDF render)
   async preloadImages(cards: DeckCard[], progressCallback?: (current: number, total: number, message: string) => void): Promise<void> {
     // Abort signal kontrolü
     if (this.abortSignal?.aborted) {
@@ -53,13 +55,15 @@ export class PDFGenerator {
         try {
           imageUrl = toAbsoluteUrl(imageUrl);
         } catch (urlError) {
-          console.warn(`Failed to normalize URL in preload:`, urlError);
+          console.warn(`[preloadImages] Failed to normalize URL:`, urlError);
           // Skip if normalization fails and URL is not absolute
           if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
+            console.warn(`[preloadImages] Skipping invalid URL: ${imageUrl}`);
             continue;
           }
         }
         
+        // Only preload if not already cached or failed
         if (!this.imageCache.has(imageUrl) && !this.preloadQueue.has(imageUrl) && !this.failedImages.has(imageUrl)) {
           imageUrls.add(imageUrl);
         }
@@ -67,14 +71,18 @@ export class PDFGenerator {
     }
     
     if (imageUrls.size === 0) {
+      console.log('[preloadImages] All images already loaded');
       progressCallback?.(0, 0, 'Tüm görseller zaten yüklü');
       return;
     }
     
-    // Batch yükleme - her seferinde 10 görsel paralel yükle (daha hızlı)
+    console.log(`[preloadImages] Starting preload of ${imageUrls.size} images`);
+    
+    // Batch yükleme - her seferinde 5 görsel paralel yükle (Cloudflare Pages rate limits)
     const imageUrlsArray = Array.from(imageUrls);
-    const batchSize = 10;
+    const batchSize = 5; // Reduced for Cloudflare Pages stability
     let loadedCount = 0;
+    let failedCount = 0;
     
     for (let i = 0; i < imageUrlsArray.length; i += batchSize) {
       if (this.abortSignal?.aborted) {
@@ -82,6 +90,7 @@ export class PDFGenerator {
       }
       
       const batch = imageUrlsArray.slice(i, i + batchSize);
+      console.log(`[preloadImages] Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(imageUrlsArray.length / batchSize)}: ${batch.length} images`);
       
       // Batch içindeki görselleri paralel yükle
       const batchPromises = batch.map(async (imageUrl) => {
@@ -92,35 +101,57 @@ export class PDFGenerator {
           
           this.preloadQueue.add(imageUrl);
           
+          // MANDATORY: Fetch via proxy (same-origin) and convert to base64
+          // This ensures zero network dependency during PDF rendering
           const imageData = await this.getCardImageBytes(imageUrl);
           
           if (imageData && imageData.length > 1000) {
+            // Image successfully loaded and cached as bytes (will be base64 in getImageAsDataUri)
             this.imageCache.set(imageUrl, imageData);
             loadedCount++;
-            progressCallback?.(loadedCount, imageUrls.size, `Görsel yüklendi: ${loadedCount}/${imageUrls.size}`);
+            const progressMsg = `Görsel yüklendi: ${loadedCount}/${imageUrls.size}`;
+            console.log(`[preloadImages] ${progressMsg}: ${imageUrl.substring(0, 50)}...`);
+            progressCallback?.(loadedCount, imageUrls.size, progressMsg);
             return true;
           } else {
-            throw new Error('Invalid image data');
+            throw new Error(`Invalid image data: ${imageData?.length || 0} bytes`);
           }
         } catch (error: any) {
           if (error.message === 'Operation aborted') {
             throw error;
           }
-          console.error(`Failed to preload image:`, imageUrl, error);
+          failedCount++;
+          console.error(`[preloadImages] Failed to preload image:`, {
+            imageUrl: imageUrl.substring(0, 50),
+            error: error?.message || error,
+            errorName: error?.name
+          });
           this.failedImages.add(imageUrl);
           loadedCount++;
-          progressCallback?.(loadedCount, imageUrls.size, `Görsel yüklenemedi: ${loadedCount}/${imageUrls.size}`);
+          const progressMsg = `Görsel yüklenemedi: ${loadedCount}/${imageUrls.size}`;
+          progressCallback?.(loadedCount, imageUrls.size, progressMsg);
           return false;
         } finally {
           this.preloadQueue.delete(imageUrl);
         }
       });
       
-      // Batch'i bekle
-      await Promise.allSettled(batchPromises);
+      // Batch'i bekle - ALL images must complete before continuing
+      const results = await Promise.allSettled(batchPromises);
+      
+      // Log batch results
+      const batchSuccess = results.filter(r => r.status === 'fulfilled' && r.value === true).length;
+      const batchFailed = results.filter(r => r.status === 'rejected' || (r.status === 'fulfilled' && r.value === false)).length;
+      console.log(`[preloadImages] Batch completed: ${batchSuccess} success, ${batchFailed} failed`);
     }
     
-    console.log(`Preloading completed. Success: ${this.imageCache.size}, Failed: ${this.failedImages.size}`);
+    const finalSuccess = this.imageCache.size;
+    const finalFailed = this.failedImages.size;
+    console.log(`[preloadImages] Preloading completed. Success: ${finalSuccess}, Failed: ${finalFailed}, Total: ${imageUrls.size}`);
+    
+    if (finalFailed > 0) {
+      console.warn(`[preloadImages] ${finalFailed} images failed to load. They will show placeholders in PDF.`);
+    }
   }
 
   async generatePDF(cards: DeckCard[], progressCallback?: (current: number, total: number, message: string) => void): Promise<Uint8Array> {
@@ -746,10 +777,11 @@ export class PDFGenerator {
     try {
       console.log(`[getCardImageBytes] Fetching image (attempt ${retryCount + 1}/${this.maxRetries}):`, url);
       
-      // Try direct fetch first, then proxy fallback (handled inside getImageAsDataUri)
+      // MANDATORY: Always use proxy first (same-origin guarantee, avoids CORS)
+      // Proxy fetches server-side, converts to base64 data URL
       const res = await getImageAsDataUri(url, {
-        preferProxy: true, // Will try direct first, then proxy
-        timeoutMs: 30000,
+        preferProxy: true, // Proxy first, direct as fallback
+        timeoutMs: 40000, // Increased timeout for Cloudflare Pages
         cache: true,
       });
 
