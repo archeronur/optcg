@@ -13,6 +13,19 @@ body {
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  position: relative;
+}
+
+/* Prevent horizontal overflow globally */
+html {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
 }
 
 /* Cloudflare Pages: Ensure mobile-first rendering */
@@ -128,6 +141,9 @@ body::before {
   max-width: 1400px;
   margin: 0 auto;
   padding: 24px;
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
 }
 
 .main-layout {
@@ -145,7 +161,10 @@ body::before {
   margin-top: 20px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .main-layout::before {
@@ -166,6 +185,11 @@ body::before {
   min-height: 400px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
   align-self: start;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .preview-section {
@@ -175,6 +199,11 @@ body::before {
   border: 1px solid rgba(255, 140, 0, 0.2);
   min-height: 400px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .input-section > h2,
@@ -413,6 +442,13 @@ body::before {
   font-size: 13px;
   resize: vertical;
   transition: border-color 0.2s;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .textarea:focus {
@@ -1315,10 +1351,12 @@ body::before {
     padding: 16px !important;
     min-height: auto;
     border-radius: 12px;
-    overflow: visible;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
+    overflow-x: hidden !important;
+    overflow-y: visible;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    position: relative;
   }
 
   .input-section > h2,
@@ -1326,6 +1364,32 @@ body::before {
     font-size: 1.1rem;
     margin-bottom: 12px;
     padding-bottom: 8px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Prevent all child elements from causing overflow */
+  .input-section > *,
+  .preview-section > * {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Card search panel mobile overflow fix */
+  .card-search-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Deck list panel mobile overflow fix */
+  .deck-list-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
   }
   
   /* Preview section mobile - ensure full visibility */
@@ -1500,9 +1564,16 @@ body::before {
   }
   
   .textarea {
-    min-height: 140px;
-    font-size: 16px; /* Prevent iOS zoom */
-    padding: 12px 14px;
+    min-height: 180px !important; /* Larger for easier paste on mobile */
+    font-size: 16px !important; /* Prevent iOS zoom */
+    padding: 16px 18px !important; /* Larger padding for easier tap */
+    border-width: 2px;
+    border-radius: 10px;
+    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
+    touch-action: manipulation;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .select {
@@ -1593,9 +1664,12 @@ body::before {
   .preview-section {
     padding: 12px !important;
     border-radius: 10px;
-    overflow: visible;
-    width: 100%;
-    box-sizing: border-box;
+    overflow-x: hidden !important;
+    overflow-y: visible;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    position: relative;
   }
 
   .input-section > h2,
@@ -1603,6 +1677,16 @@ body::before {
     font-size: 1rem;
     margin-bottom: 10px;
     padding-bottom: 6px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Prevent all child elements from causing overflow on small mobile */
+  .input-section > *,
+  .preview-section > * {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
   }
 
   /* Print Settings Panel Small Mobile */
@@ -1714,9 +1798,14 @@ body::before {
   }
   
   .textarea {
-    min-height: 120px;
-    font-size: 16px; /* Prevent iOS zoom */
-    padding: 10px 12px;
+    min-height: 160px !important; /* Larger for easier paste on small mobile */
+    font-size: 16px !important; /* Prevent iOS zoom */
+    padding: 14px 16px !important; /* Larger padding for easier tap */
+    border-width: 2px;
+    border-radius: 10px;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
   
   .preview-grid {
@@ -2380,6 +2469,10 @@ body::before {
   border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .deck-list-header {
@@ -2409,7 +2502,11 @@ body::before {
 .deck-list-items {
   max-height: 350px;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 6px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .deck-list-items::-webkit-scrollbar {
@@ -2438,6 +2535,11 @@ body::before {
   border-radius: 10px;
   transition: background 0.2s ease;
   border-bottom: 1px solid #f0f0f0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  position: relative;
 }
 
 .deck-list-item:last-child {
