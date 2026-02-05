@@ -198,13 +198,30 @@ export async function GET(request: NextRequest) {
     }
 
     // Görsel verisini al
-    const arrayBuffer = await response.arrayBuffer();
+    let arrayBuffer: ArrayBuffer;
+    try {
+      arrayBuffer = await response.arrayBuffer();
+    } catch (bufferError: any) {
+      console.error(`[image-proxy] Failed to read response as arrayBuffer:`, bufferError);
+      return NextResponse.json(
+        { error: `Failed to read image data: ${bufferError?.message || 'unknown error'}` },
+        { status: 500 }
+      );
+    }
+    
     const uint8Array = new Uint8Array(arrayBuffer);
 
     if (uint8Array.length < 1000) {
       console.error(`[image-proxy] Image data too small: ${uint8Array.length} bytes`);
+      // Try to decode as text to see if it's an error message
+      try {
+        const text = new TextDecoder().decode(uint8Array);
+        console.error(`[image-proxy] Response text:`, text.substring(0, 200));
+      } catch {
+        // Not text
+      }
       return NextResponse.json(
-        { error: 'Image data too small' },
+        { error: `Image data too small: ${uint8Array.length} bytes` },
         { status: 400 }
       );
     }
@@ -214,27 +231,28 @@ export async function GET(request: NextRequest) {
       console.log(`[image-proxy] DEBUG: Successfully fetched image:`, {
         url: imageUrl.substring(0, 60),
         bytes: uint8Array.length,
-        contentType: contentType || 'unknown'
+        contentType: contentType || 'unknown',
+        firstBytes: Array.from(uint8Array.slice(0, 10))
       });
     }
 
-    // CORS header'ları ekle (Cloudflare Pages optimized)
-    // CRITICAL: These headers ensure images can be fetched from client-side PDF generation
+    // CRITICAL: Return binary image data with proper CORS headers
+    // Cloudflare Pages Edge Runtime: Must return binary data correctly
     return new NextResponse(uint8Array, {
       status: 200,
       headers: {
         'Content-Type': contentType || 'image/png',
-        // CRITICAL: CORS headers for PDF generation
+        // CRITICAL: CORS headers for PDF generation (must allow all origins)
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': '*',
         'Access-Control-Max-Age': '86400',
         'Cross-Origin-Resource-Policy': 'cross-origin',
         'Cache-Control': 'public, max-age=86400, s-maxage=86400, immutable',
-        // Cloudflare Pages: Add Vary header for better caching
         'Vary': 'Accept-Encoding',
-        // Cloudflare Pages: Add CORS preflight support
-        'X-Content-Type-Options': 'nosniff'
+        'X-Content-Type-Options': 'nosniff',
+        // CRITICAL: Ensure content-length is set for binary data
+        'Content-Length': uint8Array.length.toString()
       }
     });
 

@@ -85,22 +85,57 @@ async function fetchBytes(url: string, timeoutMs: number): Promise<{ bytes: Uint
     console.log(`[fetchBytes] Response status: ${res.status} ${res.statusText} for ${url.substring(0, 60)}...`);
 
     if (!res.ok) {
-      // Try to provide more context when the proxy returns JSON
+      // CRITICAL: Check if response is JSON error from proxy
       const ct = res.headers.get('content-type') || '';
       if (ct.includes('application/json')) {
-        const json = await res.json().catch(() => null);
-        const msg = json?.error ? String(json.error) : `HTTP ${res.status}`;
-        console.error(`[fetchBytes] JSON error response:`, json);
-        throw new Error(msg);
+        try {
+          const json = await res.json().catch(() => null);
+          const msg = json?.error ? String(json.error) : `HTTP ${res.status}`;
+          console.error(`[fetchBytes] JSON error response from proxy:`, json);
+          throw new Error(`Proxy error: ${msg}`);
+        } catch (jsonError: any) {
+          // If JSON parse fails, continue with text error
+          console.error(`[fetchBytes] Failed to parse JSON error:`, jsonError);
+        }
       }
+      
+      // Try to get error text
       const errorText = await res.text().catch(() => res.statusText);
       console.error(`[fetchBytes] HTTP error ${res.status}:`, errorText.substring(0, 200));
-      throw new Error(`HTTP ${res.status} ${res.statusText}`);
+      
+      // Provide more context for common errors
+      if (res.status === 403) {
+        throw new Error(`Access forbidden (403) - Domain may not be allowed in proxy`);
+      } else if (res.status === 404) {
+        throw new Error(`Not found (404) - Proxy route may not be deployed correctly`);
+      } else if (res.status === 500) {
+        throw new Error(`Server error (500) - Proxy route internal error`);
+      } else if (res.status === 504) {
+        throw new Error(`Timeout (504) - Image fetch timed out`);
+      }
+      
+      throw new Error(`HTTP ${res.status} ${res.statusText}: ${errorText.substring(0, 100)}`);
     }
 
+    // CRITICAL: Read response as arrayBuffer (works for both binary and text)
     const arrayBuffer = await res.arrayBuffer();
     const bytes = new Uint8Array(arrayBuffer);
     const contentType = res.headers.get('content-type') || '';
+    
+    // CRITICAL: Verify we got actual image data, not an error message
+    if (bytes.length < 1000) {
+      // Try to decode as text to see if it's an error message
+      try {
+        const text = new TextDecoder().decode(bytes);
+        if (text.includes('error') || text.includes('Error') || text.startsWith('{')) {
+          console.error(`[fetchBytes] Response appears to be error text:`, text.substring(0, 200));
+          throw new Error(`Proxy returned error: ${text.substring(0, 100)}`);
+        }
+      } catch {
+        // Not text, just too small
+      }
+      throw new Error(`Image data too small: ${bytes.length} bytes`);
+    }
     
     console.log(`[fetchBytes] Success: ${bytes.length} bytes, contentType: ${contentType} for ${url.substring(0, 60)}...`);
     
@@ -109,7 +144,8 @@ async function fetchBytes(url: string, timeoutMs: number): Promise<{ bytes: Uint
     console.error(`[fetchBytes] Error fetching ${url.substring(0, 100)}...:`, {
       error: error?.message || error,
       errorName: error?.name,
-      aborted: controller.signal.aborted
+      aborted: controller.signal.aborted,
+      url: url.substring(0, 100)
     });
     throw error;
   } finally {
@@ -134,14 +170,28 @@ export async function getImageAsDataUri(inputUrl: string, options: GetImageAsDat
 
   if (cache && inMemoryCache.has(cacheKey)) {
     const cached = inMemoryCache.get(cacheKey)!;
+    console.log(`[getImageAsDataUri] Cache hit for: ${absoluteSourceUrl.substring(0, 60)}...`);
     return { ...cached, fromCache: true };
   }
 
   // 1) Prefer same-origin proxy to bypass upstream CORS
   if (preferProxy) {
     const proxyPath = `/api/image-proxy?url=${encodeURIComponent(absoluteSourceUrl)}`;
-    // Always make proxy calls absolute to survive basePath/assetPrefix/proxying differences.
-    const proxyUrl = toAbsoluteUrl(proxyPath, getSiteOrigin());
+    
+    // CRITICAL: Get site origin - must be correct for production
+    const siteOrigin = getSiteOrigin();
+    const proxyUrl = toAbsoluteUrl(proxyPath, siteOrigin);
+    
+    // DEBUG: Log proxy URL construction (first 5 requests)
+    if (inMemoryCache.size < 5) {
+      console.log(`[getImageAsDataUri] DEBUG: Proxy URL construction:`, {
+        inputUrl: inputUrl.substring(0, 60),
+        absoluteSourceUrl: absoluteSourceUrl.substring(0, 60),
+        siteOrigin: siteOrigin,
+        proxyPath: proxyPath.substring(0, 80),
+        proxyUrl: proxyUrl.substring(0, 80)
+      });
+    }
     
     try {
       const { bytes, contentType } = await fetchBytes(proxyUrl, timeoutMs);
@@ -158,12 +208,21 @@ export async function getImageAsDataUri(inputUrl: string, options: GetImageAsDat
         via: 'api-proxy',
       };
       if (cache) inMemoryCache.set(cacheKey, result);
+      
+      console.log(`[getImageAsDataUri] ✓ Success via proxy: ${absoluteSourceUrl.substring(0, 60)}...`);
       return result;
     } catch (proxyError: any) {
       // Proxy failed, fallback to direct fetch
-      console.warn(`[getImageAsDataUri] Proxy failed for ${absoluteSourceUrl}, trying direct fetch:`, proxyError?.message || proxyError);
+      console.error(`[getImageAsDataUri] ✗ Proxy failed for ${absoluteSourceUrl.substring(0, 60)}...:`, {
+        error: proxyError?.message || proxyError,
+        errorName: proxyError?.name,
+        proxyUrl: proxyUrl.substring(0, 80),
+        siteOrigin: siteOrigin
+      });
       
+      // Try direct fetch as fallback
       try {
+        console.log(`[getImageAsDataUri] Attempting direct fetch fallback for: ${absoluteSourceUrl.substring(0, 60)}...`);
         const { bytes, contentType } = await fetchBytes(absoluteSourceUrl, timeoutMs);
         if (bytes.length < 1000) throw new Error('Image bytes too small');
 
@@ -178,9 +237,16 @@ export async function getImageAsDataUri(inputUrl: string, options: GetImageAsDat
           via: 'direct',
         };
         if (cache) inMemoryCache.set(cacheKey, result);
+        
+        console.log(`[getImageAsDataUri] ✓ Success via direct fetch: ${absoluteSourceUrl.substring(0, 60)}...`);
         return result;
       } catch (directError: any) {
         // Both proxy and direct failed
+        console.error(`[getImageAsDataUri] ✗ Both proxy and direct fetch failed:`, {
+          proxyError: proxyError?.message || proxyError,
+          directError: directError?.message || directError,
+          absoluteSourceUrl: absoluteSourceUrl.substring(0, 60)
+        });
         throw new Error(`Failed to fetch image (proxy: ${proxyError?.message || 'unknown'}, direct: ${directError?.message || 'unknown'})`);
       }
     }
@@ -203,4 +269,3 @@ export async function getImageAsDataUri(inputUrl: string, options: GetImageAsDat
   if (cache) inMemoryCache.set(cacheKey, result);
   return result;
 }
-
