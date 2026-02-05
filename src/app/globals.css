@@ -100,9 +100,11 @@ body.is-mobile {
 
 body {
   color: #333;
-  background: 
-    linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%),
-    url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
+  /* Instant-render background without remote images (Cloudflare friendly) */
+  background:
+    radial-gradient(circle at top left, rgba(255, 140, 0, 0.4) 0%, transparent 55%),
+    radial-gradient(circle at bottom right, rgba(0, 123, 255, 0.35) 0%, transparent 55%),
+    linear-gradient(135deg, #050816 0%, #0b1020 40%, #14182a 100%);
   min-height: 100vh;
   position: relative;
   background-attachment: fixed;
