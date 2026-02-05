@@ -2519,6 +2519,11 @@ body::before {
     right: 12px;
     z-index: 1001;
   }
+
+  /* On touch devices, avoid hover transforms that can make the X jumpy */
+  .modal-close:hover {
+    transform: none;
+  }
   
   .zoom-controls {
     flex-wrap: wrap;
