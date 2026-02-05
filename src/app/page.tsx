@@ -1489,6 +1489,17 @@ Variants: _p1, _p2 (Parallel), _aa (Alt Art), _sp (Special)`}
                     <p className="no-variants-message">No alternative arts available for this card.</p>
                   )}
                 </div>
+
+                {/* Mobile-friendly close button at the bottom (in addition to the top-right X) */}
+                <div className="modal-footer-mobile-close">
+                  <button
+                    type="button"
+                    className="button modal-footer-close-button"
+                    onClick={handleCloseModal}
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           </div>
