@@ -83,8 +83,9 @@ export default function Home() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [sameCardCount, setSameCardCount] = useState(0);
   
-  // Zoom state
-  const [zoomLevel, setZoomLevel] = useState(1);
+  // Remove card confirmation state (from quantity controls in modal or deck list)
+  const [showRemoveCardConfirm, setShowRemoveCardConfirm] = useState(false);
+  const [cardToRemove, setCardToRemove] = useState<DeckCard | null>(null);
   
   // Mobile detection - SSR-safe with initial check
   // Initialize with false to prevent hydration mismatch, will be set correctly on client
@@ -246,11 +247,9 @@ export default function Home() {
       return;
     }
     
-    // Update textarea with current deck list
-    if (resolvedCards.length > 0) {
-      const newDeckText = generateDeckListText(resolvedCards);
-      setInputText(newDeckText);
-    }
+    // Update textarea with current deck list (also clear when all cards removed)
+    const newDeckText = generateDeckListText(resolvedCards);
+    setInputText(newDeckText);
   }, [resolvedCards, generateDeckListText]);
   
   // Register Service Worker
@@ -588,7 +587,6 @@ export default function Home() {
     setImagesReady(false);
     setPdfGenerating(false);
     setLoadingProgress(null);
-    setZoomLevel(1);
     setShowCelebration(false);
     setCardsLoading(false);
   }, []);
@@ -844,18 +842,60 @@ export default function Home() {
     setSelectedVariant(null);
   }, [selectedCard, selectedVariant, showSuccess]);
 
-  // Zoom handlers
-  const handleZoomIn = useCallback(() => {
-    setZoomLevel(prev => Math.min(prev + 0.2, 2));
-  }, []);
+  // Calculate total quantity for selected card (same card ID, variants are separate)
+  const selectedCardTotalQuantity = useMemo(() => {
+    if (!selectedCard || !resolvedCards.length) return 0;
+    
+    // Count all cards with the same ID (variant'lar farklı ID'ye sahip olduğu için ayrı sayılır)
+    return resolvedCards
+      .filter(dc => dc.card.id === selectedCard.card.id)
+      .reduce((sum, dc) => sum + dc.count, 0);
+  }, [selectedCard, resolvedCards]);
 
-  const handleZoomOut = useCallback(() => {
-    setZoomLevel(prev => Math.max(prev - 0.2, 0.5));
-  }, []);
+  // Quantity control handlers for modal
+  const handleQuantityIncrease = useCallback(() => {
+    if (!selectedCard) return;
+    handleUpdateCardCount(selectedCard.card.id, selectedCardTotalQuantity + 1);
+    setSelectedCard(prev => prev ? { ...prev, count: prev.count + 1 } : null);
+  }, [selectedCard, selectedCardTotalQuantity, handleUpdateCardCount]);
 
-  const handleZoomReset = useCallback(() => {
-    setZoomLevel(1);
-  }, []);
+  const handleQuantityDecrease = useCallback(() => {
+    if (!selectedCard) return;
+    if (selectedCardTotalQuantity <= 1) {
+      setCardToRemove(selectedCard);
+      setShowRemoveCardConfirm(true);
+    } else {
+      handleUpdateCardCount(selectedCard.card.id, selectedCardTotalQuantity - 1);
+      setSelectedCard(prev => prev ? { ...prev, count: prev.count - 1 } : null);
+    }
+  }, [selectedCard, selectedCardTotalQuantity, handleUpdateCardCount]);
+
+  // Deck list quantity handlers (used from the deck list panel)
+  const handleDeckListIncrease = useCallback((deckCard: DeckCard) => {
+    handleUpdateCardCount(deckCard.card.id, deckCard.count + 1);
+  }, [handleUpdateCardCount]);
+
+  const handleDeckListDecrease = useCallback((deckCard: DeckCard) => {
+    if (deckCard.count <= 1) {
+      setCardToRemove(deckCard);
+      setShowRemoveCardConfirm(true);
+    } else {
+      handleUpdateCardCount(deckCard.card.id, deckCard.count - 1);
+    }
+  }, [handleUpdateCardCount]);
+
+  const handleConfirmRemoveCard = useCallback(() => {
+    const card = cardToRemove || selectedCard;
+    if (!card) return;
+    handleRemoveCard(card.card.id);
+    setShowRemoveCardConfirm(false);
+    setCardToRemove(null);
+    // Close modal if the removed card was the selected one in modal
+    if (selectedCard && card.card.id === selectedCard.card.id) {
+      setIsModalOpen(false);
+      setSelectedCard(null);
+    }
+  }, [cardToRemove, selectedCard, handleRemoveCard]);
 
   // Page navigation handlers (optimized)
   const handlePrevPage = useCallback(() => {
@@ -919,22 +959,12 @@ export default function Home() {
     return Array.from({ length: stats.cardsPerPage }).map((_, index) => pageCards[index] || null);
   }, [expandedCards, stats, currentPreviewPage]);
 
-  // Calculate total quantity for selected card (same card ID, variants are separate)
-  const selectedCardTotalQuantity = useMemo(() => {
-    if (!selectedCard || !resolvedCards.length) return 0;
-    
-    // Count all cards with the same ID (variant'lar farklı ID'ye sahip olduğu için ayrı sayılır)
-    return resolvedCards
-      .filter(dc => dc.card.id === selectedCard.card.id)
-      .reduce((sum, dc) => sum + dc.count, 0);
-  }, [selectedCard, resolvedCards]);
-
   return (
     <div className="container">
       <header className="header">
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '12px' }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '10px' }}>🏴‍☠️</div>
+            <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>🏴‍☠️</div>
             <h1>One Piece Proxy Print</h1>
             <p>Professional proxy printing tool for One Piece Trading Card Game cards</p>
           </div>
@@ -984,7 +1014,7 @@ Supported formats:
 
 Variants: _p1, _p2 (Parallel), _aa (Alt Art), _sp (Special)`}
               disabled={isLoading}
-              style={{ minHeight: '200px' }}
+              style={{ minHeight: '160px' }}
             />
             <button 
               className="button" 
@@ -1003,6 +1033,52 @@ Variants: _p1, _p2 (Parallel), _aa (Alt Art), _sp (Special)`}
             >
               Clear
             </button>
+          )}
+
+          {/* Deck Card List */}
+          {resolvedCards.length > 0 && (
+            <div className="deck-list-panel">
+              <div className="deck-list-header">
+                <h3>🃏 Deck List</h3>
+                <span className="deck-list-count">
+                  {resolvedCards.reduce((sum, dc) => sum + dc.count, 0)} cards ({resolvedCards.length} unique)
+                </span>
+              </div>
+              <div className="deck-list-items">
+                {resolvedCards.map((dc) => (
+                  <div key={dc.card.id} className="deck-list-item">
+                    <div className="deck-list-item-image">
+                      <img 
+                        src={dc.card.image_uris.small || dc.card.image_uris.large} 
+                        alt={dc.card.name}
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      />
+                    </div>
+                    <div className="deck-list-item-info">
+                      <span className="deck-list-item-name">{dc.card.name}</span>
+                      <span className="deck-list-item-id">{dc.card.id}</span>
+                    </div>
+                    <div className="deck-list-item-controls">
+                      <button 
+                        className="deck-list-btn deck-list-btn-minus"
+                        onClick={() => handleDeckListDecrease(dc)}
+                        title="Decrease quantity"
+                      >
+                        −
+                      </button>
+                      <span className="deck-list-item-count">{dc.count}</span>
+                      <button 
+                        className="deck-list-btn deck-list-btn-plus"
+                        onClick={() => handleDeckListIncrease(dc)}
+                        title="Increase quantity"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
 
           {/* Progress Bar */}
@@ -1048,68 +1124,62 @@ Variants: _p1, _p2 (Parallel), _aa (Alt Art), _sp (Special)`}
         <div className="preview-section">
           <h2>Preview & Settings</h2>
 
-          {/* Print settings - only crop marks */}
-          <div style={{ marginBottom: '20px' }}>
-            <h3>Print Settings</h3>
-            
-            <div style={{ marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <label>Grid Layout: </label>
-              <span style={{ padding: '6px 10px', border: '1px solid #e9ecef', borderRadius: '6px', background: '#f8f9fa' }}>3×3</span>
+          {/* Print settings - Crop Marks */}
+          <div className="print-settings-panel">
+            <div className="print-settings-header">
+              <h3>⚙️ Print Settings</h3>
+              <span className="grid-badge">3×3 Grid</span>
             </div>
-
-            <div className="checkbox-group">
-              <div style={{ marginBottom: '15px', padding: '10px', background: '#f0f8ff', borderRadius: '8px', border: '1px solid #e3f2fd' }}>
-                <label style={{ fontWeight: '600', color: '#1976d2', display: 'block', marginBottom: '10px' }}>Crop Marks</label>
-                <div className="cropmark-settings">
-                  <div>
-                    <label htmlFor="cropMarkLength" style={{ display: 'block', fontSize: 12 }}>Crop Mark Length (mm)</label>
-                    <input
-                      id="cropMarkLength"
-                      type="number"
-                      min={1}
-                      max={10}
-                      step={0.05}
-                      value={printSettings.cropMarkLengthMm ?? 2}
-                      onChange={(e) => setPrintSettings(prev => ({
-                        ...prev,
-                        cropMarkLengthMm: parseFloat(e.target.value)
-                      }))}
-                      className="input"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="cropMarkOffset" style={{ display: 'block', fontSize: 12 }}>Crop Mark Offset (mm)</label>
-                    <input
-                      id="cropMarkOffset"
-                      type="number"
-                      inputMode="decimal"
-                      min={0}
-                      max={2}
-                      step={0.05}
-                      value={printSettings.cropMarkOffsetMm ?? 0.25}
-                      onChange={(e) => setPrintSettings(prev => ({
-                        ...prev,
-                        cropMarkOffsetMm: parseFloat(e.target.value)
-                      }))}
-                      className="input"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="cropMarkThickness" style={{ display: 'block', fontSize: 12 }}>Crop Mark Thickness (pt)</label>
-                    <input
-                      id="cropMarkThickness"
-                      type="number"
-                      min={0.1}
-                      max={1}
-                      step={0.05}
-                      value={printSettings.cropMarkThicknessPt ?? 0.25}
-                      onChange={(e) => setPrintSettings(prev => ({
-                        ...prev,
-                        cropMarkThicknessPt: parseFloat(e.target.value)
-                      }))}
-                      className="input"
-                    />
-                  </div>
+            <div className="print-settings-body">
+              <div className="cropmark-settings-row">
+                <div className="cropmark-field">
+                  <label htmlFor="cropMarkLength">Length <span className="field-unit">(mm)</span></label>
+                  <input
+                    id="cropMarkLength"
+                    type="number"
+                    min={1}
+                    max={10}
+                    step={0.05}
+                    value={printSettings.cropMarkLengthMm ?? 2}
+                    onChange={(e) => setPrintSettings(prev => ({
+                      ...prev,
+                      cropMarkLengthMm: parseFloat(e.target.value)
+                    }))}
+                    className="cropmark-input"
+                  />
+                </div>
+                <div className="cropmark-field">
+                  <label htmlFor="cropMarkOffset">Offset <span className="field-unit">(mm)</span></label>
+                  <input
+                    id="cropMarkOffset"
+                    type="number"
+                    inputMode="decimal"
+                    min={0}
+                    max={2}
+                    step={0.05}
+                    value={printSettings.cropMarkOffsetMm ?? 0.25}
+                    onChange={(e) => setPrintSettings(prev => ({
+                      ...prev,
+                      cropMarkOffsetMm: parseFloat(e.target.value)
+                    }))}
+                    className="cropmark-input"
+                  />
+                </div>
+                <div className="cropmark-field">
+                  <label htmlFor="cropMarkThickness">Thickness <span className="field-unit">(pt)</span></label>
+                  <input
+                    id="cropMarkThickness"
+                    type="number"
+                    min={0.1}
+                    max={1}
+                    step={0.05}
+                    value={printSettings.cropMarkThicknessPt ?? 0.25}
+                    onChange={(e) => setPrintSettings(prev => ({
+                      ...prev,
+                      cropMarkThicknessPt: parseFloat(e.target.value)
+                    }))}
+                    className="cropmark-input"
+                  />
                 </div>
               </div>
             </div>
@@ -1174,41 +1244,10 @@ Variants: _p1, _p2 (Parallel), _aa (Alt Art), _sp (Special)`}
                 </button>
               </div>
 
-              {/* Zoom Controls - Hidden on mobile */}
-              {!isMobile && (
-                <div className="zoom-controls">
-                  <button 
-                    className="zoom-button" 
-                    onClick={handleZoomOut}
-                    disabled={zoomLevel <= 0.5}
-                    title="Zoom Out"
-                  >
-                    −
-                  </button>
-                  <span className="zoom-level">{Math.round(zoomLevel * 100)}%</span>
-                  <button 
-                    className="zoom-button" 
-                    onClick={handleZoomIn}
-                    disabled={zoomLevel >= 2}
-                    title="Zoom In"
-                  >
-                    +
-                  </button>
-                  <button 
-                    className="zoom-reset-button" 
-                    onClick={handleZoomReset}
-                    title="Reset Zoom"
-                  >
-                    Reset
-                  </button>
-                </div>
-              )}
-
               {/* Preview Grid */}
               <div className={`preview-grid-wrapper ${isMobile ? 'mobile-view' : ''}`}>
                 <div 
                   className={`preview-grid preview-grid-3x3 ${isMobile ? 'mobile-grid' : ''}`}
-                  style={isMobile ? {} : { transform: `scale(${zoomLevel})`, transformOrigin: 'top center' }}
                 >
                   {previewCards.map((card, index) => (
                     <div 
@@ -1256,7 +1295,7 @@ Variants: _p1, _p2 (Parallel), _aa (Alt Art), _sp (Special)`}
 
           {/* Export buttons */}
           {resolvedCards.length > 0 && (
-            <div style={{ marginTop: '20px' }}>
+            <div style={{ marginTop: '16px' }}>
               <button 
                 className="button" 
                 onClick={handleGeneratePDF}
@@ -1441,7 +1480,23 @@ Variants: _p1, _p2 (Parallel), _aa (Alt Art), _sp (Special)`}
                   
                   <div className="detail-row">
                     <span className="detail-label">Quantity in Deck:</span>
-                    <span className="detail-value quantity-badge">{selectedCardTotalQuantity}x</span>
+                    <div className="detail-value quantity-controls">
+                      <button 
+                        className="quantity-ctrl-btn quantity-ctrl-minus"
+                        onClick={handleQuantityDecrease}
+                        title="Decrease quantity"
+                      >
+                        −
+                      </button>
+                      <span className="quantity-badge">{selectedCardTotalQuantity}x</span>
+                      <button 
+                        className="quantity-ctrl-btn quantity-ctrl-plus"
+                        onClick={handleQuantityIncrease}
+                        title="Increase quantity"
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
                 </div>
                 
@@ -1549,6 +1604,35 @@ Variants: _p1, _p2 (Parallel), _aa (Alt Art), _sp (Special)`}
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirm Dialog for removing card from deck */}
+      {showRemoveCardConfirm && (cardToRemove || selectedCard) && (
+        <div className="confirm-dialog-overlay" onClick={() => { setShowRemoveCardConfirm(false); setCardToRemove(null); }}>
+          <div className="confirm-dialog" onClick={(e) => e.stopPropagation()}>
+            <div className="confirm-dialog-icon">⚠️</div>
+            <h3>Remove Card?</h3>
+            <p>
+              Are you sure you want to remove <strong>{(cardToRemove || selectedCard)!.card.name}</strong> from your deck entirely?
+            </p>
+            
+            <div className="confirm-dialog-buttons">
+              <button 
+                className="confirm-btn-all"
+                onClick={handleConfirmRemoveCard}
+                style={{ background: 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)', boxShadow: '0 4px 15px rgba(231, 76, 60, 0.4)' }}
+              >
+                Yes, Remove Card
+              </button>
+              <button 
+                className="confirm-btn-cancel"
+                onClick={() => { setShowRemoveCardConfirm(false); setCardToRemove(null); }}
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>
