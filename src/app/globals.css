@@ -1233,6 +1233,11 @@ body::before {
   .header p {
     font-size: 1rem;
   }
+
+  .input-section,
+  .preview-section {
+    padding: 20px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -1274,15 +1279,15 @@ body::before {
   .container {
     width: 100% !important;
     max-width: 100% !important;
-    padding: 10px !important;
+    padding: 12px !important;
     box-sizing: border-box !important;
     margin: 0 auto !important;
   }
   
   .main-layout {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 15px;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 16px !important;
     border-radius: 16px;
     width: 100% !important;
     max-width: 100% !important;
@@ -1292,36 +1297,35 @@ body::before {
   }
   
   .header {
-    margin-bottom: 20px;
-    padding: 0 10px;
+    margin-bottom: 16px;
+    padding: 0 8px;
   }
   
   .header h1 {
-    font-size: 1.8rem;
-    margin-bottom: 10px;
+    font-size: 1.75rem;
+    margin-bottom: 8px;
   }
   
   .header p {
-    font-size: 0.95rem;
-  }
-  
-  .container {
-    padding: 10px;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    overflow-x: hidden;
+    font-size: 0.9rem;
   }
   
   .input-section,
   .preview-section {
-    padding: 15px;
+    padding: 16px !important;
     min-height: auto;
     border-radius: 12px;
     overflow: visible;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+  }
+
+  .input-section > h2,
+  .preview-section > h2 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
   }
   
   /* Preview section mobile - ensure full visibility */
@@ -1359,9 +1363,47 @@ body::before {
   .button {
     width: 100%;
     margin: 8px 0;
-    padding: 16px 28px; /* Larger touch target */
+    padding: 14px 24px; /* Larger touch target */
     min-height: 44px; /* iOS recommended minimum */
     font-size: 16px; /* Prevent zoom on iOS */
+    border-radius: 10px;
+  }
+
+  /* Print Settings Panel Mobile */
+  .print-settings-panel {
+    margin-bottom: 16px;
+  }
+
+  .print-settings-header {
+    padding: 10px 14px;
+  }
+
+  .print-settings-header h3 {
+    font-size: 14px;
+  }
+
+  .grid-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+
+  .print-settings-body {
+    padding: 12px 14px;
+  }
+
+  .cropmark-settings-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .cropmark-field label {
+    font-size: 11px;
+  }
+
+  .cropmark-input {
+    padding: 10px 12px;
+    font-size: 16px; /* Prevent iOS zoom */
+    min-height: 44px; /* Touch-friendly */
   }
   
   .page-selector {
@@ -1452,12 +1494,33 @@ body::before {
   .select,
   .search-input {
     font-size: 16px; /* Prevent zoom on iOS */
-    padding: 14px 16px; /* Larger touch target */
+    padding: 12px 14px; /* Larger touch target */
     min-height: 44px;
+    border-radius: 8px;
   }
   
   .textarea {
-    min-height: 180px;
+    min-height: 140px;
+    font-size: 16px; /* Prevent iOS zoom */
+    padding: 12px 14px;
+  }
+
+  .select {
+    min-height: 44px;
+    font-size: 16px;
+    padding: 12px 14px;
+  }
+
+  .page-select {
+    min-height: 44px;
+    font-size: 16px;
+    padding: 10px 12px;
+  }
+
+  .page-nav-button {
+    min-height: 44px;
+    font-size: 15px;
+    padding: 10px 16px;
   }
   
   /* Zoom controls mobile */
@@ -1500,42 +1563,148 @@ body::before {
 }
 
 @media (max-width: 480px) {
+  .container {
+    padding: 8px !important;
+  }
+
   .header h1 {
     font-size: 1.5rem;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
   
   .header p {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
   
   .header div[style*="fontSize: 3rem"] {
-    font-size: 2.5rem !important;
+    font-size: 2rem !important;
   }
   
   .main-layout {
-    padding: 10px;
+    padding: 12px !important;
     border-radius: 12px;
-    gap: 15px;
+    gap: 12px !important;
     width: 100%;
-    box-sizing: border-box;
-    overflow-x: hidden;
-  }
-  
-  .container {
-    width: 100%;
-    max-width: 100%;
     box-sizing: border-box;
     overflow-x: hidden;
   }
   
   .input-section,
   .preview-section {
-    padding: 12px;
+    padding: 12px !important;
     border-radius: 10px;
     overflow: visible;
     width: 100%;
     box-sizing: border-box;
+  }
+
+  .input-section > h2,
+  .preview-section > h2 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+  }
+
+  /* Print Settings Panel Small Mobile */
+  .print-settings-panel {
+    margin-bottom: 12px;
+  }
+
+  .print-settings-header {
+    padding: 8px 12px;
+  }
+
+  .print-settings-header h3 {
+    font-size: 13px;
+  }
+
+  .grid-badge {
+    font-size: 9px;
+    padding: 2px 6px;
+  }
+
+  .print-settings-body {
+    padding: 10px 12px;
+  }
+
+  .cropmark-field label {
+    font-size: 10px;
+  }
+
+  .cropmark-input {
+    padding: 8px 10px;
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  /* Deck List Panel Small Mobile */
+  .deck-list-panel {
+    margin-top: 10px;
+  }
+
+  .deck-list-header {
+    padding: 8px 12px;
+  }
+
+  .deck-list-header h3 {
+    font-size: 13px;
+  }
+
+  .deck-list-count {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  .deck-list-items {
+    max-height: 250px;
+    padding: 4px;
+  }
+
+  .deck-list-item {
+    padding: 8px 6px;
+    gap: 8px;
+  }
+
+  .deck-list-item-image {
+    width: 28px;
+    height: 39px;
+  }
+
+  .deck-list-item-name {
+    font-size: 11px;
+  }
+
+  .deck-list-item-id {
+    font-size: 8px;
+    padding: 1px 4px;
+  }
+
+  .deck-list-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    min-width: 32px;
+    min-height: 32px;
+  }
+
+  .deck-list-item-count {
+    font-size: 13px;
+    min-width: 18px;
+  }
+
+  /* Quantity controls small mobile */
+  .quantity-ctrl-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    min-width: 32px;
+    min-height: 32px;
+  }
+
+  .quantity-badge {
+    font-size: 12px;
+    padding: 4px 10px;
+    min-width: 32px;
   }
   
   /* Preview section - ensure no overflow issues */
@@ -1545,9 +1714,9 @@ body::before {
   }
   
   .textarea {
-    min-height: 150px;
-    font-size: 16px; /* Prevent zoom on iOS */
-    padding: 12px;
+    min-height: 120px;
+    font-size: 16px; /* Prevent iOS zoom */
+    padding: 10px 12px;
   }
   
   .preview-grid {
@@ -2378,31 +2547,75 @@ body::before {
 /* Deck list responsive */
 @media (max-width: 768px) {
   .deck-list-panel {
-    margin-top: 15px;
+    margin-top: 12px;
   }
 
   .deck-list-header {
-    padding: 12px 14px;
+    padding: 10px 14px;
   }
 
   .deck-list-header h3 {
-    font-size: 15px;
+    font-size: 14px;
+  }
+
+  .deck-list-count {
+    font-size: 11px;
+    padding: 3px 8px;
   }
 
   .deck-list-items {
-    max-height: 280px;
-    padding: 4px;
+    max-height: 300px;
+    padding: 6px;
   }
 
   .deck-list-item {
-    padding: 8px;
-    gap: 8px;
+    padding: 10px 8px;
+    gap: 10px;
+  }
+
+  .deck-list-item-image {
+    width: 32px;
+    height: 45px;
+  }
+
+  .deck-list-item-name {
+    font-size: 12px;
+  }
+
+  .deck-list-item-id {
+    font-size: 9px;
   }
 
   .deck-list-btn {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     font-size: 18px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  .deck-list-item-count {
+    font-size: 14px;
+    min-width: 20px;
+  }
+
+  /* Quantity controls in modal mobile */
+  .quantity-controls {
+    gap: 8px;
+  }
+
+  .quantity-ctrl-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  .quantity-badge {
+    font-size: 13px;
+    padding: 5px 12px;
+    min-width: 36px;
   }
 
   .deck-list-item-name {
