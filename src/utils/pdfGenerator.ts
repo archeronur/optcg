@@ -1,7 +1,6 @@
 import { PDFDocument, rgb, PDFPage } from 'pdf-lib';
 import { DeckCard, PrintSettings } from '@/types';
 import { getImageAsDataUri } from '@/utils/imageDataUri';
-import { toAbsoluteUrl } from '@/utils/url';
 
 export class PDFGenerator {
   private pdfDoc: PDFDocument;
@@ -48,23 +47,32 @@ export class PDFGenerator {
       throw new Error('Operation aborted');
     }
     
+    // DEBUG: Log first 5 image URLs before preload
+    const first5Urls: string[] = [];
     const imageUrls = new Set<string>();
     for (const card of cards) {
       const imageUrl = card.card.image_uris.full || card.card.image_uris.large || card.card.image_uris.small;
       if (imageUrl && !this.imageCache.has(imageUrl) && !this.preloadQueue.has(imageUrl) && !this.failedImages.has(imageUrl)) {
         imageUrls.add(imageUrl);
+        if (first5Urls.length < 5) {
+          first5Urls.push(imageUrl);
+        }
       }
     }
+    
+    console.log('[preloadImages] DEBUG: First 5 image URLs before preload:', first5Urls.map(url => url.substring(0, 80)));
     
     if (imageUrls.size === 0) {
       progressCallback?.(0, 0, 'Tüm görseller zaten yüklü');
       return;
     }
     
-    // Batch yükleme - her seferinde 10 görsel paralel yükle (daha hızlı)
+    // Batch yükleme - her seferinde 8 görsel paralel yükle (concurrency limit)
     const imageUrlsArray = Array.from(imageUrls);
-    const batchSize = 10;
+    const batchSize = 8; // Concurrency limit
     let loadedCount = 0;
+    let successCount = 0;
+    let failCount = 0;
     
     for (let i = 0; i < imageUrlsArray.length; i += batchSize) {
       if (this.abortSignal?.aborted) {
@@ -72,6 +80,7 @@ export class PDFGenerator {
       }
       
       const batch = imageUrlsArray.slice(i, i + batchSize);
+      console.log(`[preloadImages] Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(imageUrlsArray.length / batchSize)}: ${batch.length} images`);
       
       // Batch içindeki görselleri paralel yükle
       const batchPromises = batch.map(async (imageUrl) => {
@@ -82,21 +91,28 @@ export class PDFGenerator {
           
           this.preloadQueue.add(imageUrl);
           
+          console.log(`[preloadImages] Fetching: ${imageUrl.substring(0, 80)}...`);
           const imageData = await this.getCardImageBytes(imageUrl);
           
           if (imageData && imageData.length > 1000) {
             this.imageCache.set(imageUrl, imageData);
             loadedCount++;
+            successCount++;
+            console.log(`[preloadImages] ✓ Success ${loadedCount}/${imageUrls.size}: ${imageUrl.substring(0, 60)}...`);
             progressCallback?.(loadedCount, imageUrls.size, `Görsel yüklendi: ${loadedCount}/${imageUrls.size}`);
             return true;
           } else {
-            throw new Error('Invalid image data');
+            throw new Error(`Invalid image data: ${imageData?.length || 0} bytes`);
           }
         } catch (error: any) {
           if (error.message === 'Operation aborted') {
             throw error;
           }
-          console.error(`Failed to preload image:`, imageUrl, error);
+          failCount++;
+          console.error(`[preloadImages] ✗ Failed: ${imageUrl.substring(0, 80)}...`, {
+            error: error?.message || error,
+            errorName: error?.name
+          });
           this.failedImages.add(imageUrl);
           loadedCount++;
           progressCallback?.(loadedCount, imageUrls.size, `Görsel yüklenemedi: ${loadedCount}/${imageUrls.size}`);
@@ -110,7 +126,19 @@ export class PDFGenerator {
       await Promise.allSettled(batchPromises);
     }
     
-    console.log(`Preloading completed. Success: ${this.imageCache.size}, Failed: ${this.failedImages.size}`);
+    // DEBUG: Log first 5 image URLs after preload (check cache)
+    const first5After: Array<{ url: string; cached: boolean; bytes: number }> = [];
+    for (const url of first5Urls) {
+      const cached = this.imageCache.get(url);
+      first5After.push({
+        url: url.substring(0, 60),
+        cached: !!cached,
+        bytes: cached?.length || 0
+      });
+    }
+    console.log('[preloadImages] DEBUG: First 5 image URLs after preload:', first5After);
+    
+    console.log(`[preloadImages] Preloading completed. Success: ${successCount}, Failed: ${failCount}, Total: ${imageUrls.size}`);
   }
 
   async generatePDF(cards: DeckCard[], progressCallback?: (current: number, total: number, message: string) => void): Promise<Uint8Array> {
@@ -130,36 +158,14 @@ export class PDFGenerator {
       this.preloadQueue.clear();
       // imageCache'i temizleme - önceki yüklemelerden kalan görselleri kullanabiliriz
 
-      // MANDATORY: Preload ALL images via proxy BEFORE PDF generation starts
-      // This is data-driven (card data URLs) - NOT DOM-driven
-      // Critical for static Cloudflare Pages where DOM may not have loaded images yet
-      console.log('[generatePDF] Starting data-driven image preloading (proxy → base64)...');
+      // Görselleri önceden yükle
+      console.log('Starting image preloading...');
       progressCallback?.(0, cards.length, 'Görseller yükleniyor - Loading images...');
-      
       await this.preloadImages(cards, (current, total, msg) => {
         progressCallback?.(current, total, `Görsel yükleniyor ${current}/${total} - Loading image`);
       });
       
-      console.log('[generatePDF] Image preloading completed. All images are now base64 data URLs.');
-      
-      // CRITICAL ASSERTION: Verify all images are cached (base64 ready)
-      const uniqueImageUrls = new Set<string>();
-      for (const card of cards) {
-        const imageUrl = card.card.image_uris.full || card.card.image_uris.large || card.card.image_uris.small;
-        if (imageUrl) {
-          const normalizedUrl = toAbsoluteUrl(imageUrl);
-          uniqueImageUrls.add(normalizedUrl);
-        }
-      }
-      
-      const cachedCount = Array.from(uniqueImageUrls).filter(url => this.imageCache.has(url)).length;
-      const totalCount = uniqueImageUrls.size;
-      
-      console.log(`[generatePDF] Image cache status: ${cachedCount}/${totalCount} images ready`);
-      
-      if (cachedCount < totalCount && process.env.NODE_ENV === 'development') {
-        console.warn(`[generatePDF] Warning: Not all images are cached. Some may show placeholders.`);
-      }
+      console.log('Image preloading completed');
       
       // Abort signal kontrolü
       if (this.abortSignal?.aborted) {
@@ -611,37 +617,10 @@ export class PDFGenerator {
 
       // URL'yi temizle ve doğrula
       imageUrl = imageUrl.trim();
-      if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://') && !imageUrl.startsWith('data:image/')) {
+      if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
         console.warn(`Invalid image URL format: ${imageUrl}`);
         this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
         return;
-      }
-
-      // CRITICAL: If image is already a base64 data URI, use it directly
-      if (imageUrl.startsWith('data:image/')) {
-        try {
-          const base64Data = imageUrl.split(',')[1];
-          if (!base64Data) {
-            throw new Error('Invalid data URI format');
-          }
-          
-          const binaryString = atob(base64Data);
-          const bytes = new Uint8Array(binaryString.length);
-          for (let i = 0; i < binaryString.length; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-          }
-          
-          if (bytes.length < 1000) {
-            throw new Error(`Image data too small: ${bytes.length} bytes`);
-          }
-          
-          await this.embedBinaryImage(page, bytes, imageUrl, x, y, width, height);
-          return;
-        } catch (dataUriError: any) {
-          console.error(`Failed to embed base64 data URI for ${card.card.name}:`, dataUriError);
-          this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
-          return;
-        }
       }
 
       // Cache'den kontrol et - öncelikle cache kullan
@@ -686,7 +665,7 @@ export class PDFGenerator {
           card.card.image_uris.full,
           card.card.image_uris.large,
           card.card.image_uris.small
-        ].filter(url => url && url !== imageUrl && url.trim().startsWith('http'));
+        ].filter(url => url && url !== imageUrl);
         
         for (const altUrl of alternativeUrls) {
           if (!altUrl || altUrl === imageUrl) continue;
@@ -757,22 +736,10 @@ export class PDFGenerator {
       }
 
       this.imageCache.set(url, res.bytes);
-      this.retryCount.delete(url); // Reset retry count on success
       return res.bytes;
     } catch (e: any) {
-      const newRetryCount = retryCount + 1;
-      this.retryCount.set(url, newRetryCount);
-      
-      if (newRetryCount >= this.maxRetries) {
-        throw new Error(`Image fetch failed: ${e?.message || e}`);
-      }
-      
-      // Retry with exponential backoff
-      const delayMs = Math.min(1000 * Math.pow(2, retryCount), 5000);
-      await new Promise(resolve => setTimeout(resolve, delayMs));
-      
-      // Recursive retry
-      return this.getCardImageBytes(url);
+      this.retryCount.set(url, retryCount + 1);
+      throw new Error(`Image fetch failed: ${e?.message || e}`);
     }
   }
 

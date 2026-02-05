@@ -54,14 +54,16 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: nu
 }
 
 // Cloudflare Pages: Handle OPTIONS for CORS preflight
+// CRITICAL: This allows browser to make CORS requests for PDF image loading
 export async function OPTIONS(request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Accept',
+      'Access-Control-Allow-Headers': '*',
       'Access-Control-Max-Age': '86400',
+      'Cross-Origin-Resource-Policy': 'cross-origin',
     },
   });
 }
@@ -122,7 +124,16 @@ export async function GET(request: NextRequest) {
         // Cloudflare Pages: Don't include credentials
         credentials: 'omit'
       }, 30000); // 30 saniye timeout (Cloudflare Pages için optimize edildi)
+      
+      // DEBUG: Log redirect status if any
+      if (response.redirected) {
+        console.log(`[image-proxy] Redirect followed: ${imageUrl} -> ${response.url}`);
+      }
     } catch (error: any) {
+      console.error(`[image-proxy] Fetch error for ${imageUrl}:`, {
+        error: error?.message || error,
+        errorName: error?.name
+      });
       if (error.message === 'Request timeout') {
         return NextResponse.json(
           { error: 'Request timeout' },
@@ -133,6 +144,12 @@ export async function GET(request: NextRequest) {
     }
 
     if (!response.ok) {
+      const errorText = await response.text().catch(() => response.statusText);
+      console.error(`[image-proxy] Non-OK response for ${imageUrl}:`, {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText.substring(0, 200)
+      });
       return NextResponse.json(
         { error: `Failed to fetch image: ${response.status} ${response.statusText}` },
         { status: response.status }
@@ -158,14 +175,17 @@ export async function GET(request: NextRequest) {
     }
 
     // CORS header'ları ekle (Cloudflare Pages optimized)
+    // CRITICAL: These headers ensure images can be fetched from client-side PDF generation
     return new NextResponse(uint8Array, {
       status: 200,
       headers: {
         'Content-Type': contentType || 'image/png',
+        // CRITICAL: CORS headers for PDF generation
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Accept',
+        'Access-Control-Allow-Headers': '*',
         'Access-Control-Max-Age': '86400',
+        'Cross-Origin-Resource-Policy': 'cross-origin',
         'Cache-Control': 'public, max-age=86400, s-maxage=86400, immutable',
         // Cloudflare Pages: Add Vary header for better caching
         'Vary': 'Accept-Encoding',
