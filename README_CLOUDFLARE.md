@@ -76,11 +76,31 @@ Cloudflare Pages otomatik olarak:
 - CORS header'larının doğru ayarlandığını kontrol edin
 
 ### PDF Görsel Yükleme Sorunları:
+
+**SORUN**: Localhost'ta PDF görselleri çalışıyor ama Cloudflare Pages prod'da "Görsel yüklenemedi" hatası alıyorsunuz.
+
+**KÖK NEDEN**: 
+- Prod'da görsel URL'leri relative olabilir ve absolute URL'e çevrilmemiş olabilir
+- Proxy API route'una yapılan istekler yanlış origin ile yapılıyor olabilir
+- CORS veya network hataları görsellerin yüklenmesini engelliyor olabilir
+
+**ÇÖZÜM** (Uygulandı):
+1. ✅ Tüm görsel URL'leri `toAbsoluteUrl()` ile normalize ediliyor
+2. ✅ Proxy URL'leri her zaman absolute olarak oluşturuluyor
+3. ✅ `getSiteOrigin()` browser'da `window.location.origin` kullanıyor (prod domain'i otomatik algılıyor)
+4. ✅ Fallback mekanizması: Proxy başarısız olursa direct fetch deneniyor
+5. ✅ Error handling ve logging güçlendirildi
+
+**KONTROL ADIMLARI**:
 - Image proxy API route'unun çalıştığını kontrol edin: `/api/image-proxy`
-- Browser console'da network hatalarını kontrol edin
+- Browser console'da network hatalarını kontrol edin (404, CORS, timeout)
 - Cloudflare Pages logs'larında API route hatalarını kontrol edin
-- Timeout sürelerinin yeterli olduğundan emin olun (30-40 saniye)
-- **Önemli**: Edge runtime’da `User-Agent`, `Referer`, `Accept-Encoding` gibi header’lar **yasaktır**; proxy route bunları set ederse prod’da görsel fetch’leri başarısız olur ve PDF’de boş görsel / “Görsel yüklenemedi” placeholder’ı görünür.
+- Timeout sürelerinin yeterli olduğundan emin olun (30 saniye)
+- **Önemli**: Edge runtime'da `User-Agent`, `Referer`, `Accept-Encoding` gibi header'lar **yasaktır**; proxy route bunları set ederse prod'da görsel fetch'leri başarısız olur
+
+**ENV VARIABLE** (Opsiyonel ama önerilir):
+- `NEXT_PUBLIC_SITE_URL`: Prod domain'inizi set edin (örn: `https://PROJE-ADI.pages.dev`)
+- Bu değişken SSR/build-time fallback için kullanılır, ama browser'da `window.location.origin` her zaman önceliklidir
 
 ### Mobil Görünüm Sorunları:
 - `is-mobile` class'ının doğru eklendiğini kontrol edin

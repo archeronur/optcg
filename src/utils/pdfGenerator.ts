@@ -1,6 +1,7 @@
 import { PDFDocument, rgb, PDFPage } from 'pdf-lib';
 import { DeckCard, PrintSettings } from '@/types';
 import { getImageAsDataUri } from '@/utils/imageDataUri';
+import { toAbsoluteUrl } from '@/utils/url';
 
 export class PDFGenerator {
   private pdfDoc: PDFDocument;
@@ -46,9 +47,22 @@ export class PDFGenerator {
     
     const imageUrls = new Set<string>();
     for (const card of cards) {
-      const imageUrl = card.card.image_uris.full || card.card.image_uris.large || card.card.image_uris.small;
-      if (imageUrl && !this.imageCache.has(imageUrl) && !this.preloadQueue.has(imageUrl) && !this.failedImages.has(imageUrl)) {
-        imageUrls.add(imageUrl);
+      let imageUrl = card.card.image_uris.full || card.card.image_uris.large || card.card.image_uris.small;
+      if (imageUrl) {
+        // Normalize URL to absolute - critical for Cloudflare Pages
+        try {
+          imageUrl = toAbsoluteUrl(imageUrl);
+        } catch (urlError) {
+          console.warn(`Failed to normalize URL in preload:`, urlError);
+          // Skip if normalization fails and URL is not absolute
+          if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
+            continue;
+          }
+        }
+        
+        if (!this.imageCache.has(imageUrl) && !this.preloadQueue.has(imageUrl) && !this.failedImages.has(imageUrl)) {
+          imageUrls.add(imageUrl);
+        }
       }
     }
     
@@ -474,16 +488,31 @@ export class PDFGenerator {
   }
 
   private async getCardBackImageBytes(): Promise<Uint8Array> {
-    // Public klasöründen kart arkası görselini al
+    // Public klasöründen kart arkası görselini al - CRITICAL: Use absolute URL for Cloudflare Pages
     try {
-      const response = await fetch(PDFGenerator.CARD_BACK_URL, { cache: 'no-store' as any });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      // Ensure absolute URL for card back image
+      const absoluteCardBackUrl = toAbsoluteUrl(PDFGenerator.CARD_BACK_URL);
+      
+      const response = await fetch(absoluteCardBackUrl, { 
+        cache: 'no-store' as any,
+        credentials: 'omit',
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} for card back image`);
+      }
+      
       const arrayBuffer = await response.arrayBuffer();
       const bytes = new Uint8Array(arrayBuffer);
-      if (bytes.length < 1000) throw new Error('Card back image too small');
+      
+      if (bytes.length < 1000) {
+        throw new Error('Card back image too small');
+      }
+      
       return bytes;
-    } catch (e) {
-      throw e as any;
+    } catch (e: any) {
+      console.error('Failed to load card back image:', e);
+      throw new Error(`Card back image load failed: ${e?.message || e}`);
     }
   }
 
@@ -567,10 +596,25 @@ export class PDFGenerator {
         return;
       }
 
-      // URL'yi temizle ve doğrula
+      // URL'yi temizle ve normalize et - CRITICAL for Cloudflare Pages
       imageUrl = imageUrl.trim();
+      
+      // Ensure absolute URL - critical for prod environments
+      try {
+        imageUrl = toAbsoluteUrl(imageUrl);
+      } catch (urlError) {
+        console.warn(`Failed to normalize URL for ${card.card.name}:`, urlError);
+        // If toAbsoluteUrl fails, check if it's already absolute
+        if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
+          console.warn(`Invalid image URL format: ${imageUrl}`);
+          this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
+          return;
+        }
+      }
+      
+      // Final validation - must be absolute
       if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
-        console.warn(`Invalid image URL format: ${imageUrl}`);
+        console.warn(`Invalid image URL format after normalization: ${imageUrl}`);
         this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
         return;
       }
@@ -612,12 +656,21 @@ export class PDFGenerator {
         lastError = error;
         console.error(`Image loading failed for ${card.card.name} (${imageUrl.substring(0, 50)}...):`, error);
         
-        // Alternatif URL'leri dene
+        // Alternatif URL'leri dene - normalize edilmiş
         const alternativeUrls = [
           card.card.image_uris.full,
           card.card.image_uris.large,
           card.card.image_uris.small
-        ].filter(url => url && url !== imageUrl);
+        ]
+          .filter(url => url && url !== imageUrl)
+          .map(url => {
+            try {
+              return toAbsoluteUrl(url!);
+            } catch {
+              return url!;
+            }
+          })
+          .filter(url => url && url.startsWith('http'));
         
         for (const altUrl of alternativeUrls) {
           if (!altUrl || altUrl === imageUrl) continue;

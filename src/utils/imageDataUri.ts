@@ -123,39 +123,86 @@ export async function getImageAsDataUri(inputUrl: string, options: GetImageAsDat
   if (preferProxy) {
     const proxyPath = `/api/image-proxy?url=${encodeURIComponent(absoluteSourceUrl)}`;
     // Always make proxy calls absolute to survive basePath/assetPrefix/proxying differences.
-    const proxyUrl = toAbsoluteUrl(proxyPath, getSiteOrigin());
-    const { bytes, contentType } = await fetchBytes(proxyUrl, timeoutMs);
+    // CRITICAL: Use getSiteOrigin() to ensure correct origin in Cloudflare Pages prod
+    const siteOrigin = getSiteOrigin();
+    const proxyUrl = toAbsoluteUrl(proxyPath, siteOrigin);
+    
+    // Debug log in dev only
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[getImageAsDataUri] Using proxy:', proxyUrl, 'for source:', absoluteSourceUrl);
+    }
+    
+    try {
+      const { bytes, contentType } = await fetchBytes(proxyUrl, timeoutMs);
+      if (bytes.length < 1000) throw new Error('Image bytes too small');
+
+      const finalType = forcedContentType || (contentType && contentType.startsWith('image/') ? contentType : sniffContentType(bytes));
+      const dataUri = `data:${finalType};base64,${toBase64(bytes)}`;
+      const result: ImageDataUriResult = {
+        finalUrl: proxyUrl,
+        contentType: finalType,
+        bytes,
+        dataUri,
+        fromCache: false,
+        via: 'api-proxy',
+      };
+      if (cache) inMemoryCache.set(cacheKey, result);
+      return result;
+    } catch (proxyError: any) {
+      // If proxy fails, log and try direct fetch as fallback
+      console.warn('[getImageAsDataUri] Proxy failed, trying direct fetch:', proxyError?.message || proxyError);
+      
+      // Only fallback to direct if proxy explicitly failed (not timeout/network)
+      if (proxyError?.message?.includes('HTTP 4') || proxyError?.message?.includes('HTTP 5')) {
+        // Proxy returned error, try direct fetch
+        const { bytes, contentType } = await fetchBytes(absoluteSourceUrl, timeoutMs);
+        if (bytes.length < 1000) throw new Error('Image bytes too small');
+
+        const finalType = forcedContentType || (contentType && contentType.startsWith('image/') ? contentType : sniffContentType(bytes));
+        const dataUri = `data:${finalType};base64,${toBase64(bytes)}`;
+        const result: ImageDataUriResult = {
+          finalUrl: absoluteSourceUrl,
+          contentType: finalType,
+          bytes,
+          dataUri,
+          fromCache: false,
+          via: 'direct',
+        };
+        if (cache) inMemoryCache.set(cacheKey, result);
+        return result;
+      }
+      
+      // Re-throw other errors (timeout, network, etc.)
+      throw proxyError;
+    }
+  }
+
+  // 2) Direct fetch (works for same-origin images; often blocked for external images due to CORS)
+  try {
+    const { bytes, contentType } = await fetchBytes(absoluteSourceUrl, timeoutMs);
     if (bytes.length < 1000) throw new Error('Image bytes too small');
 
     const finalType = forcedContentType || (contentType && contentType.startsWith('image/') ? contentType : sniffContentType(bytes));
     const dataUri = `data:${finalType};base64,${toBase64(bytes)}`;
     const result: ImageDataUriResult = {
-      finalUrl: proxyUrl,
+      finalUrl: absoluteSourceUrl,
       contentType: finalType,
       bytes,
       dataUri,
       fromCache: false,
-      via: 'api-proxy',
+      via: 'direct',
     };
     if (cache) inMemoryCache.set(cacheKey, result);
     return result;
+  } catch (directError: any) {
+    // Enhanced error message for debugging
+    const errorMsg = directError?.message || String(directError);
+    console.error('[getImageAsDataUri] Direct fetch failed:', {
+      url: absoluteSourceUrl,
+      error: errorMsg,
+      isCors: errorMsg.includes('CORS') || errorMsg.includes('cross-origin'),
+    });
+    throw new Error(`Failed to fetch image: ${errorMsg}`);
   }
-
-  // 2) Direct fetch (works for same-origin images; often blocked for external images due to CORS)
-  const { bytes, contentType } = await fetchBytes(absoluteSourceUrl, timeoutMs);
-  if (bytes.length < 1000) throw new Error('Image bytes too small');
-
-  const finalType = forcedContentType || (contentType && contentType.startsWith('image/') ? contentType : sniffContentType(bytes));
-  const dataUri = `data:${finalType};base64,${toBase64(bytes)}`;
-  const result: ImageDataUriResult = {
-    finalUrl: absoluteSourceUrl,
-    contentType: finalType,
-    bytes,
-    dataUri,
-    fromCache: false,
-    via: 'direct',
-  };
-  if (cache) inMemoryCache.set(cacheKey, result);
-  return result;
 }
 
