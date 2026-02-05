@@ -28,11 +28,8 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: nu
     const fetchPromise = fetch(url, {
       ...options,
       signal: controller.signal,
-      // Cloudflare Pages: Add headers for better compatibility
-      headers: {
-        ...options.headers,
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-      }
+      // NOTE (Edge runtime): Do not set forbidden headers like `User-Agent`, `Referer`, `Accept-Encoding`.
+      // Cloudflare Pages/Workers implement a fetch() that rejects these headers.
     });
     
     const response = await Promise.race([fetchPromise, timeoutPromise]);
@@ -115,18 +112,11 @@ export async function GET(request: NextRequest) {
     // Görseli fetch et (timeout ile - edge runtime compatible, Cloudflare Pages optimized)
     let response: Response;
     try {
-      // Cloudflare Pages: Use fetch directly with proper headers
       response = await fetchWithTimeout(imageUrl, {
         method: 'GET',
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Accept': 'image/*,image/jpeg,image/png,image/webp,image/avif',
-          'Referer': url.origin,
-          'Accept-Language': 'en-US,en;q=0.9',
-          'Accept-Encoding': 'gzip, deflate, br',
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
-        },
+        // NOTE (Edge runtime): keep headers minimal & safe.
+        // We only need `Accept` to hint image formats. Other headers can break on Workers.
+        headers: { 'Accept': 'image/*' },
         // Cloudflare Pages: Ensure redirects are followed
         redirect: 'follow',
         // Cloudflare Pages: Don't include credentials

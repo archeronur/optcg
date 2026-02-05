@@ -36,7 +36,8 @@ git push -u origin main
 - Node.js versiyonu 20+ olmalı
 
 #### Environment Variables (gerekirse):
-- Şu an için environment variable gerekmiyor
+- **NEXT_PUBLIC_SITE_URL**: (önerilir) Prod domain’iniz. Absolute URL üretimi ve bazı edge/preview senaryolarında tutarlılık için kullanılır.
+  - Örnek: `NEXT_PUBLIC_SITE_URL=https://PROJE-ADI.pages.dev`
 
 ### 3. Build Komutları
 
@@ -79,6 +80,7 @@ Cloudflare Pages otomatik olarak:
 - Browser console'da network hatalarını kontrol edin
 - Cloudflare Pages logs'larında API route hatalarını kontrol edin
 - Timeout sürelerinin yeterli olduğundan emin olun (30-40 saniye)
+- **Önemli**: Edge runtime’da `User-Agent`, `Referer`, `Accept-Encoding` gibi header’lar **yasaktır**; proxy route bunları set ederse prod’da görsel fetch’leri başarısız olur ve PDF’de boş görsel / “Görsel yüklenemedi” placeholder’ı görünür.
 
 ### Mobil Görünüm Sorunları:
 - `is-mobile` class'ının doğru eklendiğini kontrol edin

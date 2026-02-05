@@ -1,5 +1,6 @@
 import { PDFDocument, rgb, PDFPage } from 'pdf-lib';
 import { DeckCard, PrintSettings } from '@/types';
+import { getImageAsDataUri } from '@/utils/imageDataUri';
 
 export class PDFGenerator {
   private pdfDoc: PDFDocument;
@@ -658,183 +659,7 @@ export class PDFGenerator {
     }
   }
 
-  // Next.js API route üzerinden görsel yükleme (server-side proxy) - Cloudflare Pages optimized
-  private async loadImageViaAPI(url: string): Promise<Uint8Array> {
-    try {
-      // Cloudflare Pages: Detect environment and use appropriate URL
-      let baseUrl = '';
-      if (typeof window !== 'undefined') {
-        baseUrl = window.location.origin;
-        // Cloudflare Pages: Ensure we use the correct origin
-        // If we're on Cloudflare Pages, use the current origin
-        if (baseUrl.includes('.pages.dev') || baseUrl.includes('cloudflarepages.com')) {
-          // Already correct
-        }
-      } else if (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_BASE_URL) {
-        baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-      }
-      
-      // Cloudflare Pages: Always use absolute URL for API calls
-      // Relative URLs may not work correctly in Cloudflare Pages
-      const apiUrl = baseUrl 
-        ? `${baseUrl}/api/image-proxy?url=${encodeURIComponent(url)}`
-        : (typeof window !== 'undefined' 
-          ? `${window.location.origin}/api/image-proxy?url=${encodeURIComponent(url)}`
-          : `/api/image-proxy?url=${encodeURIComponent(url)}`);
-      
-      console.log(`[API] Loading image via API: ${apiUrl.substring(0, 100)}...`);
-      
-      // Create abort controller for timeout (Cloudflare Pages compatible)
-      const controller = new AbortController();
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        const timeoutId = setTimeout(() => {
-          controller.abort();
-          reject(new Error('Request timeout'));
-        }, 40000); // 40 saniye timeout (Cloudflare Pages için optimize edildi)
-        
-        controller.signal.addEventListener('abort', () => {
-          clearTimeout(timeoutId);
-        });
-      });
-      
-      try {
-        const fetchPromise = fetch(apiUrl, {
-          method: 'GET',
-          headers: {
-            'Accept': 'image/*,image/jpeg,image/png,image/webp,image/avif',
-            'Cache-Control': 'no-cache',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-          },
-          signal: controller.signal,
-          // Cloudflare Pages: Add credentials for better compatibility
-          credentials: 'omit',
-          mode: 'cors',
-          // Cloudflare Pages: Add redirect handling
-          redirect: 'follow'
-        });
-        
-        const response = await Promise.race([fetchPromise, timeoutPromise]);
-
-        // Check if response is ok or if it's an error response
-        if (!response.ok) {
-          let errorText = 'Unknown error';
-          try {
-            // Try to get error message from response
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-              const errorJson = await response.json().catch(() => null);
-              if (errorJson && errorJson.error) {
-                errorText = errorJson.error;
-              }
-            } else {
-              errorText = await response.text().catch(() => `HTTP ${response.status}`);
-            }
-          } catch (e) {
-            errorText = `HTTP ${response.status} ${response.statusText}`;
-          }
-          console.error(`[API] API proxy failed: ${response.status} - ${errorText}`);
-          throw new Error(`API proxy failed: ${response.status} - ${errorText}`);
-        }
-
-        // Check content type
-        const contentType = response.headers.get('content-type');
-        if (contentType && !contentType.startsWith('image/') && !contentType.includes('application/octet-stream')) {
-          console.warn(`[API] Unexpected content type: ${contentType}, but continuing...`);
-        }
-
-        const arrayBuffer = await response.arrayBuffer();
-        const uint8Array = new Uint8Array(arrayBuffer);
-
-        if (uint8Array.length < 1000) {
-          console.error(`[API] Image data too small from API: ${uint8Array.length} bytes`);
-          throw new Error(`Image data too small from API: ${uint8Array.length} bytes`);
-        }
-
-        console.log(`[API] ✅ Successfully loaded image via API: ${uint8Array.length} bytes`);
-        return uint8Array;
-      } catch (fetchError: any) {
-        if (fetchError.name === 'AbortError' || controller.signal.aborted || fetchError.message === 'Request timeout') {
-          throw new Error('Request timeout');
-        }
-        // Re-throw with more context
-        throw new Error(`Fetch error: ${fetchError.message || fetchError}`);
-      }
-    } catch (error: any) {
-      console.error(`[API] API proxy error for ${url.substring(0, 50)}:`, error);
-      throw new Error(`API proxy error: ${error.message || error}`);
-    }
-  }
-
-  // Canvas kullanarak görsel yükleme (CORS bypass - crossOrigin olmadan)
-  private async loadImageViaCanvas(url: string): Promise<Uint8Array> {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      // crossOrigin kullanmadan dene (tainted canvas ama çalışabilir)
-      
-      // Timeout ekle
-      const timeout = setTimeout(() => {
-        reject(new Error('Image load timeout'));
-      }, 8000);
-      
-      img.onload = async () => {
-        clearTimeout(timeout);
-        try {
-          // Canvas oluştur
-          const canvas = document.createElement('canvas');
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext('2d');
-          
-          if (!ctx) {
-            reject(new Error('Could not get canvas context'));
-            return;
-          }
-          
-          // Görseli canvas'a çiz (tainted canvas olabilir)
-          try {
-            ctx.drawImage(img, 0, 0);
-          } catch (drawError: any) {
-            // Tainted canvas hatası - crossOrigin ile tekrar dene
-            if (drawError.name === 'SecurityError' || drawError.message?.includes('tainted')) {
-              reject(new Error('Canvas tainted - CORS required'));
-              return;
-            }
-            throw drawError;
-          }
-          
-          // Canvas'ı blob'a çevir
-          canvas.toBlob(async (blob) => {
-            if (!blob) {
-              reject(new Error('Canvas toBlob returned null'));
-              return;
-            }
-            
-            // Blob'u Uint8Array'e çevir
-            const arrayBuffer = await blob.arrayBuffer();
-            const uint8Array = new Uint8Array(arrayBuffer);
-            
-            if (uint8Array.length > 1000) {
-              resolve(uint8Array);
-            } else {
-              reject(new Error('Image data too small'));
-            }
-          }, 'image/png'); // PNG formatında al (daha güvenilir)
-          
-        } catch (error) {
-          reject(error);
-        }
-      };
-      
-      img.onerror = (error) => {
-        clearTimeout(timeout);
-        reject(new Error(`Image load error: ${error}`));
-      };
-      
-      img.src = url;
-    });
-  }
-
-  // Ana görsel yükleme metodu - CORS güvenli
+  // Ana görsel yükleme metodu - CORS dayanıklı: her zaman önce same-origin image-proxy -> bytes -> embed
   private async getCardImageBytes(url: string): Promise<Uint8Array> {
     // Önce cache'den kontrol et
     if (this.imageCache.has(url)) {
@@ -847,204 +672,27 @@ export class PDFGenerator {
     }
 
     const retryCount = this.retryCount.get(url) || 0;
-    
     if (retryCount >= this.maxRetries) {
       throw new Error(`Maximum retries exceeded for ${url}`);
     }
 
-    // Önce Next.js API route yöntemini dene (server-side proxy - en güvenilir)
-    // Cloudflare Pages'de bu yöntem edge runtime'da çalışır
-    // Retry mekanizması ile 2 kez dene
-    for (let apiRetry = 0; apiRetry < 2; apiRetry++) {
-      try {
-        console.log(`[Image Load] Trying API proxy (attempt ${apiRetry + 1}/2) for: ${url.substring(0, 50)}...`);
-        const imageData = await this.loadImageViaAPI(url);
-        
-        if (imageData && imageData.length > 1000) {
-          console.log(`[Image Load] ✅ API proxy success: ${imageData.length} bytes`);
-          this.imageCache.set(url, imageData);
-          return imageData;
-        } else {
-          console.warn(`[Image Load] ⚠️ API proxy returned invalid data: ${imageData?.length || 0} bytes`);
-          if (apiRetry < 1) {
-            // Wait a bit before retry
-            await new Promise(resolve => setTimeout(resolve, 500));
-            continue;
-          }
-        }
-      } catch (apiError: any) {
-        console.warn(`[Image Load] ❌ API proxy failed (attempt ${apiRetry + 1}/2) for ${url.substring(0, 50)}:`, apiError.message || apiError);
-        if (apiRetry < 1) {
-          // Wait a bit before retry
-          await new Promise(resolve => setTimeout(resolve, 500));
-          continue;
-        }
-      }
-    }
-
-    // Canvas yöntemini dene (CORS bypass)
-    if (typeof document !== 'undefined' && typeof Image !== 'undefined') {
-      try {
-        console.log(`Trying canvas method for: ${url.substring(0, 50)}...`);
-        const imageData = await this.loadImageViaCanvas(url);
-        
-        if (imageData && imageData.length > 1000) {
-          this.imageCache.set(url, imageData);
-          return imageData;
-        }
-      } catch (canvasError) {
-        console.log(`Canvas method failed for ${url}, trying fetch:`, canvasError);
-      }
-    }
-
     try {
-      // Direct fetch ile dene
-      const imageData = await this.fetchImageDirectly(url);
-      
-      // Veriyi doğrula
-      if (imageData && imageData.length > 1000) {
-        this.imageCache.set(url, imageData);
-        return imageData;
-      } else {
-        throw new Error('Image data too small or invalid');
+      const res = await getImageAsDataUri(url, {
+        preferProxy: true,
+        timeoutMs: 30000,
+        cache: true,
+      });
+
+      if (!res.bytes || res.bytes.length < 1000) {
+        throw new Error('Image bytes too small');
       }
 
-    } catch (error) {
-      console.log(`Direct fetch failed for ${url}, attempt ${retryCount + 1}/${this.maxRetries}:`, error);
-      
-      // Retry count'u artır
+      this.imageCache.set(url, res.bytes);
+      return res.bytes;
+    } catch (e: any) {
       this.retryCount.set(url, retryCount + 1);
-      
-      // Proxy ile dene
-      if (retryCount < 2) {
-        try {
-          const imageData = await this.fetchImageViaProxy(url);
-          
-          // Veriyi doğrula
-          if (imageData && imageData.length > 1000) {
-            this.imageCache.set(url, imageData);
-            return imageData;
-          } else {
-            throw new Error('Proxy image data too small or invalid');
-          }
-        } catch (proxyError) {
-          console.error(`Proxy fetch also failed for ${url}:`, proxyError);
-          throw new Error(`Failed to load image after ${retryCount + 1} attempts`);
-        }
-      } else {
-        throw new Error(`Failed to load image after ${retryCount + 1} attempts`);
-      }
+      throw new Error(`Image fetch failed: ${e?.message || e}`);
     }
-  }
-
-  // Direct fetch - CORS güvenli
-  private async fetchImageDirectly(url: string): Promise<Uint8Array> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 saniye timeout
-
-    try {
-      // Önce no-cors modunu dene (CORS sorunlarını bypass eder)
-      let response: Response;
-      try {
-        response = await fetch(url, {
-          mode: 'no-cors',
-          credentials: 'omit',
-          signal: controller.signal,
-          cache: 'no-cache'
-        });
-      } catch (noCorsError) {
-        // no-cors başarısız olursa cors modunu dene
-        response = await fetch(url, {
-          mode: 'cors',
-          credentials: 'omit',
-          signal: controller.signal,
-          headers: {
-            'Accept': 'image/*,image/jpeg,image/png,image/webp',
-            'Cache-Control': 'no-cache',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-          }
-        });
-      }
-
-      clearTimeout(timeoutId);
-
-      // no-cors modunda response.ok her zaman false olabilir, bu yüzden kontrol etme
-      if (response.type === 'opaque') {
-        // Opaque response - veriyi al ve kullan
-        console.log('Received opaque response (no-cors mode)');
-      } else if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      // no-cors modunda content-type kontrol edilemez
-      if (response.type !== 'opaque') {
-        const contentType = response.headers.get('content-type');
-        if (contentType && !contentType.startsWith('image/')) {
-          console.warn(`Unexpected content type: ${contentType}, continuing anyway`);
-        }
-      }
-
-      const arrayBuffer = await response.arrayBuffer();
-      const uint8Array = new Uint8Array(arrayBuffer);
-
-      if (uint8Array.length < 1000) {
-        throw new Error('Image too small, likely corrupted');
-      }
-
-      return uint8Array;
-
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
-    }
-  }
-
-  // Proxy ile görsel yükleme (client-side fallback)
-  private async fetchImageViaProxy(url: string): Promise<Uint8Array> {
-    // Daha fazla proxy servisi ekle
-    const proxyUrls = [
-      `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-      `https://corsproxy.io/?${encodeURIComponent(url)}`,
-      `https://cors-anywhere.herokuapp.com/${url}`, // Not: Bu servis production'da çalışmayabilir
-      url // Try direct URL as last resort
-    ];
-
-    for (const proxyUrl of proxyUrls) {
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 saniye timeout
-
-        const response = await fetch(proxyUrl, {
-          signal: controller.signal,
-          mode: 'cors',
-          headers: {
-            'Accept': 'image/*,image/jpeg,image/png,image/webp',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-          }
-        });
-
-        clearTimeout(timeoutId);
-
-        if (response.ok || response.type === 'opaque') {
-          const arrayBuffer = await response.arrayBuffer();
-          const uint8Array = new Uint8Array(arrayBuffer);
-
-          if (uint8Array.length > 1000) {
-            console.log(`Successfully loaded via proxy: ${proxyUrl.substring(0, 50)}...`);
-            return uint8Array;
-          }
-        }
-      } catch (error: any) {
-        if (error.name === 'AbortError') {
-          console.log(`Proxy timeout: ${proxyUrl.substring(0, 50)}...`);
-        } else {
-          console.log(`Proxy failed: ${proxyUrl.substring(0, 50)}...`, error.message);
-        }
-        continue;
-      }
-    }
-
-    throw new Error('All proxy methods failed');
   }
 
   // Binary görseli PDF'e göm - CORS güvenli

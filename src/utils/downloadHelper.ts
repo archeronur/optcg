@@ -21,6 +21,11 @@ export async function downloadPDF(
   pdfBytes: Uint8Array,
   filename: string = `onepiece-deck-${Date.now()}.pdf`
 ): Promise<DownloadResult> {
+  const pdfArrayBuffer = pdfBytes.buffer.slice(
+    pdfBytes.byteOffset,
+    pdfBytes.byteOffset + pdfBytes.byteLength
+  ) as ArrayBuffer;
+
   // Method 1: File System Access API (Chrome, Edge, Opera)
   if ('showSaveFilePicker' in window) {
     try {
@@ -37,7 +42,7 @@ export async function downloadPDF(
       });
 
       const writable = await fileHandle.createWritable();
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const blob = new Blob([pdfArrayBuffer], { type: 'application/pdf' });
       await writable.write(blob);
       await writable.close();
 
@@ -57,7 +62,7 @@ export async function downloadPDF(
 
   // Method 2: Blob URL with anchor click (most compatible)
   try {
-    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const blob = new Blob([pdfArrayBuffer], { type: 'application/pdf' });
     const url = URL.createObjectURL(blob);
 
     // Create anchor element
@@ -156,7 +161,7 @@ export async function downloadPDF(
 
   // Method 4: Window.open with blob (last resort)
   try {
-    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const blob = new Blob([pdfArrayBuffer], { type: 'application/pdf' });
     const url = URL.createObjectURL(blob);
     const newWindow = window.open(url, '_blank');
 
@@ -190,7 +195,8 @@ async function convertToBase64(bytes: Uint8Array): Promise<string> {
     // Files larger than 10MB
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      const blob = new Blob([bytes], { type: 'application/pdf' });
+      const ab = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
+      const blob = new Blob([ab], { type: 'application/pdf' });
       reader.onloadend = () => {
         const base64 = (reader.result as string).split(',')[1];
         resolve(base64);

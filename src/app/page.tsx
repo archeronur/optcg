@@ -61,7 +61,8 @@ export default function Home() {
       
       // Multiple checks for better mobile detection
       const isMobileWidth = width <= 768;
-      const isTouchDevice = 'ontouchstart' in window || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+      const isTouchDevice =
+        'ontouchstart' in window || (typeof navigator !== 'undefined' && (navigator.maxTouchPoints ?? 0) > 0);
       const isMobileUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent || '');
       
       // Consider mobile if width is small OR (touch device AND mobile user agent)
@@ -623,10 +624,10 @@ export default function Home() {
       // Helper function to check if image URL is valid
       const getImageUrl = (variant: Card): string | null => {
         if (!variant.image_uris) return null;
-        const url = variant.image_uris.small || 
-                   variant.image_uris.large || 
-                   variant.image_uris.full ||
-                   variant.image_uris.normal;
+        const url =
+          variant.image_uris.small ||
+          variant.image_uris.large ||
+          variant.image_uris.full;
         // Check if URL is valid (not null, undefined, empty, or string 'null'/'undefined')
         if (!url || typeof url !== 'string') return null;
         const trimmed = url.trim();
