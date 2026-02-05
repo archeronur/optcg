@@ -56,7 +56,6 @@ import { translationService } from '@/utils/translations';
 import { debounce, throttle, createCleanup } from '@/utils/performance';
 import { downloadPDF } from '@/utils/downloadHelper';
 import CardSearchPanel from '@/components/CardSearchPanel';
-import { PdfGeneratorClient, PdfGeneratorClientRef } from '@/components/PdfGeneratorClient';
 
 export default function Home() {
   // State
@@ -203,7 +202,6 @@ export default function Home() {
   });
 
   const abortControllerRef = useRef<AbortController | null>(null);
-  const pdfGeneratorRef = useRef<PdfGeneratorClientRef | null>(null);
   
   // Performance optimizations
   const cleanup = useMemo(() => createCleanup(), []);
@@ -475,16 +473,15 @@ export default function Home() {
   }, [inputText, resolveCards, showError, showSuccess]);
 
 
-  // Generate PDF - Now uses client-only PdfGeneratorClient component
-  // CRITICAL: PDF generation is fully isolated from static prerender lifecycle
+  // Generate PDF
   const handleGeneratePDF = useCallback(async () => {
     if (resolvedCards.length === 0) {
       showError('Please enter a deck first');
       return;
     }
 
-    // Check PDF generation status via ref
-    if (pdfGeneratorRef.current && pdfGeneratorRef.current.state !== 'IDLE' && pdfGeneratorRef.current.state !== 'DONE') {
+    // Check PDF generation status
+    if (pdfGenerating) {
       console.log('PDF generation already in progress');
       return;
     }
@@ -502,13 +499,47 @@ export default function Home() {
     abortControllerRef.current = new AbortController();
     
     try {
-      // Use PdfGeneratorClient ref to generate PDF
-      // This ensures PDF generation runs in fully client-only context
-      if (!pdfGeneratorRef.current) {
-        throw new Error('PDF generator not initialized');
+      console.log('Starting PDF generation...');
+      
+      // Start performance tracking
+      const { performanceTracker } = await import('@/utils/stability');
+      performanceTracker.mark('pdf-generation-start');
+      
+      const { PDFGenerator } = await import('@/utils/pdfGenerator');
+      const generator = new PDFGenerator(printSettings, abortControllerRef.current.signal);
+      
+      // Add progress callback
+      const updateProgress = (current: number, total: number, message: string) => {
+        console.log(`Progress: ${current}/${total} - ${message}`);
+        setLoadingProgress({ current, total, message });
+      };
+      
+      const pdfBytes = await generator.generatePDF(resolvedCards, updateProgress);
+      
+      // Complete performance tracking
+      performanceTracker.measure('pdf-generation-total', 'pdf-generation-start');
+      const generationTime = performanceTracker.getMeasure('pdf-generation-total');
+      console.log(`PDF generation completed in ${generationTime?.toFixed(2)}ms`);
+      
+      console.log('PDF generated, size:', pdfBytes.length, 'bytes');
+      
+      // Download PDF using improved download helper
+      const filename = `onepiece-deck-${Date.now()}.pdf`;
+      const downloadResult = await downloadPDF(pdfBytes, filename);
+      
+      if (downloadResult.success) {
+        console.log(`PDF downloaded successfully using ${downloadResult.method}`);
+        showSuccess('PDF generated and downloaded successfully');
+        
+        // Show celebration animation
+        setShowCelebration(true);
+      } else {
+        console.error('PDF download failed:', downloadResult.error);
+        showError(
+          downloadResult.error || 
+          'PDF could not be downloaded. Please check your browser settings or try a different browser.'
+        );
       }
-
-      await pdfGeneratorRef.current.generate();
       
     } catch (err: any) {
       if (err.name === 'AbortError') {
@@ -539,7 +570,7 @@ export default function Home() {
       setIsLoading(false);
       setLoadingProgress(null);
     }
-  }, [resolvedCards, showError]);
+  }, [resolvedCards, printSettings, pdfGenerating, showError, showSuccess]);
 
   // Clear deck
   const handleClearDeck = useCallback(() => {
@@ -1266,39 +1297,6 @@ Variants: _p1, _p2 (Parallel), _aa (Alt Art), _sp (Special)`}
             </div>
           )}
         </div>
-      </div>
-
-      {/* PdfGeneratorClient - Client-only PDF generation component */}
-      {/* CRITICAL: This component is rendered but hidden. It handles PDF generation
-          in a fully client-only context, isolated from static prerender lifecycle.
-          PDF generation state machine ensures proper ordering:
-          IDLE → LOADING_IMAGES → READY → GENERATING → DONE */}
-      <div style={{ display: 'none' }}>
-        <PdfGeneratorClient
-          ref={pdfGeneratorRef}
-          cards={resolvedCards}
-          printSettings={printSettings}
-          abortSignal={abortControllerRef.current?.signal}
-          onProgress={(current, total, message) => {
-            console.log(`Progress: ${current}/${total} - ${message}`);
-            setLoadingProgress({ current, total, message });
-          }}
-          onSuccess={() => {
-            console.log('PDF generated and downloaded successfully');
-            showSuccess('PDF generated and downloaded successfully');
-            setShowCelebration(true);
-            setPdfGenerating(false);
-            setIsLoading(false);
-            setLoadingProgress(null);
-          }}
-          onError={(error) => {
-            console.error('PDF generation error:', error);
-            showError(error);
-            setPdfGenerating(false);
-            setIsLoading(false);
-            setLoadingProgress(null);
-          }}
-        />
       </div>
 
       {/* Legal notice and proxy warning */}
