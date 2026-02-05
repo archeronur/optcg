@@ -507,31 +507,16 @@ export class PDFGenerator {
   }
 
   private async getCardBackImageBytes(): Promise<Uint8Array> {
-    // Public klasöründen kart arkası görselini al - CRITICAL: Use absolute URL for Cloudflare Pages
+    // Public klasöründen kart arkası görselini al
     try {
-      // Ensure absolute URL for card back image
-      const absoluteCardBackUrl = toAbsoluteUrl(PDFGenerator.CARD_BACK_URL);
-      
-      const response = await fetch(absoluteCardBackUrl, { 
-        cache: 'no-store' as any,
-        credentials: 'omit',
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status} for card back image`);
-      }
-      
+      const response = await fetch(PDFGenerator.CARD_BACK_URL, { cache: 'no-store' as any });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const arrayBuffer = await response.arrayBuffer();
       const bytes = new Uint8Array(arrayBuffer);
-      
-      if (bytes.length < 1000) {
-        throw new Error('Card back image too small');
-      }
-      
+      if (bytes.length < 1000) throw new Error('Card back image too small');
       return bytes;
-    } catch (e: any) {
-      console.error('Failed to load card back image:', e);
-      throw new Error(`Card back image load failed: ${e?.message || e}`);
+    } catch (e) {
+      throw e as any;
     }
   }
 
