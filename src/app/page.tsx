@@ -1,5 +1,53 @@
 'use client';
 
+/**
+ * MAIN PAGE COMPONENT - One Piece Proxy Print
+ * 
+ * CRITICAL ARCHITECTURE NOTE: PDF Generation Isolation
+ * 
+ * Why PDF generation must be isolated from static prerender lifecycle:
+ * 
+ * 1. Cloudflare Pages Static Prerendering:
+ *    - The main route `/` is STATIC prerendered at build time
+ *    - The HTML is generated server-side and served as static files
+ *    - Client-side hydration happens AFTER the static HTML is served
+ * 
+ * 2. The Problem with PDF Generation on Static Pages:
+ *    - PDF generation requires async image loading (fetch → base64 conversion)
+ *    - Static prerender timing is unpredictable for async-heavy flows
+ *    - Images may not be loaded when PDF generation code runs
+ *    - This causes "Görsel yüklenemedi" (Image failed to load) errors in PDFs
+ * 
+ * 3. Why Client-Only Isolation Solves This:
+ *    - PdfGeneratorClient component uses dynamic import with { ssr: false }
+ *    - This ensures PDF code NEVER runs during prerender or SSR
+ *    - PDF generation only runs after full client hydration
+ *    - State machine enforces strict ordering: images must be base64 before PDF capture
+ * 
+ * 4. The Solution Architecture:
+ *    a) PdfGeneratorClient: Fully client-only component with state machine
+ *    b) PdfRenderRoot: Isolated rendering container (only mounts during PDF generation)
+ *    c) Runtime Guard: Verifies all images are base64 before PDF capture
+ *    d) Data-Driven: Uses card data URLs → proxy → base64 (no DOM dependency)
+ * 
+ * 5. Lifecycle Flow:
+ *    - User clicks "Download PDF"
+ *    - PdfGeneratorClient.generate() is called
+ *    - State: IDLE → LOADING_IMAGES (preload all images as base64)
+ *    - State: LOADING_IMAGES → READY (all images are base64)
+ *    - PdfRenderRoot mounts (receives cards with base64 image URLs)
+ *    - Runtime guard verifies all images in PdfRenderRoot are base64
+ *    - State: READY → GENERATING (PDF generation with pdf-lib)
+ *    - State: GENERATING → DONE (PDF downloaded)
+ *    - PdfRenderRoot unmounts (cleanup)
+ * 
+ * This architecture guarantees:
+ * - PDF generation never runs during static prerender
+ * - All images are base64 before PDF capture
+ * - Works identically on localhost and Cloudflare Pages
+ * - No "Görsel yüklenemedi" errors in PDFs
+ */
+
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { DeckCard, ParsedDeckEntry, PrintSettings, Card } from '@/types';
 import { DeckParser } from '@/utils/deckParser';
@@ -8,6 +56,7 @@ import { translationService } from '@/utils/translations';
 import { debounce, throttle, createCleanup } from '@/utils/performance';
 import { downloadPDF } from '@/utils/downloadHelper';
 import CardSearchPanel from '@/components/CardSearchPanel';
+import { PdfGeneratorClient, PdfGeneratorClientRef } from '@/components/PdfGeneratorClient';
 
 export default function Home() {
   // State
@@ -154,6 +203,7 @@ export default function Home() {
   });
 
   const abortControllerRef = useRef<AbortController | null>(null);
+  const pdfGeneratorRef = useRef<PdfGeneratorClientRef | null>(null);
   
   // Performance optimizations
   const cleanup = useMemo(() => createCleanup(), []);
@@ -425,15 +475,16 @@ export default function Home() {
   }, [inputText, resolveCards, showError, showSuccess]);
 
 
-  // Generate PDF
+  // Generate PDF - Now uses client-only PdfGeneratorClient component
+  // CRITICAL: PDF generation is fully isolated from static prerender lifecycle
   const handleGeneratePDF = useCallback(async () => {
     if (resolvedCards.length === 0) {
       showError('Please enter a deck first');
       return;
     }
 
-    // Check PDF generation status
-    if (pdfGenerating) {
+    // Check PDF generation status via ref
+    if (pdfGeneratorRef.current && pdfGeneratorRef.current.state !== 'IDLE' && pdfGeneratorRef.current.state !== 'DONE') {
       console.log('PDF generation already in progress');
       return;
     }
@@ -451,47 +502,13 @@ export default function Home() {
     abortControllerRef.current = new AbortController();
     
     try {
-      console.log('Starting PDF generation...');
-      
-      // Start performance tracking
-      const { performanceTracker } = await import('@/utils/stability');
-      performanceTracker.mark('pdf-generation-start');
-      
-      const { PDFGenerator } = await import('@/utils/pdfGenerator');
-      const generator = new PDFGenerator(printSettings, abortControllerRef.current.signal);
-      
-      // Add progress callback
-      const updateProgress = (current: number, total: number, message: string) => {
-        console.log(`Progress: ${current}/${total} - ${message}`);
-        setLoadingProgress({ current, total, message });
-      };
-      
-      const pdfBytes = await generator.generatePDF(resolvedCards, updateProgress);
-      
-      // Complete performance tracking
-      performanceTracker.measure('pdf-generation-total', 'pdf-generation-start');
-      const generationTime = performanceTracker.getMeasure('pdf-generation-total');
-      console.log(`PDF generation completed in ${generationTime?.toFixed(2)}ms`);
-      
-      console.log('PDF generated, size:', pdfBytes.length, 'bytes');
-      
-      // Download PDF using improved download helper
-      const filename = `onepiece-deck-${Date.now()}.pdf`;
-      const downloadResult = await downloadPDF(pdfBytes, filename);
-      
-      if (downloadResult.success) {
-        console.log(`PDF downloaded successfully using ${downloadResult.method}`);
-        showSuccess('PDF generated and downloaded successfully');
-        
-        // Show celebration animation
-        setShowCelebration(true);
-      } else {
-        console.error('PDF download failed:', downloadResult.error);
-        showError(
-          downloadResult.error || 
-          'PDF could not be downloaded. Please check your browser settings or try a different browser.'
-        );
+      // Use PdfGeneratorClient ref to generate PDF
+      // This ensures PDF generation runs in fully client-only context
+      if (!pdfGeneratorRef.current) {
+        throw new Error('PDF generator not initialized');
       }
+
+      await pdfGeneratorRef.current.generate();
       
     } catch (err: any) {
       if (err.name === 'AbortError') {
@@ -522,7 +539,7 @@ export default function Home() {
       setIsLoading(false);
       setLoadingProgress(null);
     }
-  }, [resolvedCards, printSettings, pdfGenerating, showError, showSuccess]);
+  }, [resolvedCards, showError]);
 
   // Clear deck
   const handleClearDeck = useCallback(() => {
@@ -1249,6 +1266,39 @@ Variants: _p1, _p2 (Parallel), _aa (Alt Art), _sp (Special)`}
             </div>
           )}
         </div>
+      </div>
+
+      {/* PdfGeneratorClient - Client-only PDF generation component */}
+      {/* CRITICAL: This component is rendered but hidden. It handles PDF generation
+          in a fully client-only context, isolated from static prerender lifecycle.
+          PDF generation state machine ensures proper ordering:
+          IDLE → LOADING_IMAGES → READY → GENERATING → DONE */}
+      <div style={{ display: 'none' }}>
+        <PdfGeneratorClient
+          ref={pdfGeneratorRef}
+          cards={resolvedCards}
+          printSettings={printSettings}
+          abortSignal={abortControllerRef.current?.signal}
+          onProgress={(current, total, message) => {
+            console.log(`Progress: ${current}/${total} - ${message}`);
+            setLoadingProgress({ current, total, message });
+          }}
+          onSuccess={() => {
+            console.log('PDF generated and downloaded successfully');
+            showSuccess('PDF generated and downloaded successfully');
+            setShowCelebration(true);
+            setPdfGenerating(false);
+            setIsLoading(false);
+            setLoadingProgress(null);
+          }}
+          onError={(error) => {
+            console.error('PDF generation error:', error);
+            showError(error);
+            setPdfGenerating(false);
+            setIsLoading(false);
+            setLoadingProgress(null);
+          }}
+        />
       </div>
 
       {/* Legal notice and proxy warning */}
