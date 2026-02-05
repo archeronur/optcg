@@ -2,6 +2,7 @@ import { PDFDocument, rgb, PDFPage } from 'pdf-lib';
 import { DeckCard, PrintSettings } from '@/types';
 import { getImageAsDataUri } from '@/utils/imageDataUri';
 import { toAbsoluteUrl } from '@/utils/url';
+import { tryGetImageFromDOM } from '@/utils/imageFromDOM';
 
 export class PDFGenerator {
   private pdfDoc: PDFDocument;
@@ -755,7 +756,7 @@ export class PDFGenerator {
     }
   }
 
-  // Ana görsel yükleme metodu - CORS dayanıklı: önce direct fetch, sonra proxy fallback
+  // Ana görsel yükleme metodu - CORS dayanıklı: önce DOM'dan al, sonra proxy/direct fetch
   private async getCardImageBytes(url: string): Promise<Uint8Array> {
     // Önce cache'den kontrol et
     if (this.imageCache.has(url)) {
@@ -777,6 +778,25 @@ export class PDFGenerator {
     try {
       console.log(`[getCardImageBytes] Fetching image (attempt ${retryCount + 1}/${this.maxRetries}):`, url);
       
+      // CRITICAL FIX: Try to get image from DOM first (already loaded in preview)
+      // This is much more reliable than re-fetching, especially in Cloudflare Pages
+      if (typeof window !== 'undefined') {
+        try {
+          const domResult = await tryGetImageFromDOM(url);
+          if (domResult?.success && domResult.bytes && domResult.bytes.length > 1000) {
+            console.log(`[getCardImageBytes] Successfully extracted from DOM: ${url.substring(0, 50)}...`);
+            this.imageCache.set(url, domResult.bytes);
+            this.retryCount.delete(url);
+            return domResult.bytes;
+          } else if (domResult && !domResult.success) {
+            console.log(`[getCardImageBytes] DOM extraction failed, will fetch: ${domResult.error}`);
+          }
+        } catch (domError: any) {
+          console.log(`[getCardImageBytes] DOM extraction error, will fetch: ${domError?.message || domError}`);
+        }
+      }
+      
+      // Fallback: Fetch via proxy/direct (if not in DOM or DOM extraction failed)
       // MANDATORY: Always use proxy first (same-origin guarantee, avoids CORS)
       // Proxy fetches server-side, converts to base64 data URL
       const res = await getImageAsDataUri(url, {
