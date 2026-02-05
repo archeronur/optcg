@@ -724,12 +724,13 @@ export class PDFGenerator {
     }
   }
 
-  // Ana görsel yükleme metodu - CORS dayanıklı: her zaman önce same-origin image-proxy -> bytes -> embed
+  // Ana görsel yükleme metodu - CORS dayanıklı: önce direct fetch, sonra proxy fallback
   private async getCardImageBytes(url: string): Promise<Uint8Array> {
     // Önce cache'den kontrol et
     if (this.imageCache.has(url)) {
       const cached = this.imageCache.get(url)!;
       if (cached && cached.length > 1000) {
+        console.log(`[getCardImageBytes] Using cached image for: ${url.substring(0, 50)}...`);
         return cached;
       }
       // Cache'deki veri geçersiz, sil
@@ -738,25 +739,55 @@ export class PDFGenerator {
 
     const retryCount = this.retryCount.get(url) || 0;
     if (retryCount >= this.maxRetries) {
+      console.error(`[getCardImageBytes] Max retries exceeded for: ${url}`);
       throw new Error(`Maximum retries exceeded for ${url}`);
     }
 
     try {
+      console.log(`[getCardImageBytes] Fetching image (attempt ${retryCount + 1}/${this.maxRetries}):`, url);
+      
+      // Try direct fetch first, then proxy fallback (handled inside getImageAsDataUri)
       const res = await getImageAsDataUri(url, {
-        preferProxy: true,
+        preferProxy: true, // Will try direct first, then proxy
         timeoutMs: 30000,
         cache: true,
       });
 
+      console.log(`[getCardImageBytes] Image fetched successfully via ${res.via}:`, {
+        url: url.substring(0, 50),
+        bytes: res.bytes.length,
+        contentType: res.contentType
+      });
+
       if (!res.bytes || res.bytes.length < 1000) {
-        throw new Error('Image bytes too small');
+        throw new Error(`Image bytes too small: ${res.bytes?.length || 0} bytes`);
       }
 
       this.imageCache.set(url, res.bytes);
+      this.retryCount.delete(url); // Reset retry count on success
       return res.bytes;
     } catch (e: any) {
-      this.retryCount.set(url, retryCount + 1);
-      throw new Error(`Image fetch failed: ${e?.message || e}`);
+      const newRetryCount = retryCount + 1;
+      this.retryCount.set(url, newRetryCount);
+      
+      console.error(`[getCardImageBytes] Image fetch failed (attempt ${newRetryCount}/${this.maxRetries}):`, {
+        url: url.substring(0, 50),
+        error: e?.message || e,
+        errorName: e?.name,
+        retryCount: newRetryCount
+      });
+      
+      if (newRetryCount >= this.maxRetries) {
+        throw new Error(`Image fetch failed after ${this.maxRetries} attempts: ${e?.message || e}`);
+      }
+      
+      // Retry with exponential backoff
+      const delayMs = Math.min(1000 * Math.pow(2, retryCount), 5000);
+      console.log(`[getCardImageBytes] Retrying after ${delayMs}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+      
+      // Recursive retry
+      return this.getCardImageBytes(url);
     }
   }
 
