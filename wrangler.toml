@@ -7,6 +7,9 @@
 name = "optcg"
 compatibility_date = "2026-02-05"
 
+# Enable Node.js APIs (node:buffer, node:async_hooks, etc.) required by next-on-pages worker
+compatibility_flags = ["nodejs_compat"]
+
 # Tell Cloudflare Pages what directory to publish (instead of default `out`)
 pages_build_output_dir = ".vercel/output/static"
 
