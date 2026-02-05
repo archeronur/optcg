@@ -54,37 +54,24 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: nu
 }
 
 // Cloudflare Pages: Handle OPTIONS for CORS preflight
-// CRITICAL: This allows browser to make CORS requests for PDF image loading
 export async function OPTIONS(request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': '*',
+      'Access-Control-Allow-Headers': 'Content-Type, Accept',
       'Access-Control-Max-Age': '86400',
-      // Add cache control for preflight
-      'Cache-Control': 'public, max-age=86400'
     },
   });
 }
 
 export async function GET(request: NextRequest) {
-  const startTime = Date.now();
-  
   try {
     const searchParams = request.nextUrl.searchParams;
     const imageUrl = searchParams.get('url');
 
-    console.log('[image-proxy] Request received:', {
-      url: imageUrl,
-      referer: request.headers.get('referer'),
-      origin: request.headers.get('origin'),
-      userAgent: request.headers.get('user-agent')?.substring(0, 50)
-    });
-
     if (!imageUrl) {
-      console.error('[image-proxy] Missing URL parameter');
       return NextResponse.json(
         { error: 'URL parameter is required' },
         { status: 400 }
@@ -95,13 +82,7 @@ export async function GET(request: NextRequest) {
     let url: URL;
     try {
       url = new URL(imageUrl);
-      console.log('[image-proxy] Parsed URL:', {
-        hostname: url.hostname,
-        pathname: url.pathname,
-        protocol: url.protocol
-      });
-    } catch (error) {
-      console.error('[image-proxy] Invalid URL format:', imageUrl, error);
+    } catch {
       return NextResponse.json(
         { error: 'Invalid URL format' },
         { status: 400 }
@@ -128,11 +109,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // MANDATORY: Fetch image server-side (same-origin guarantee, avoids CORS)
-    // Cloudflare Edge Runtime fetches from external API, returns as binary
+    // Görseli fetch et (timeout ile - edge runtime compatible, Cloudflare Pages optimized)
     let response: Response;
     try {
-      console.log('[image-proxy] Fetching image server-side:', imageUrl);
       response = await fetchWithTimeout(imageUrl, {
         method: 'GET',
         // NOTE (Edge runtime): keep headers minimal & safe.
@@ -142,22 +121,8 @@ export async function GET(request: NextRequest) {
         redirect: 'follow',
         // Cloudflare Pages: Don't include credentials
         credentials: 'omit'
-      }, 45000); // 45 saniye timeout (increased for Cloudflare Pages stability)
-      
-      console.log('[image-proxy] Fetch response:', {
-        url: imageUrl,
-        status: response.status,
-        statusText: response.statusText,
-        contentType: response.headers.get('content-type'),
-        contentLength: response.headers.get('content-length'),
-        ok: response.ok
-      });
+      }, 30000); // 30 saniye timeout (Cloudflare Pages için optimize edildi)
     } catch (error: any) {
-      console.error('[image-proxy] Fetch error:', {
-        url: imageUrl,
-        error: error?.message || error,
-        errorName: error?.name
-      });
       if (error.message === 'Request timeout') {
         return NextResponse.json(
           { error: 'Request timeout' },
@@ -168,13 +133,6 @@ export async function GET(request: NextRequest) {
     }
 
     if (!response.ok) {
-      const errorText = await response.text().catch(() => response.statusText);
-      console.error('[image-proxy] Non-OK response:', {
-        url: imageUrl,
-        status: response.status,
-        statusText: response.statusText,
-        body: errorText.substring(0, 200)
-      });
       return NextResponse.json(
         { error: `Failed to fetch image: ${response.status} ${response.statusText}` },
         { status: response.status }
@@ -192,57 +150,32 @@ export async function GET(request: NextRequest) {
     const arrayBuffer = await response.arrayBuffer();
     const uint8Array = new Uint8Array(arrayBuffer);
 
-    console.log('[image-proxy] Image data received:', {
-      url: imageUrl,
-      bytes: uint8Array.length,
-      contentType: contentType
-    });
-
     if (uint8Array.length < 1000) {
-      console.error('[image-proxy] Image data too small:', uint8Array.length);
       return NextResponse.json(
         { error: 'Image data too small' },
         { status: 400 }
       );
     }
 
-    const duration = Date.now() - startTime;
-    console.log('[image-proxy] Success:', {
-      url: imageUrl,
-      bytes: uint8Array.length,
-      duration: `${duration}ms`
-    });
-
     // CORS header'ları ekle (Cloudflare Pages optimized)
-    // CRITICAL: These headers ensure images can be fetched from client-side PDF generation
     return new NextResponse(uint8Array, {
       status: 200,
       headers: {
         'Content-Type': contentType || 'image/png',
-        // CRITICAL: CORS headers for PDF generation
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': '*',
+        'Access-Control-Allow-Headers': 'Content-Type, Accept',
         'Access-Control-Max-Age': '86400',
-        // Cache control - allow caching but ensure fresh images for PDF generation
-        'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+        'Cache-Control': 'public, max-age=86400, s-maxage=86400, immutable',
         // Cloudflare Pages: Add Vary header for better caching
         'Vary': 'Accept-Encoding',
         // Cloudflare Pages: Add CORS preflight support
-        'X-Content-Type-Options': 'nosniff',
-        // Ensure content length is set
-        'Content-Length': uint8Array.length.toString()
+        'X-Content-Type-Options': 'nosniff'
       }
     });
 
   } catch (error: any) {
-    const duration = Date.now() - startTime;
-    console.error('[image-proxy] Error:', {
-      error: error?.message || error,
-      errorName: error?.name,
-      stack: error?.stack,
-      duration: `${duration}ms`
-    });
+    console.error('Image proxy error:', error);
     
     if (error.name === 'TimeoutError' || error.name === 'AbortError') {
       return NextResponse.json(
