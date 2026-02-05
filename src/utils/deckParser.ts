@@ -121,10 +121,41 @@ export class DeckParser {
     // "OP14-020" (sadece kart kodu, adet 1)
     // "1x Portgas.D.Ace (002) (Alternate Art) (OP13-002_p1)" (variant format)
     // "1xOP13-002_p1" (variant ile yeni format)
+    // "P-107", "P-029", "P-048" (promo kartlar)
+    // "1x Arlong (P-048)" (promo kart formatı)
+
+    // ÖNCE: Promo kart formatını kontrol et (P-XXX)
+    const promoMatch = line.match(/^(\d+)\s*x?\s*(.+?)?\s*\(?P-(\d{3})\)?\s*$/i);
+    if (promoMatch) {
+      const count = parseInt(promoMatch[1] || '1');
+      const name = promoMatch[2] ? promoMatch[2].trim() : '';
+      const promoNumber = promoMatch[3].padStart(3, '0');
+      
+      return {
+        count,
+        name: name || `Card P-${promoNumber}`,
+        set_code: 'PRB', // Promo kartlar için PRB set kodu kullan
+        number: promoNumber,
+        original_line: line
+      };
+    }
+
+    // Sadece promo kart kodu formatı: "P-107", "p-029"
+    const promoOnlyMatch = line.match(/^P-(\d{3})$/i);
+    if (promoOnlyMatch) {
+      const promoNumber = promoOnlyMatch[1].padStart(3, '0');
+      return {
+        count: 1,
+        name: `Card P-${promoNumber}`,
+        set_code: 'PRB',
+        number: promoNumber,
+        original_line: line
+      };
+    }
 
     // ÖNCE: Satırın sonunda tam kart ID'si var mı kontrol et (variant dahil)
-    // Format: (OP13-002_p1) veya (ST21-001_aa)
-    const fullIdMatch = line.match(/\(([A-Z]{2,3}\d{2}-\d{3}(?:_[a-z0-9]+)?)\)\s*$/i);
+    // Format: (OP13-002_p1) veya (ST21-001_aa) veya (P-048)
+    const fullIdMatch = line.match(/\(([A-Z]{1,3}\d{0,2}-?\d{3}(?:_[a-z0-9]+)?)\)\s*$/i);
     if (fullIdMatch) {
       const rawCardId = fullIdMatch[1];
       // Adet ve ismi çıkar
@@ -140,6 +171,21 @@ export class DeckParser {
       name = name.replace(/\s*\([^)]*\)\s*$/g, '').trim(); // Son parantezi kaldır
       name = name.replace(/\s*\([^)]*\)\s*$/g, '').trim(); // Varsa bir öncekini de kaldır (Alternate Art gibi)
       name = name.replace(/\s*\([^)]*\)\s*$/g, '').trim(); // Varsa (002) gibi numarayı da kaldır
+      
+      // Promo kart kontrolü: P-048 formatı
+      if (rawCardId.match(/^P-(\d{3})$/i)) {
+        const promoMatch = rawCardId.match(/^P-(\d{3})$/i);
+        if (promoMatch) {
+          const promoNumber = promoMatch[1].padStart(3, '0');
+          return {
+            count,
+            name: name || `Card P-${promoNumber}`,
+            set_code: 'PRB',
+            number: promoNumber,
+            original_line: line
+          };
+        }
+      }
       
       // Set kodu ve numarayı ayır (variant suffix ile birlikte)
       // Variant suffix'i küçük harf olarak sakla (resim URL'leri için önemli)
@@ -162,11 +208,27 @@ export class DeckParser {
     }
 
     // Yeni format variant ile: "1xOP11-040_p1", "4xOP05-067_aa"
-    let match = line.match(/^(\d+)\s*x\s*([A-Z]{2,3}\d{2}-\d{3}(?:_[a-z0-9]+)?)$/i);
+    // Promo format: "1xP-107"
+    let match = line.match(/^(\d+)\s*x\s*([A-Z]{1,3}\d{0,2}-?\d{3}(?:_[a-z0-9]+)?)$/i);
     
     if (match) {
       const count = parseInt(match[1]);
       const rawSetAndNumber = match[2];
+      
+      // Promo kart kontrolü: P-107 formatı
+      if (rawSetAndNumber.match(/^P-(\d{3})$/i)) {
+        const promoMatch = rawSetAndNumber.match(/^P-(\d{3})$/i);
+        if (promoMatch) {
+          const promoNumber = promoMatch[1].padStart(3, '0');
+          return {
+            count,
+            name: `Card P-${promoNumber}`,
+            set_code: 'PRB',
+            number: promoNumber,
+            original_line: line
+          };
+        }
+      }
       
       // Set kodunu ve numarayı ayır (variant suffix ile)
       const setMatch = rawSetAndNumber.match(/^([A-Z]{2,3})(\d{2})-(\d{3})(_.+)?$/i);
@@ -187,11 +249,26 @@ export class DeckParser {
       }
     }
 
-    // Sadece kart kodu formatı (variant ile): "OP14-020", "OP13-002_p1"
-    match = line.match(/^([A-Z]{2,3}\d{2}-\d{3}(?:_[a-z0-9]+)?)$/i);
+    // Sadece kart kodu formatı (variant ile): "OP14-020", "OP13-002_p1", "P-107"
+    match = line.match(/^([A-Z]{1,3}\d{0,2}-?\d{3}(?:_[a-z0-9]+)?)$/i);
     
     if (match) {
       const rawSetAndNumber = match[1];
+      
+      // Promo kart kontrolü: P-107 formatı
+      if (rawSetAndNumber.match(/^P-(\d{3})$/i)) {
+        const promoMatch = rawSetAndNumber.match(/^P-(\d{3})$/i);
+        if (promoMatch) {
+          const promoNumber = promoMatch[1].padStart(3, '0');
+          return {
+            count: 1,
+            name: `Card P-${promoNumber}`,
+            set_code: 'PRB',
+            number: promoNumber,
+            original_line: line
+          };
+        }
+      }
       
       const setMatch = rawSetAndNumber.match(/^([A-Z]{2,3})(\d{2})-(\d{3})(_.+)?$/i);
       if (setMatch) {
@@ -258,7 +335,15 @@ export class DeckParser {
 
     // "OP12-040", "ST21-017", "OP-12/040", "OP12 040" gibi formatlar
     // Ayrıca variant suffix'leri de destekle: "OP13-002_p1", "OP12-040_aa"
+    // Promo kartlar: "P-048", "P-107"
     const cleanInfo = setInfo.trim();
+    
+    // Promo kart kontrolü: P-048 formatı
+    const promoMatch = cleanInfo.match(/^P-(\d{3})$/i);
+    if (promoMatch) {
+      const promoNumber = promoMatch[1].padStart(3, '0');
+      return { setCode: 'PRB', number: promoNumber };
+    }
     
     // Tam kart ID formatı (variant suffix ile): OP13-002_p1, ST21-017_aa
     const fullMatch = cleanInfo.match(/^([A-Z]{2,3})(\d{2})[\s\-\/]*(\d{3})(_.+)?$/i);

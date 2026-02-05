@@ -1,0 +1,12 @@
+# Promo Kart Test Dosyası
+# Bu dosyayı kopyalayıp uygulamaya yapıştırabilirsiniz
+
+# Promo kart formatları:
+p-107
+p-029
+1x Arlong (P-048)
+
+# Diğer formatlar da çalışmalı:
+P-107
+P-029
+1x P-048

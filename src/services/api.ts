@@ -57,6 +57,9 @@ class OPTCGAPI {
     // PRB (Promo) sets always use Limitless
     if (upperCode.startsWith('PRB')) return true;
     
+    // P (Promo) format - single letter P indicates promo cards
+    if (upperCode === 'P' || upperCode.startsWith('P-')) return true;
+    
     // OP13 and newer sets use Limitless (OPTCG API may not have them yet)
     const opMatch = upperCode.match(/^OP(\d+)$/);
     if (opMatch) {
@@ -121,7 +124,34 @@ class OPTCGAPI {
   private createFallbackCard(cardId: string): any {
     console.log(`Creating fallback card for ${cardId}`);
     
-    // Parse card ID: OP13-002, ST21-001, OP13-002_p1, etc.
+    // Parse card ID: OP13-002, ST21-001, OP13-002_p1, P-107, etc.
+    // Promo kart kontrolü: P-107 formatı
+    const promoMatch = cardId.match(/^P-(\d{3})$/i);
+    if (promoMatch) {
+      const promoNumber = promoMatch[1].padStart(3, '0');
+      const fullCardId = `P-${promoNumber}`;
+      
+      // Promo kartlar için resim URL'i
+      const imageUrl = `https://en.onepiece-cardgame.com/images/cardlist/card/${fullCardId}.png`;
+      
+      return {
+        card_id: fullCardId,
+        name: `Card ${fullCardId}`,
+        set: 'PRB',
+        number: promoNumber,
+        rarity: 'Promo',
+        category: 'Unknown',
+        color: null,
+        cost: null,
+        effect: '',
+        trigger: '',
+        illustrator: '',
+        // Mark as fallback card
+        _isFallback: true,
+        _imageUrl: imageUrl
+      };
+    }
+    
     const match = cardId.match(/^([A-Z]{2,3})(\d{2})-(\d{3})(_.+)?$/i);
     if (!match) {
       console.log(`Invalid card ID format: ${cardId}`);
@@ -289,14 +319,24 @@ class OPTCGAPI {
         // Check if should use Limitless API (ST sets and newer OP sets)
         if (this.shouldUseLimitlessAPI(setCode)) {
           console.log(`Using Limitless API for ${setCode}`);
-          // Convert OP-14 to OP14 for Limitless API
-          const limitlessSetCode = setCode.replace('-', '');
-          // Build card ID with variant suffix if present
-          const paddedNumber = baseNumber?.padStart(3, '0') || '001';
-          const cardId = variantSuffix 
-            ? `${limitlessSetCode}-${paddedNumber}${variantSuffix}` 
-            : `${limitlessSetCode}-${paddedNumber}`;
-          console.log(`Converted set code: ${setCode} -> ${limitlessSetCode}`);
+          
+          // Promo kart kontrolü: PRB set kodu ile P- formatı
+          let cardId: string;
+          if (setCode === 'PRB' || setCode === 'P') {
+            // Promo kartlar için P-XXX formatını kullan
+            const paddedNumber = baseNumber?.padStart(3, '0') || '001';
+            cardId = `P-${paddedNumber}`;
+            console.log(`Promo card detected, using format: ${cardId}`);
+          } else {
+            // Convert OP-14 to OP14 for Limitless API
+            const limitlessSetCode = setCode.replace('-', '');
+            // Build card ID with variant suffix if present
+            const paddedNumber = baseNumber?.padStart(3, '0') || '001';
+            cardId = variantSuffix 
+              ? `${limitlessSetCode}-${paddedNumber}${variantSuffix}` 
+              : `${limitlessSetCode}-${paddedNumber}`;
+            console.log(`Converted set code: ${setCode} -> ${limitlessSetCode}`);
+          }
           console.log(`Card ID for Limitless API: ${cardId}`);
           
           // First try with variant suffix
@@ -560,8 +600,8 @@ class OPTCGAPI {
       return { variant: 'sp', variantLabel: 'SP' };
     }
     
-    // Check for promo cards (PRB set)
-    if (id.startsWith('prb') || id.includes('promo')) {
+    // Check for promo cards (PRB set or P- format)
+    if (id.startsWith('prb') || id.includes('promo') || id.match(/^p-\d+/i)) {
       return { variant: 'promo', variantLabel: 'Promo' };
     }
     
@@ -979,15 +1019,43 @@ class OPTCGAPI {
     });
   }
 
-  // Check if query is a card ID format (e.g., OP13-046, ST21-001, OP13-0, OP13-)
+  // Check if query is a card ID format (e.g., OP13-046, ST21-001, OP13-0, OP13-, P-107, p-)
   private isCardIdFormat(query: string): boolean {
-    return /^[A-Za-z]{2,3}\d{1,2}-?\d{0,3}$/i.test(query.trim());
+    const trimmed = query.trim();
+    // Promo kart formatı: P-107, P-029, P-, p-
+    if (/^P-?\d{0,3}$/i.test(trimmed)) return true;
+    // Normal format: OP13-046, ST21-001
+    return /^[A-Za-z]{2,3}\d{1,2}-?\d{0,3}$/i.test(trimmed);
   }
 
   // Parse card ID format to get set code and number
   private parseCardId(query: string): { setCode: string; number: string | null; fullId: string } | null {
+    const trimmed = query.trim().toUpperCase();
+    
+    // Promo kart formatı: P-107, P-029, P-, p-
+    const promoMatch = trimmed.match(/^P-?(\d{0,3})$/i);
+    if (promoMatch) {
+      // Eğer numara varsa
+      if (promoMatch[1]) {
+        const cardNum = promoMatch[1].padStart(3, '0');
+        const fullId = `P-${cardNum}`;
+        return {
+          setCode: 'PRB',
+          number: cardNum,
+          fullId
+        };
+      } else {
+        // Sadece "P-" veya "P" yazıldığında
+        return {
+          setCode: 'PRB',
+          number: null,
+          fullId: 'P'
+        };
+      }
+    }
+    
     // Match formats like: OP13-024, OP13024, OP13-02, OP13-0, OP13-
-    const match = query.trim().toUpperCase().match(/^([A-Za-z]{2,3})(\d{1,2})-?(\d{0,3})$/i);
+    const match = trimmed.match(/^([A-Za-z]{2,3})(\d{1,2})-?(\d{0,3})$/i);
     if (match) {
       const setPrefix = match[1].toUpperCase();
       const setNum = match[2].padStart(2, '0');
@@ -1005,7 +1073,7 @@ class OPTCGAPI {
 
   // Auto-complete search (fast, returns limited results)
   async searchCardsAutocomplete(query: string, limit: number = 10): Promise<Card[]> {
-    if (!query || query.length < 2) {
+    if (!query || query.length < 1) {
       return [];
     }
 
@@ -1014,13 +1082,143 @@ class OPTCGAPI {
       await this.getAllCardsForSearch();
     }
 
-    const normalizedQuery = query.trim().toUpperCase().replace(/-/g, '');
+    const trimmedQuery = query.trim();
+    const normalizedQuery = trimmedQuery.toUpperCase().replace(/-/g, '');
     
-    // Check if query looks like a card ID (e.g., OP13-046, ST21-001)
+    // Promo kart için özel kontrol: "p-107", "P-029" gibi formatlar
+    if (trimmedQuery.length >= 2) {
+      // Tam promo kart formatı: "p-107", "P-029"
+      const promoMatch = trimmedQuery.match(/^p-(\d{1,3})$/i);
+      if (promoMatch) {
+        const promoNumber = promoMatch[1].padStart(3, '0');
+        
+        // Cache'de ara
+        const promoMatches = this.fullCardListCache.filter(card => {
+          const cardId = (card.id || '').toUpperCase();
+          const cardSetCode = (card.set_code || '').toUpperCase().replace(/-/g, '');
+          const cardNumber = (card.number || '').padStart(3, '0');
+          
+          if (cardId === `P-${promoNumber}` || cardId === `PRB-${promoNumber}`) {
+            return true;
+          }
+          if (cardSetCode === 'PRB' && cardNumber === promoNumber) {
+            return true;
+          }
+          return false;
+        });
+        
+        if (promoMatches.length > 0) {
+          return promoMatches.slice(0, limit);
+        }
+        
+        // Cache'de yoksa API'den çek
+        try {
+          console.log(`Promo card not in cache, fetching from API: P-${promoNumber}`);
+          const promoCard = await this.findCard(`Card P-${promoNumber}`, 'PRB', promoNumber);
+          if (promoCard) {
+            // Cache'e ekle
+            const cacheKey = `Card P-${promoNumber}_PRB_${promoNumber}`;
+            this.cache.set(cacheKey, [promoCard]);
+            // fullCardListCache'e de ekle (eğer yoksa)
+            const existsInCache = this.fullCardListCache.some(c => c.id === promoCard.id);
+            if (!existsInCache) {
+              this.fullCardListCache.push(promoCard);
+            }
+            return [promoCard];
+          }
+        } catch (error) {
+          console.error('Error fetching promo card from API:', error);
+        }
+      }
+      
+      // Sadece "p-" veya "P-" yazıldığında cache'deki promo kartları göster
+      if (trimmedQuery.toLowerCase() === 'p-' || trimmedQuery.toLowerCase() === 'p') {
+        const allPromoMatches = this.fullCardListCache.filter(card => {
+          const cardId = (card.id || '').toUpperCase();
+          const cardSetCode = (card.set_code || '').toUpperCase().replace(/-/g, '');
+          return cardId.startsWith('P-') || cardSetCode === 'PRB';
+        });
+        
+        // Numara sırasına göre sırala
+        allPromoMatches.sort((a, b) => {
+          const numA = parseInt(a.number || '0');
+          const numB = parseInt(b.number || '0');
+          return numA - numB;
+        });
+        
+        return allPromoMatches.slice(0, limit);
+      }
+    }
+    
+    // Check if query looks like a card ID (e.g., OP13-046, ST21-001, P-107)
     if (this.isCardIdFormat(query)) {
       const parsed = this.parseCardId(query);
       if (parsed) {
         console.log('Searching for card ID:', parsed);
+        
+        // Promo kart kontrolü (numara varsa veya sadece "P-" yazıldıysa)
+        if (parsed.setCode === 'PRB') {
+          // Eğer numara varsa, spesifik promo kart ara
+          if (parsed.number) {
+            // Promo kartlar için özel arama
+            const promoMatches = this.fullCardListCache.filter(card => {
+              const cardId = (card.id || '').toUpperCase();
+              const cardSetCode = (card.set_code || '').toUpperCase().replace(/-/g, '');
+              const cardNumber = (card.number || '').padStart(3, '0');
+              
+              // P-107 formatını kontrol et
+              if (cardId === `P-${parsed.number}` || cardId === `PRB-${parsed.number}`) {
+                return true;
+              }
+              
+              // Set code ve numara eşleşmesi
+              if (cardSetCode === 'PRB' && cardNumber === parsed.number) {
+                return true;
+              }
+              
+              return false;
+            });
+            
+            if (promoMatches.length > 0) {
+              return promoMatches.slice(0, limit);
+            }
+            
+            // Eğer cache'de bulunamazsa, Limitless API'den çekmeyi dene
+            try {
+              console.log(`Promo card not found in cache, fetching from API: P-${parsed.number}`);
+              const promoCard = await this.findCard(`Card P-${parsed.number}`, 'PRB', parsed.number);
+              if (promoCard) {
+                // Cache'e ekle
+                const cacheKey = `Card P-${parsed.number}_PRB_${parsed.number}`;
+                this.cache.set(cacheKey, [promoCard]);
+                // fullCardListCache'e de ekle (eğer yoksa)
+                const existsInCache = this.fullCardListCache.some(c => c.id === promoCard.id);
+                if (!existsInCache) {
+                  this.fullCardListCache.push(promoCard);
+                }
+                return [promoCard];
+              }
+            } catch (error) {
+              console.error('Error fetching promo card from API:', error);
+            }
+          } else {
+            // Sadece "P-" yazıldığında cache'deki tüm promo kartları göster
+            const allPromoMatches = this.fullCardListCache.filter(card => {
+              const cardId = (card.id || '').toUpperCase();
+              const cardSetCode = (card.set_code || '').toUpperCase().replace(/-/g, '');
+              return cardId.startsWith('P-') || cardSetCode === 'PRB';
+            });
+            
+            // Numara sırasına göre sırala
+            allPromoMatches.sort((a, b) => {
+              const numA = parseInt(a.number || '0');
+              const numB = parseInt(b.number || '0');
+              return numA - numB;
+            });
+            
+            return allPromoMatches.slice(0, limit);
+          }
+        }
         
         // Direct search by card ID - include ALL variants (normal, parallel, alternate art, etc.)
         const matches = this.fullCardListCache.filter(card => {
