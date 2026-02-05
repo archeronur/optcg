@@ -320,18 +320,18 @@ class OPTCGAPI {
         if (this.shouldUseLimitlessAPI(setCode)) {
           console.log(`Using Limitless API for ${setCode}`);
           
+          // Convert OP-14 to OP14 for Limitless API (needed for both promo and non-promo cards)
+          const limitlessSetCode = setCode.replace('-', '');
+          const paddedNumber = baseNumber?.padStart(3, '0') || '001';
+          
           // Promo kart kontrolü: PRB set kodu ile P- formatı
           let cardId: string;
           if (setCode === 'PRB' || setCode === 'P') {
             // Promo kartlar için P-XXX formatını kullan
-            const paddedNumber = baseNumber?.padStart(3, '0') || '001';
             cardId = `P-${paddedNumber}`;
             console.log(`Promo card detected, using format: ${cardId}`);
           } else {
-            // Convert OP-14 to OP14 for Limitless API
-            const limitlessSetCode = setCode.replace('-', '');
             // Build card ID with variant suffix if present
-            const paddedNumber = baseNumber?.padStart(3, '0') || '001';
             cardId = variantSuffix 
               ? `${limitlessSetCode}-${paddedNumber}${variantSuffix}` 
               : `${limitlessSetCode}-${paddedNumber}`;
@@ -345,8 +345,12 @@ class OPTCGAPI {
           
           // If we got a fallback card and have a variant suffix, try the base card from API first
           if (limitlessCard && limitlessCard._isFallback && variantSuffix) {
-            console.log(`Got fallback for variant, trying base card: ${limitlessSetCode}-${paddedNumber}`);
-            const baseCard = await this.getCardFromLimitless(`${limitlessSetCode}-${paddedNumber}`);
+            // For promo cards, use P- format; for others, use limitlessSetCode format
+            const baseCardId = (setCode === 'PRB' || setCode === 'P') 
+              ? `P-${paddedNumber}` 
+              : `${limitlessSetCode}-${paddedNumber}`;
+            console.log(`Got fallback for variant, trying base card: ${baseCardId}`);
+            const baseCard = await this.getCardFromLimitless(baseCardId);
             // Only use base card if it's a real API result (not fallback)
             if (baseCard && !baseCard._isFallback) {
               limitlessCard = baseCard;
