@@ -13,244 +13,168 @@ export type GetImageAsDataUriOptions = {
   timeoutMs?: number;
   preferProxy?: boolean;
   cache?: boolean;
-  forcedContentType?: string;
 };
 
-const inMemoryCache = new Map<string, ImageDataUriResult>();
+const imageCache = new Map<string, ImageDataUriResult>();
 
-function sniffContentType(bytes: Uint8Array): string {
-  // PNG: 89 50 4E 47
-  if (bytes.length >= 8 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) {
-    return 'image/png';
-  }
-  // JPEG: FF D8
-  if (bytes.length >= 2 && bytes[0] === 0xff && bytes[1] === 0xd8) {
-    return 'image/jpeg';
-  }
-  // WEBP: RIFF....WEBP
-  if (bytes.length >= 12 && bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 &&
-      bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50) {
-    return 'image/webp';
-  }
-  return 'application/octet-stream';
+// Detect image type from bytes
+function detectImageType(bytes: Uint8Array): string {
+  if (bytes[0] === 0x89 && bytes[1] === 0x50) return 'image/png';
+  if (bytes[0] === 0xFF && bytes[1] === 0xD8) return 'image/jpeg';
+  if (bytes[0] === 0x52 && bytes[1] === 0x49) return 'image/webp'; // RIFF
+  return 'image/png';
 }
 
-function toBase64(bytes: Uint8Array): string {
+// Convert bytes to base64
+function bytesToBase64(bytes: Uint8Array): string {
   let binary = '';
-  const chunkSize = 8192;
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    const chunk = bytes.subarray(i, i + chunkSize);
-    binary += String.fromCharCode.apply(null, Array.from(chunk));
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i += 1024) {
+    const chunk = bytes.subarray(i, Math.min(i + 1024, len));
+    for (let j = 0; j < chunk.length; j++) {
+      binary += String.fromCharCode(chunk[j]);
+    }
   }
   return btoa(binary);
 }
 
-async function fetchBytes(url: string, timeoutMs: number): Promise<{ bytes: Uint8Array; contentType: string }> {
+// Fetch image bytes with timeout
+async function fetchImageBytes(url: string, timeoutMs: number): Promise<{ bytes: Uint8Array; contentType: string }> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
   
   try {
-    console.log(`[fetchBytes] Fetching: ${url.substring(0, 100)}...`);
-    
-    const res = await fetch(url, {
+    const response = await fetch(url, {
       method: 'GET',
-      redirect: 'follow',
-      credentials: 'omit',
-      cache: 'no-store' as RequestCache,
+      headers: { 'Accept': 'image/*' },
       signal: controller.signal,
-      headers: { Accept: 'image/*' },
+      cache: 'no-store',
     });
-
-    console.log(`[fetchBytes] Response: ${res.status} ${res.statusText}`);
-
-    if (!res.ok) {
-      // Check if response is JSON error
-      const contentType = res.headers.get('content-type') || '';
-      if (contentType.includes('application/json')) {
-        try {
-          const json = await res.json();
-          console.error(`[fetchBytes] JSON error:`, json);
-          throw new Error(`Proxy error: ${json?.error || JSON.stringify(json)}`);
-        } catch (jsonErr) {
-          // JSON parse failed, continue
-        }
-      }
-      
-      const errorText = await res.text().catch(() => res.statusText);
-      console.error(`[fetchBytes] HTTP error ${res.status}:`, errorText.substring(0, 200));
-      
-      // Provide helpful error messages
-      if (res.status === 403) throw new Error(`Access forbidden (403) - Check allowed domains`);
-      if (res.status === 404) throw new Error(`Not found (404) - API route may not be deployed`);
-      if (res.status === 500) throw new Error(`Server error (500) - Internal proxy error`);
-      if (res.status === 502) throw new Error(`Bad gateway (502) - Upstream server error`);
-      if (res.status === 504) throw new Error(`Gateway timeout (504) - Request timed out`);
-      
-      throw new Error(`HTTP ${res.status}: ${errorText.substring(0, 100)}`);
-    }
-
-    const arrayBuffer = await res.arrayBuffer();
-    const bytes = new Uint8Array(arrayBuffer);
-    const responseContentType = res.headers.get('content-type') || '';
     
-    console.log(`[fetchBytes] Received ${bytes.length} bytes, Content-Type: ${responseContentType}`);
-    
-    // Validate we got actual image data
-    if (bytes.length < 500) {
-      try {
-        const text = new TextDecoder().decode(bytes);
-        if (text.includes('error') || text.includes('Error') || text.startsWith('{') || text.startsWith('<')) {
-          console.error(`[fetchBytes] Response looks like error text:`, text.substring(0, 200));
-          throw new Error(`Response is not image data: ${text.substring(0, 100)}`);
-        }
-      } catch (decodeErr) {
-        // Not decodable as text
-      }
-      throw new Error(`Image data too small: ${bytes.length} bytes`);
-    }
-    
-    return { bytes, contentType: responseContentType };
-  } catch (error: any) {
-    if (error.name === 'AbortError') {
-      throw new Error(`Request timeout after ${timeoutMs}ms`);
-    }
-    console.error(`[fetchBytes] Error:`, error.message);
-    throw error;
-  } finally {
     clearTimeout(timeoutId);
+    
+    if (!response.ok) {
+      // Try to get error message from JSON response
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('json')) {
+        const json = await response.json().catch(() => ({}));
+        throw new Error(json.error || `HTTP ${response.status}`);
+      }
+      throw new Error(`HTTP ${response.status}`);
+    }
+    
+    const arrayBuffer = await response.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    const contentType = response.headers.get('content-type') || '';
+    
+    return { bytes, contentType };
+  } catch (err: any) {
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') {
+      throw new Error('Request timeout');
+    }
+    throw err;
   }
 }
 
 /**
- * Fetches an image and returns it as a base64 data URI.
- * Uses same-origin proxy to bypass CORS for external images.
+ * Fetch image and convert to base64 data URI.
+ * Uses proxy for cross-origin images.
  */
-export async function getImageAsDataUri(inputUrl: string, options: GetImageAsDataUriOptions = {}): Promise<ImageDataUriResult> {
+export async function getImageAsDataUri(
+  inputUrl: string,
+  options: GetImageAsDataUriOptions = {}
+): Promise<ImageDataUriResult> {
   const {
     timeoutMs = 30000,
     preferProxy = true,
     cache = true,
-    forcedContentType,
   } = options;
 
-  // Normalize URL to absolute
-  const absoluteSourceUrl = toAbsoluteUrl(inputUrl);
-  const cacheKey = `${preferProxy ? 'p' : 'd'}:${absoluteSourceUrl}`;
+  const absoluteUrl = toAbsoluteUrl(inputUrl);
+  const cacheKey = absoluteUrl;
 
   // Check cache
-  if (cache && inMemoryCache.has(cacheKey)) {
-    const cached = inMemoryCache.get(cacheKey)!;
-    console.log(`[getImageAsDataUri] Cache hit: ${absoluteSourceUrl.substring(0, 60)}...`);
+  if (cache && imageCache.has(cacheKey)) {
+    const cached = imageCache.get(cacheKey)!;
     return { ...cached, fromCache: true };
   }
 
-  // Get site origin for proxy URL construction
-  const siteOrigin = getSiteOrigin();
-  
-  console.log(`[getImageAsDataUri] Starting fetch:`, {
-    inputUrl: inputUrl.substring(0, 60),
-    absoluteSourceUrl: absoluteSourceUrl.substring(0, 60),
-    siteOrigin,
-    preferProxy,
-  });
+  let bytes: Uint8Array;
+  let contentType: string;
+  let via: 'api-proxy' | 'direct';
+  let finalUrl: string;
 
-  // Strategy 1: Use proxy (preferred for external images)
   if (preferProxy) {
-    const proxyPath = `/api/image-proxy?url=${encodeURIComponent(absoluteSourceUrl)}`;
-    const proxyUrl = `${siteOrigin}${proxyPath}`;
+    // Use proxy to bypass CORS
+    const origin = getSiteOrigin();
+    const proxyUrl = `${origin}/api/image-proxy?url=${encodeURIComponent(absoluteUrl)}`;
     
-    console.log(`[getImageAsDataUri] Using proxy: ${proxyUrl.substring(0, 100)}...`);
+    console.log(`[getImageAsDataUri] Proxy fetch: ${proxyUrl.substring(0, 100)}`);
     
     try {
-      const { bytes, contentType } = await fetchBytes(proxyUrl, timeoutMs);
+      const result = await fetchImageBytes(proxyUrl, timeoutMs);
+      bytes = result.bytes;
+      contentType = result.contentType;
+      via = 'api-proxy';
+      finalUrl = proxyUrl;
+    } catch (proxyErr: any) {
+      console.warn(`[getImageAsDataUri] Proxy failed: ${proxyErr.message}, trying direct...`);
       
-      if (bytes.length < 500) {
-        throw new Error(`Image bytes too small from proxy: ${bytes.length}`);
-      }
-
-      const finalType = forcedContentType || (contentType && contentType.startsWith('image/') ? contentType : sniffContentType(bytes));
-      const dataUri = `data:${finalType};base64,${toBase64(bytes)}`;
-      
-      const result: ImageDataUriResult = {
-        finalUrl: proxyUrl,
-        contentType: finalType,
-        bytes,
-        dataUri,
-        fromCache: false,
-        via: 'api-proxy',
-      };
-      
-      if (cache) inMemoryCache.set(cacheKey, result);
-      console.log(`[getImageAsDataUri] ✓ Success via proxy: ${bytes.length} bytes`);
-      return result;
-      
-    } catch (proxyError: any) {
-      console.error(`[getImageAsDataUri] Proxy failed:`, proxyError.message);
-      
-      // Strategy 2: Try direct fetch (might work for same-origin or CORS-enabled images)
-      console.log(`[getImageAsDataUri] Trying direct fetch as fallback...`);
-      
+      // Fallback to direct fetch
       try {
-        const { bytes, contentType } = await fetchBytes(absoluteSourceUrl, timeoutMs);
-        
-        if (bytes.length < 500) {
-          throw new Error(`Image bytes too small: ${bytes.length}`);
-        }
-
-        const finalType = forcedContentType || (contentType && contentType.startsWith('image/') ? contentType : sniffContentType(bytes));
-        const dataUri = `data:${finalType};base64,${toBase64(bytes)}`;
-        
-        const result: ImageDataUriResult = {
-          finalUrl: absoluteSourceUrl,
-          contentType: finalType,
-          bytes,
-          dataUri,
-          fromCache: false,
-          via: 'direct',
-        };
-        
-        if (cache) inMemoryCache.set(cacheKey, result);
-        console.log(`[getImageAsDataUri] ✓ Success via direct fetch: ${bytes.length} bytes`);
-        return result;
-        
-      } catch (directError: any) {
-        console.error(`[getImageAsDataUri] Direct fetch also failed:`, directError.message);
-        
-        // Both strategies failed
-        throw new Error(
-          `Failed to load image: Proxy error: ${proxyError.message} | Direct error: ${directError.message}`
-        );
+        const result = await fetchImageBytes(absoluteUrl, timeoutMs);
+        bytes = result.bytes;
+        contentType = result.contentType;
+        via = 'direct';
+        finalUrl = absoluteUrl;
+      } catch (directErr: any) {
+        throw new Error(`Proxy: ${proxyErr.message} | Direct: ${directErr.message}`);
       }
     }
+  } else {
+    // Direct fetch only
+    const result = await fetchImageBytes(absoluteUrl, timeoutMs);
+    bytes = result.bytes;
+    contentType = result.contentType;
+    via = 'direct';
+    finalUrl = absoluteUrl;
   }
 
-  // Strategy 2 only: Direct fetch (no proxy)
-  console.log(`[getImageAsDataUri] Direct fetch (no proxy): ${absoluteSourceUrl.substring(0, 80)}...`);
-  
-  const { bytes, contentType } = await fetchBytes(absoluteSourceUrl, timeoutMs);
-  
-  if (bytes.length < 500) {
-    throw new Error(`Image bytes too small: ${bytes.length}`);
+  // Validate bytes
+  if (bytes.length < 100) {
+    throw new Error(`Image too small: ${bytes.length} bytes`);
   }
 
-  const finalType = forcedContentType || (contentType && contentType.startsWith('image/') ? contentType : sniffContentType(bytes));
-  const dataUri = `data:${finalType};base64,${toBase64(bytes)}`;
+  // Detect content type from bytes if not provided
+  const finalContentType = contentType.startsWith('image/') ? contentType : detectImageType(bytes);
   
+  // Create data URI
+  const base64 = bytesToBase64(bytes);
+  const dataUri = `data:${finalContentType};base64,${base64}`;
+  
+  // Validate data URI format
+  if (!dataUri.startsWith('data:image/')) {
+    throw new Error('Invalid data URI format');
+  }
+
   const result: ImageDataUriResult = {
-    finalUrl: absoluteSourceUrl,
-    contentType: finalType,
+    finalUrl,
+    contentType: finalContentType,
     bytes,
     dataUri,
     fromCache: false,
-    via: 'direct',
+    via,
   };
-  
-  if (cache) inMemoryCache.set(cacheKey, result);
+
+  if (cache) {
+    imageCache.set(cacheKey, result);
+  }
+
+  console.log(`[getImageAsDataUri] Success: ${bytes.length} bytes via ${via}`);
   return result;
 }
 
-// Export cache clearing function for testing
 export function clearImageCache(): void {
-  inMemoryCache.clear();
-  console.log('[getImageAsDataUri] Cache cleared');
+  imageCache.clear();
 }

@@ -1,229 +1,137 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 export const runtime = 'edge';
 
-// Cloudflare Pages Edge Runtime: Timeout helper
-async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number = 25000): Promise<Response> {
-  const controller = new AbortController();
-  
-  const timeoutId = setTimeout(() => {
-    controller.abort();
-  }, timeoutMs);
+// Allowed domains
+const ALLOWED_DOMAINS = [
+  'optcgapi.com',
+  'onepiece-cardgame.com',
+  'en.onepiece-cardgame.com',
+  'onepiece.limitlesstcg.com',
+];
 
-  try {
-    const fetchPromise = fetch(url, {
-      ...options,
-      signal: controller.signal,
-    });
-    
-    const response = await fetchPromise;
-    clearTimeout(timeoutId);
-    return response;
-  } catch (error: any) {
-    clearTimeout(timeoutId);
-    
-    if (error.name === 'AbortError' || controller.signal.aborted) {
-      throw new Error('Request timeout');
-    }
-    throw error;
-  }
-}
-
-// CORS headers for all responses
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS',
-  'Access-Control-Allow-Headers': '*',
-  'Access-Control-Max-Age': '86400',
-  'Cross-Origin-Resource-Policy': 'cross-origin',
-};
-
-// Handle OPTIONS preflight
-export async function OPTIONS(request: NextRequest) {
-  return new Response(null, {
-    status: 200,
-    headers: CORS_HEADERS,
+// Helper: Create JSON response (Cloudflare Workers compatible)
+function jsonResponse(data: object, status: number): Response {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': '*',
+    },
   });
 }
 
-// Simple request counter for debug
-let requestCount = 0;
+// Helper: Create binary response
+function binaryResponse(data: ArrayBuffer, contentType: string): Response {
+  return new Response(data, {
+    status: 200,
+    headers: {
+      'Content-Type': contentType,
+      'Content-Length': String(data.byteLength),
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': '*',
+      'Cache-Control': 'public, max-age=86400',
+    },
+  });
+}
 
-export async function GET(request: NextRequest) {
-  requestCount++;
-  const reqId = requestCount;
-  
+// OPTIONS handler
+export function OPTIONS(): Response {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': '*',
+      'Access-Control-Max-Age': '86400',
+    },
+  });
+}
+
+// GET handler
+export async function GET(request: NextRequest): Promise<Response> {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const imageUrl = searchParams.get('url');
-
-    // DEBUG: Always log request (helps diagnose prod issues)
-    console.log(`[image-proxy #${reqId}] Request received:`, {
-      url: imageUrl?.substring(0, 80) || 'MISSING',
-      host: request.headers.get('host'),
-      origin: request.headers.get('origin'),
-    });
-
-    if (!imageUrl) {
-      console.error(`[image-proxy #${reqId}] Missing URL parameter`);
-      return new Response(
-        JSON.stringify({ error: 'URL parameter is required', reqId }),
-        { status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
-      );
+    const url = request.nextUrl.searchParams.get('url');
+    
+    console.log('[proxy] Request:', url?.substring(0, 80) || 'none');
+    
+    if (!url) {
+      return jsonResponse({ error: 'URL required' }, 400);
     }
-
-    // Validate URL format
-    let url: URL;
+    
+    // Parse URL
+    let parsedUrl: URL;
     try {
-      url = new URL(imageUrl);
+      parsedUrl = new URL(url);
     } catch {
-      console.error(`[image-proxy #${reqId}] Invalid URL format:`, imageUrl.substring(0, 100));
-      return new Response(
-        JSON.stringify({ error: 'Invalid URL format', reqId }),
-        { status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
-      );
+      return jsonResponse({ error: 'Invalid URL' }, 400);
     }
-
-    // Security: Only allow HTTPS and specific domains
-    const allowedDomains = [
-      'optcgapi.com',
-      'onepiece-cardgame.com',
-      'en.onepiece-cardgame.com',
-      'onepiece.limitlesstcg.com',
-    ];
-
-    const hostname = url.hostname.toLowerCase();
-    const isAllowed = allowedDomains.some(domain => 
-      hostname === domain || hostname.endsWith('.' + domain)
-    );
-
-    if (!isAllowed) {
-      console.error(`[image-proxy #${reqId}] Domain not allowed:`, hostname);
-      return new Response(
-        JSON.stringify({ error: 'Domain not allowed', domain: hostname, reqId }),
-        { status: 403, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
-      );
+    
+    // Check domain
+    const host = parsedUrl.hostname.toLowerCase();
+    const allowed = ALLOWED_DOMAINS.some(d => host === d || host.endsWith('.' + d));
+    if (!allowed) {
+      console.log('[proxy] Blocked:', host);
+      return jsonResponse({ error: 'Domain not allowed' }, 403);
     }
-
-    if (url.protocol !== 'https:') {
-      console.error(`[image-proxy #${reqId}] Non-HTTPS rejected:`, url.protocol);
-      return new Response(
-        JSON.stringify({ error: 'Only HTTPS URLs allowed', reqId }),
-        { status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
-      );
+    
+    // Require HTTPS
+    if (parsedUrl.protocol !== 'https:') {
+      return jsonResponse({ error: 'HTTPS required' }, 400);
     }
-
-    // Fetch the image
-    console.log(`[image-proxy #${reqId}] Fetching:`, imageUrl.substring(0, 80));
+    
+    // Fetch image
+    console.log('[proxy] Fetching:', url.substring(0, 80));
+    
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 25000);
     
     let response: Response;
     try {
-      response = await fetchWithTimeout(imageUrl, {
+      response = await fetch(url, {
         method: 'GET',
         headers: { 'Accept': 'image/*' },
-        redirect: 'follow',
-        credentials: 'omit',
-      }, 25000);
-      
-      console.log(`[image-proxy #${reqId}] Fetch response:`, {
-        status: response.status,
-        statusText: response.statusText,
-        contentType: response.headers.get('content-type'),
-        redirected: response.redirected,
+        signal: controller.signal,
       });
-    } catch (fetchError: any) {
-      console.error(`[image-proxy #${reqId}] Fetch error:`, fetchError.message);
-      
-      const status = fetchError.message === 'Request timeout' ? 504 : 502;
-      return new Response(
-        JSON.stringify({ error: `Fetch failed: ${fetchError.message}`, reqId }),
-        { status, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    if (!response.ok) {
-      const errorText = await response.text().catch(() => response.statusText);
-      console.error(`[image-proxy #${reqId}] Non-OK response:`, {
-        status: response.status,
-        body: errorText.substring(0, 200),
-      });
-      return new Response(
-        JSON.stringify({ error: `Upstream error: ${response.status}`, body: errorText.substring(0, 100), reqId }),
-        { status: response.status, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Read image data
-    let arrayBuffer: ArrayBuffer;
-    try {
-      arrayBuffer = await response.arrayBuffer();
-    } catch (bufferError: any) {
-      console.error(`[image-proxy #${reqId}] ArrayBuffer error:`, bufferError.message);
-      return new Response(
-        JSON.stringify({ error: `Failed to read response: ${bufferError.message}`, reqId }),
-        { status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const imageBytes = new Uint8Array(arrayBuffer);
-    const contentType = response.headers.get('content-type') || 'image/png';
-
-    console.log(`[image-proxy #${reqId}] Image data:`, {
-      size: imageBytes.length,
-      contentType,
-      firstBytes: Array.from(imageBytes.slice(0, 8)),
-    });
-
-    // Validate image size
-    if (imageBytes.length < 500) {
-      // Try to decode as text to check if it's an error
-      try {
-        const text = new TextDecoder().decode(imageBytes);
-        console.error(`[image-proxy #${reqId}] Response too small, text:`, text.substring(0, 200));
-        return new Response(
-          JSON.stringify({ error: 'Response too small', size: imageBytes.length, text: text.substring(0, 100), reqId }),
-          { status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
-        );
-      } catch {
-        // Not text
+      clearTimeout(timeout);
+    } catch (fetchErr: any) {
+      clearTimeout(timeout);
+      console.error('[proxy] Fetch error:', fetchErr.message);
+      if (fetchErr.name === 'AbortError') {
+        return jsonResponse({ error: 'Timeout' }, 504);
       }
-      return new Response(
-        JSON.stringify({ error: 'Image too small', size: imageBytes.length, reqId }),
-        { status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
-      );
+      return jsonResponse({ error: fetchErr.message }, 502);
     }
-
-    // Validate image signature (JPEG or PNG)
-    const isJPEG = imageBytes[0] === 0xFF && imageBytes[1] === 0xD8;
-    const isPNG = imageBytes[0] === 0x89 && imageBytes[1] === 0x50 && imageBytes[2] === 0x4E && imageBytes[3] === 0x47;
     
-    if (!isJPEG && !isPNG) {
-      console.warn(`[image-proxy #${reqId}] Unknown image format, first bytes:`, Array.from(imageBytes.slice(0, 8)));
-      // Continue anyway, might be WEBP or other format
+    console.log('[proxy] Response:', response.status);
+    
+    if (!response.ok) {
+      return jsonResponse({ error: `HTTP ${response.status}` }, response.status);
     }
-
-    console.log(`[image-proxy #${reqId}] SUCCESS: Returning ${imageBytes.length} bytes`);
-
-    // CRITICAL: Return binary data using Response (not NextResponse for better compatibility)
-    // Cloudflare Pages Edge Runtime works better with native Response
-    return new Response(arrayBuffer, {
-      status: 200,
-      headers: {
-        ...CORS_HEADERS,
-        'Content-Type': contentType.startsWith('image/') ? contentType : 'image/png',
-        'Content-Length': imageBytes.length.toString(),
-        'Cache-Control': 'public, max-age=86400, s-maxage=86400, immutable',
-        'X-Image-Proxy-Status': 'success',
-        'X-Image-Size': imageBytes.length.toString(),
-      },
-    });
-
-  } catch (error: any) {
-    console.error(`[image-proxy #${reqId}] Unhandled error:`, error.message, error.stack);
     
-    return new Response(
-      JSON.stringify({ error: error.message || 'Internal error', reqId }),
-      { status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } }
-    );
+    // Read body
+    let buffer: ArrayBuffer;
+    try {
+      buffer = await response.arrayBuffer();
+    } catch (bufErr: any) {
+      console.error('[proxy] Buffer error:', bufErr.message);
+      return jsonResponse({ error: 'Read failed' }, 500);
+    }
+    
+    console.log('[proxy] Success:', buffer.byteLength, 'bytes');
+    
+    if (buffer.byteLength < 100) {
+      return jsonResponse({ error: 'Too small' }, 400);
+    }
+    
+    const ct = response.headers.get('content-type') || 'image/png';
+    return binaryResponse(buffer, ct);
+    
+  } catch (err: any) {
+    console.error('[proxy] Error:', err.message);
+    return jsonResponse({ error: err.message || 'Unknown error' }, 500);
   }
 }
