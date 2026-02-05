@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev -H localhost",
-    "build": "next build",
+    "build": "node scripts/build.js",
+    "build:next": "next build",
     "start": "next start",
     "lint": "next lint",
     "perf": "next build && next start",
     "test:perf": "node -e \"console.log('🚀 Performance test başlatılıyor...')\"",
-    "pages:build": "npx @cloudflare/next-on-pages@latest",
+    "pages:build": "next-on-pages",
     "prepages:build": "next build",
     "pages:deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static"
   },
