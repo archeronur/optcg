@@ -2821,6 +2821,24 @@ body::before {
   border-top: 1px solid #e9ecef;
 }
 
+/* Mobile-only footer close button (hidden on desktop) */
+.modal-footer-mobile-close {
+  display: none;
+}
+
+.modal-footer-close-button {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.modal-footer-close-button:hover {
+  opacity: 0.9;
+}
+
 /* ========================
    SKELETON LOADING
    ======================== */
@@ -3086,266 +3104,314 @@ body::before {
   background: linear-gradient(135deg, #764ba2, #667eea);
 }
 
-/* Modal Responsive */
+/* ========================
+   MODAL RESPONSIVE - 768px
+   ======================== */
 @media (max-width: 768px) {
   .modal-overlay {
     padding: 0;
-    align-items: flex-end; /* Bottom aligned on mobile */
-    overflow-y: auto;
-    overflow-x: hidden !important;
+    align-items: flex-end;
+    overflow: hidden;
     -webkit-overflow-scrolling: touch;
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100% !important;
-    max-width: 100vw !important;
+    inset: 0;
   }
   
   .modal-content {
-    max-width: 100% !important;
     width: 100% !important;
-    max-height: 95vh;
-    border-radius: 20px 20px 0 0;
+    max-width: 100vw !important;
+    max-height: 93vh;
+    border-radius: 16px 16px 0 0;
     margin: 0;
     animation: slideUpMobile 0.3s ease;
+    overflow-x: hidden;
     overflow-y: auto;
-    overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;
-    position: relative;
     box-sizing: border-box;
   }
   
   @keyframes slideUpMobile {
-    from {
-      opacity: 0;
-      transform: translateY(100%);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(100%); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Drag handle indicator at top */
+  .modal-content::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: #d0d0d0;
+    border-radius: 2px;
+    margin: 10px auto 0;
+    flex-shrink: 0;
+  }
+  
+  .modal-close {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+    top: 10px;
+    right: 10px;
+    z-index: 1001;
+    position: absolute;
+    background: rgba(0,0,0,0.06);
+    box-shadow: none;
+    color: #666;
+  }
+
+  .modal-close:hover {
+    transform: none;
+    background: rgba(0,0,0,0.1);
   }
   
   .modal-body {
-    grid-template-columns: 1fr !important;
-    gap: 20px;
-    padding: 20px !important;
-    overflow-x: hidden !important;
-    overflow-y: auto;
-    max-height: none;
-    -webkit-overflow-scrolling: touch;
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column;
+    gap: 16px;
+    padding: 12px 16px 24px !important;
+    overflow-x: hidden;
+    overflow-y: visible;
+    width: 100%;
+    box-sizing: border-box;
   }
   
+  /* Image: compact, centered */
   .modal-image-section {
-    padding: 20px;
-    width: 100% !important;
-    max-width: 100% !important;
+    padding: 16px;
+    border-radius: 12px;
+    width: 100%;
     box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow-x: hidden;
   }
   
   .modal-card-image {
-    max-height: 350px;
-    max-width: 100% !important;
+    max-height: 280px;
+    max-width: 60%;
     width: auto;
     height: auto;
     object-fit: contain;
+    border-radius: 8px;
+  }
+
+  .modal-card-image:hover {
+    transform: none;
   }
   
+  /* Card name: compact */
   .modal-card-name-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    padding-bottom: 12px;
-    border-bottom: 2px solid #e9ecef;
-    margin-bottom: 16px;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 0;
+    flex-wrap: wrap;
   }
   
   .modal-card-name {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .modal-info-section {
     width: 100%;
-    line-height: 1.3;
+    box-sizing: border-box;
+    gap: 12px;
+    overflow: hidden;
   }
   
+  /* Detail rows: inline horizontal on mobile */
   .modal-card-details {
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 100%;
     box-sizing: border-box;
-    overflow-x: hidden;
+    gap: 0;
   }
   
   .detail-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    padding: 12px 0;
-    border-bottom: 1px solid #e9ecef;
-    width: 100% !important;
-    max-width: 100% !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 0;
+    border-bottom: 1px solid #f0f0f0;
+    width: 100%;
     box-sizing: border-box;
-    overflow-x: hidden;
   }
   
   .detail-label {
-    min-width: auto;
-    width: 100%;
-    font-size: 12px;
+    min-width: 90px;
+    width: auto;
+    font-size: 11px;
     font-weight: 700;
-    margin-bottom: 4px;
-    color: #495057;
+    color: #6c757d;
+    margin-bottom: 0;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
   }
   
   .detail-value {
-    font-size: 15px;
-    width: 100% !important;
-    max-width: 100% !important;
+    font-size: 14px;
+    flex: 1;
+    min-width: 0;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    line-height: 1.5;
-    overflow-x: hidden;
+    line-height: 1.4;
   }
 
-  /* Quantity controls mobile */
+  /* Quantity controls: always inline */
   .quantity-controls {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden;
-    flex-wrap: wrap;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center;
     gap: 8px;
+    width: auto !important;
   }
 
   .quantity-ctrl-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
     flex-shrink: 0;
+    min-width: 34px;
+    min-height: 34px;
   }
 
   .quantity-badge {
     flex-shrink: 0;
+    font-size: 13px;
+    padding: 5px 12px;
+    min-width: 36px;
   }
   
-  .modal-info-section {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box;
-    gap: 16px;
-    overflow-x: hidden;
-  }
-  
+  /* Card text sections: compact */
   .modal-card-text {
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 100%;
     box-sizing: border-box;
-    padding: 16px;
-    overflow-x: hidden;
+    padding: 14px;
+    border-radius: 10px;
+  }
+  
+  .modal-card-text h4 {
+    font-size: 11px;
+    margin-bottom: 6px;
   }
   
   .modal-card-text p {
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 13px;
+    line-height: 1.5;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
   }
 
   .modal-flavor-text {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden;
+    padding: 12px 14px;
+    border-radius: 10px;
   }
 
   .modal-flavor-text p {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
+    font-size: 12px;
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
 
   .modal-artist {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden;
+    font-size: 11px;
+    padding-top: 8px;
   }
   
+  /* Art variants section */
   .art-variants-section {
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 100%;
     box-sizing: border-box;
-    padding: 16px;
-    overflow-x: hidden;
+    padding: 14px;
+    border-radius: 10px;
+  }
+
+  .art-variants-section h4 {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  .art-variants-hint {
+    font-size: 11px;
+    padding: 6px 10px;
+    margin-bottom: 10px;
   }
   
   .variants-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden;
+    gap: 8px;
+    width: 100%;
   }
 
   .variant-card {
-    max-width: 100%;
-    overflow-x: hidden;
-  }
-  
-  .modal-close {
-    width: 48px; /* Touch-friendly */
-    height: 48px;
-    font-size: 28px;
-    top: 12px;
-    right: 12px;
-    z-index: 1001;
-    position: absolute;
-    flex-shrink: 0;
+    border-width: 2px;
+    border-radius: 8px;
   }
 
-  /* On touch devices, avoid hover transforms that can make the X jumpy */
-  .modal-close:hover {
+  .variant-card:hover {
     transform: none;
   }
 
-  .change-art-btn {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden;
-    box-sizing: border-box;
+  .variant-info {
+    padding: 4px 2px;
   }
 
+  .variant-info .variant-label {
+    font-size: 8px;
+    padding: 2px 5px;
+  }
+
+  .current-badge {
+    font-size: 8px;
+    padding: 1px 5px;
+  }
+
+  .variant-selected-check {
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+    top: 3px;
+    right: 3px;
+  }
+
+  .change-art-btn {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 16px;
+    font-size: 14px;
+    border-radius: 10px;
+    min-height: 44px;
+  }
+
+  .no-variants-message {
+    font-size: 12px;
+    padding: 12px;
+  }
+
+  /* Footer close button */
   .modal-footer-mobile-close {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden;
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
   }
 
   .modal-footer-close-button {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden;
-    box-sizing: border-box;
-  }
-  
-  .zoom-controls {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  
-  .zoom-reset-button {
-    margin-left: 0;
     width: 100%;
-    margin-top: 8px;
+    padding: 12px 16px;
+    font-size: 15px;
+    border-radius: 10px;
+    min-height: 44px;
   }
   
+  /* Celebration */
   .celebration-content {
     padding: 30px 40px;
     margin: 15px;
@@ -3366,217 +3432,173 @@ body::before {
   }
   
   .autocomplete-item {
-    padding: 14px 16px; /* Larger touch target */
+    padding: 14px 16px;
     min-height: 60px;
   }
 }
 
+/* ========================
+   MODAL RESPONSIVE - 480px
+   ======================== */
 @media (max-width: 480px) {
-  .modal-overlay {
-    padding: 0;
-    overflow-x: hidden !important;
-    width: 100% !important;
-    max-width: 100vw !important;
-  }
-  
   .modal-content {
     max-height: 100vh;
-    border-radius: 20px 20px 0 0;
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden !important;
-    box-sizing: border-box;
+    border-radius: 14px 14px 0 0;
+  }
+
+  .modal-content::before {
+    width: 36px;
+    height: 4px;
+    margin: 8px auto 0;
+  }
+
+  .modal-close {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+    top: 8px;
+    right: 8px;
   }
   
   .modal-body {
-    padding: 16px !important;
-    gap: 16px;
-    max-height: calc(100vh - 100px);
-    overflow-y: auto;
-    overflow-x: hidden !important;
-    -webkit-overflow-scrolling: touch;
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
+    padding: 10px 14px 20px !important;
+    gap: 12px;
   }
   
   .modal-image-section {
-    padding: 16px;
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box;
-    overflow-x: hidden;
+    padding: 12px;
+    border-radius: 10px;
   }
   
   .modal-card-image {
-    max-height: 300px;
-    max-width: 100% !important;
-    width: auto;
-    height: auto;
-    object-fit: contain;
+    max-height: 220px;
+    max-width: 55%;
   }
   
   .modal-card-name-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #e9ecef;
-    margin-bottom: 14px;
+    gap: 6px;
+    padding-bottom: 8px;
   }
   
   .modal-card-name {
-    font-size: 1.3rem;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    width: 100% !important;
-    max-width: 100% !important;
-    line-height: 1.3;
-    overflow-x: hidden;
+    font-size: 1.1rem;
+    line-height: 1.2;
   }
-  
+
   .modal-info-section {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box;
-    gap: 14px;
-    overflow-x: hidden;
-  }
-  
-  .modal-card-details {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden;
+    gap: 10px;
   }
   
   .detail-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    padding: 12px 0;
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box;
-    overflow-x: hidden;
+    padding: 7px 0;
   }
   
   .detail-label {
-    min-width: auto;
-    width: 100%;
-    font-size: 11px;
-    font-weight: 700;
-    margin-bottom: 4px;
-    color: #495057;
+    min-width: 80px;
+    font-size: 10px;
   }
   
   .detail-value {
-    font-size: 14px;
-    width: 100% !important;
-    max-width: 100% !important;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.5;
-    overflow-x: hidden;
+    font-size: 13px;
   }
 
-  /* Quantity controls small mobile */
-  .quantity-controls {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden;
-    flex-wrap: wrap;
-    gap: 6px;
+  .quantity-ctrl-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    min-width: 30px;
+    min-height: 30px;
+  }
+
+  .quantity-badge {
+    font-size: 12px;
+    padding: 4px 10px;
+    min-width: 32px;
   }
   
   .modal-card-text {
-    padding: 14px;
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box;
-    overflow-x: hidden;
+    padding: 12px;
+    border-radius: 8px;
+  }
+  
+  .modal-card-text h4 {
+    font-size: 10px;
+    margin-bottom: 5px;
   }
   
   .modal-card-text p {
-    font-size: 13px;
-    line-height: 1.6;
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    font-size: 12px;
+    line-height: 1.5;
   }
 
   .modal-flavor-text {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden;
+    padding: 10px 12px;
+    border-radius: 8px;
   }
 
   .modal-flavor-text p {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    font-size: 11px;
   }
 
   .modal-artist {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden;
+    font-size: 10px;
+    padding-top: 6px;
   }
   
   .art-variants-section {
-    padding: 14px;
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box;
-    overflow-x: hidden;
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .art-variants-section h4 {
+    font-size: 13px;
+  }
+
+  .art-variants-hint {
+    font-size: 10px;
+    padding: 5px 8px;
+    margin-bottom: 8px;
   }
   
   .variants-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden;
+    gap: 6px;
   }
 
   .variant-card {
-    max-width: 100%;
-    overflow-x: hidden;
+    border-radius: 6px;
   }
-  
-  .modal-close {
-    width: 44px;
-    height: 44px;
-    font-size: 26px;
-    top: 10px;
-    right: 10px;
-    position: absolute;
-    flex-shrink: 0;
+
+  .variant-info .variant-label {
+    font-size: 7px;
+    padding: 1px 4px;
+  }
+
+  .current-badge {
+    font-size: 7px;
+    padding: 1px 4px;
+  }
+
+  .variant-selected-check {
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    top: 2px;
+    right: 2px;
   }
 
   .change-art-btn {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden;
-    box-sizing: border-box;
-  }
-
-  .modal-footer-mobile-close {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden;
+    padding: 10px 14px;
+    font-size: 13px;
+    border-radius: 8px;
   }
 
   .modal-footer-close-button {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden;
-    box-sizing: border-box;
+    padding: 10px 14px;
+    font-size: 14px;
+    border-radius: 8px;
   }
-  
+
   .skeleton-grid {
     gap: 8px;
     padding: 15px;
@@ -3608,41 +3630,6 @@ body::before {
     width: 36px;
     height: 36px;
     font-size: 20px;
-  }
-  
-  /* Art variants mobile */
-  .art-variants-section {
-    padding: 15px;
-  }
-  
-  .variants-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-  }
-  
-  .variant-card {
-    border-width: 2px;
-  }
-  
-  .change-art-btn {
-    padding: 12px 16px;
-    font-size: 14px;
-    min-height: 44px;
-  }
-
-  /* Extra mobile close button at bottom of card detail modal */
-  .modal-footer-mobile-close {
-    margin-top: 12px;
-    display: flex;
-    justify-content: center;
-    width: 100%;
-  }
-
-  .modal-footer-close-button {
-    width: 100%;
-    max-width: 320px;
-    padding: 10px 16px;
-    font-size: 14px;
   }
   
   /* Confirm dialog mobile */
