@@ -20,8 +20,24 @@ function run(cmd, args) {
 }
 
 if (isCloudflarePages()) {
-  console.log('[build] Detected Cloudflare Pages environment. Running `next-on-pages`...');
-  run('next-on-pages', []);
+  /**
+   * next-on-pages internally runs `vercel build`, which in turn executes `npm run build`.
+   * If our build script itself calls next-on-pages, that becomes recursive and fails with:
+   *   "vercel build must not recursively invoke itself"
+   *
+   * We avoid that by:
+   * - outer Cloudflare build: run next-on-pages and set an env marker
+   * - inner build (triggered by vercel build): run plain next build
+   */
+  if (process.env.NEXT_ON_PAGES_INNER_BUILD === '1') {
+    console.log('[build] Cloudflare inner build detected. Running `next build`...');
+    run('next', ['build']);
+  } else {
+    console.log('[build] Detected Cloudflare Pages environment. Running `next-on-pages`...');
+    // Re-run this same build script as part of `vercel build`, but in "inner build" mode.
+    process.env.NEXT_ON_PAGES_INNER_BUILD = '1';
+    run('next-on-pages', []);
+  }
 } else {
   console.log('[build] Non-Cloudflare environment. Running `next build`...');
   run('next', ['build']);
