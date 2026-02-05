@@ -3,10 +3,11 @@ export function getSiteOrigin(): string {
   // This is critical for Cloudflare Pages where domain can vary
   if (typeof window !== 'undefined' && window.location?.origin) {
     const origin = window.location.origin;
-    // Debug log in dev only
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[getSiteOrigin] Using browser origin:', origin);
-    }
+    // ALWAYS log - critical for debugging prod issues
+    console.log('[getSiteOrigin] Using browser origin:', origin, {
+      href: window.location.href,
+      pathname: window.location.pathname
+    });
     return origin;
   }
 
@@ -16,10 +17,12 @@ export function getSiteOrigin(): string {
 
   const fallback = envOrigin || 'http://localhost:3000';
   
-  // Debug log in dev only
-  if (process.env.NODE_ENV === 'development') {
-    console.log('[getSiteOrigin] Using fallback origin:', fallback);
-  }
+  // ALWAYS log - critical for debugging
+  console.warn('[getSiteOrigin] Using fallback origin (no window):', fallback, {
+    hasWindow: typeof window !== 'undefined',
+    envOrigin,
+    isSSR: typeof window === 'undefined'
+  });
   
   return fallback;
 }
@@ -60,20 +63,26 @@ export function toAbsoluteUrl(input: string, origin: string = getSiteOrigin()): 
   try {
     const absoluteUrl = new URL(raw, origin).toString();
     
-    // Debug log in dev only
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[toAbsoluteUrl]', raw, '->', absoluteUrl, '(origin:', origin + ')');
-    }
+    // ALWAYS log - critical for debugging prod issues
+    console.log('[toAbsoluteUrl]', raw, '->', absoluteUrl, '(origin:', origin + ')');
     
     return absoluteUrl;
   } catch (error) {
-    console.error('[toAbsoluteUrl] Failed to create URL:', { input: raw, origin, error });
+    console.error('[toAbsoluteUrl] Failed to create URL:', { 
+      input: raw, 
+      origin, 
+      error: error instanceof Error ? error.message : String(error),
+      errorName: error instanceof Error ? error.name : undefined
+    });
     // Fallback: if it's already a valid-looking URL, return as-is
     if (/^https?:\/\//i.test(raw)) {
+      console.log('[toAbsoluteUrl] Input already absolute, returning as-is:', raw);
       return raw;
     }
     // Last resort: prepend origin
-    return `${origin}${raw.startsWith('/') ? '' : '/'}${raw}`;
+    const fallbackUrl = `${origin}${raw.startsWith('/') ? '' : '/'}${raw}`;
+    console.warn('[toAbsoluteUrl] Using fallback URL:', fallbackUrl);
+    return fallbackUrl;
   }
 }
 

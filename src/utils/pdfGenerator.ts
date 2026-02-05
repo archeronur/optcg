@@ -600,13 +600,18 @@ export class PDFGenerator {
       imageUrl = imageUrl.trim();
       
       // Ensure absolute URL - critical for prod environments
+      const originalUrl = imageUrl;
       try {
         imageUrl = toAbsoluteUrl(imageUrl);
+        console.log(`[drawCard] URL normalized: ${originalUrl} -> ${imageUrl} for ${card.card.name}`);
       } catch (urlError) {
-        console.warn(`Failed to normalize URL for ${card.card.name}:`, urlError);
+        console.error(`[drawCard] Failed to normalize URL for ${card.card.name}:`, {
+          originalUrl,
+          error: urlError
+        });
         // If toAbsoluteUrl fails, check if it's already absolute
         if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
-          console.warn(`Invalid image URL format: ${imageUrl}`);
+          console.error(`[drawCard] Invalid image URL format: ${imageUrl} for ${card.card.name}`);
           this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
           return;
         }
@@ -614,7 +619,7 @@ export class PDFGenerator {
       
       // Final validation - must be absolute
       if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
-        console.warn(`Invalid image URL format after normalization: ${imageUrl}`);
+        console.error(`[drawCard] Invalid image URL format after normalization: ${imageUrl} for ${card.card.name}`);
         this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
         return;
       }
@@ -651,10 +656,17 @@ export class PDFGenerator {
       let lastError: Error | null = null;
       
       try {
+        console.log(`[drawCard] Loading image for ${card.card.name}:`, imageUrl);
         imageData = await this.getCardImageBytes(imageUrl);
+        console.log(`[drawCard] Image loaded successfully for ${card.card.name}, bytes:`, imageData?.length);
       } catch (error: any) {
         lastError = error;
-        console.error(`Image loading failed for ${card.card.name} (${imageUrl.substring(0, 50)}...):`, error);
+        console.error(`[drawCard] Image loading failed for ${card.card.name}:`, {
+          imageUrl,
+          error: error?.message || error,
+          errorName: error?.name,
+          stack: error?.stack
+        });
         
         // Alternatif URL'leri dene - normalize edilmiş
         const alternativeUrls = [

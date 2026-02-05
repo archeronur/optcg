@@ -67,11 +67,21 @@ export async function OPTIONS(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+  const startTime = Date.now();
+  
   try {
     const searchParams = request.nextUrl.searchParams;
     const imageUrl = searchParams.get('url');
 
+    console.log('[image-proxy] Request received:', {
+      url: imageUrl,
+      referer: request.headers.get('referer'),
+      origin: request.headers.get('origin'),
+      userAgent: request.headers.get('user-agent')?.substring(0, 50)
+    });
+
     if (!imageUrl) {
+      console.error('[image-proxy] Missing URL parameter');
       return NextResponse.json(
         { error: 'URL parameter is required' },
         { status: 400 }
@@ -82,7 +92,13 @@ export async function GET(request: NextRequest) {
     let url: URL;
     try {
       url = new URL(imageUrl);
-    } catch {
+      console.log('[image-proxy] Parsed URL:', {
+        hostname: url.hostname,
+        pathname: url.pathname,
+        protocol: url.protocol
+      });
+    } catch (error) {
+      console.error('[image-proxy] Invalid URL format:', imageUrl, error);
       return NextResponse.json(
         { error: 'Invalid URL format' },
         { status: 400 }
@@ -112,6 +128,7 @@ export async function GET(request: NextRequest) {
     // Görseli fetch et (timeout ile - edge runtime compatible, Cloudflare Pages optimized)
     let response: Response;
     try {
+      console.log('[image-proxy] Fetching image:', imageUrl);
       response = await fetchWithTimeout(imageUrl, {
         method: 'GET',
         // NOTE (Edge runtime): keep headers minimal & safe.
@@ -122,7 +139,21 @@ export async function GET(request: NextRequest) {
         // Cloudflare Pages: Don't include credentials
         credentials: 'omit'
       }, 30000); // 30 saniye timeout (Cloudflare Pages için optimize edildi)
+      
+      console.log('[image-proxy] Fetch response:', {
+        url: imageUrl,
+        status: response.status,
+        statusText: response.statusText,
+        contentType: response.headers.get('content-type'),
+        contentLength: response.headers.get('content-length'),
+        ok: response.ok
+      });
     } catch (error: any) {
+      console.error('[image-proxy] Fetch error:', {
+        url: imageUrl,
+        error: error?.message || error,
+        errorName: error?.name
+      });
       if (error.message === 'Request timeout') {
         return NextResponse.json(
           { error: 'Request timeout' },
@@ -133,6 +164,13 @@ export async function GET(request: NextRequest) {
     }
 
     if (!response.ok) {
+      const errorText = await response.text().catch(() => response.statusText);
+      console.error('[image-proxy] Non-OK response:', {
+        url: imageUrl,
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText.substring(0, 200)
+      });
       return NextResponse.json(
         { error: `Failed to fetch image: ${response.status} ${response.statusText}` },
         { status: response.status }
@@ -150,12 +188,26 @@ export async function GET(request: NextRequest) {
     const arrayBuffer = await response.arrayBuffer();
     const uint8Array = new Uint8Array(arrayBuffer);
 
+    console.log('[image-proxy] Image data received:', {
+      url: imageUrl,
+      bytes: uint8Array.length,
+      contentType: contentType
+    });
+
     if (uint8Array.length < 1000) {
+      console.error('[image-proxy] Image data too small:', uint8Array.length);
       return NextResponse.json(
         { error: 'Image data too small' },
         { status: 400 }
       );
     }
+
+    const duration = Date.now() - startTime;
+    console.log('[image-proxy] Success:', {
+      url: imageUrl,
+      bytes: uint8Array.length,
+      duration: `${duration}ms`
+    });
 
     // CORS header'ları ekle (Cloudflare Pages optimized)
     return new NextResponse(uint8Array, {
@@ -175,7 +227,13 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('Image proxy error:', error);
+    const duration = Date.now() - startTime;
+    console.error('[image-proxy] Error:', {
+      error: error?.message || error,
+      errorName: error?.name,
+      stack: error?.stack,
+      duration: `${duration}ms`
+    });
     
     if (error.name === 'TimeoutError' || error.name === 'AbortError') {
       return NextResponse.json(

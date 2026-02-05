@@ -67,6 +67,9 @@ function toBase64(bytes: Uint8Array): string {
 async function fetchBytes(url: string, timeoutMs: number): Promise<{ bytes: Uint8Array; contentType: string }> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  
+  console.log('[fetchBytes] Fetching:', url);
+  
   try {
     const res = await fetch(url, {
       method: 'GET',
@@ -79,21 +82,43 @@ async function fetchBytes(url: string, timeoutMs: number): Promise<{ bytes: Uint
       },
     });
 
+    console.log('[fetchBytes] Response:', {
+      url,
+      status: res.status,
+      statusText: res.statusText,
+      contentType: res.headers.get('content-type'),
+      ok: res.ok
+    });
+
     if (!res.ok) {
       // Try to provide more context when the proxy returns JSON
       const ct = res.headers.get('content-type') || '';
       if (ct.includes('application/json')) {
         const json = await res.json().catch(() => null);
         const msg = json?.error ? String(json.error) : `HTTP ${res.status}`;
+        console.error('[fetchBytes] JSON error response:', json);
         throw new Error(msg);
       }
+      const errorText = await res.text().catch(() => res.statusText);
+      console.error('[fetchBytes] HTTP error:', res.status, errorText.substring(0, 200));
       throw new Error(`HTTP ${res.status} ${res.statusText}`);
     }
 
     const arrayBuffer = await res.arrayBuffer();
     const bytes = new Uint8Array(arrayBuffer);
     const contentType = res.headers.get('content-type') || '';
+    
+    console.log('[fetchBytes] Success:', url, 'bytes:', bytes.length, 'contentType:', contentType);
+    
     return { bytes, contentType };
+  } catch (error: any) {
+    console.error('[fetchBytes] Fetch error:', {
+      url,
+      error: error?.message || error,
+      errorName: error?.name,
+      aborted: controller.signal.aborted
+    });
+    throw error;
   } finally {
     clearTimeout(timeoutId);
   }
@@ -127,13 +152,12 @@ export async function getImageAsDataUri(inputUrl: string, options: GetImageAsDat
     const siteOrigin = getSiteOrigin();
     const proxyUrl = toAbsoluteUrl(proxyPath, siteOrigin);
     
-    // Debug log in dev only
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[getImageAsDataUri] Using proxy:', proxyUrl, 'for source:', absoluteSourceUrl);
-    }
+    // Debug log - ALWAYS log in prod to diagnose issues
+    console.log('[getImageAsDataUri] Using proxy:', proxyUrl, 'for source:', absoluteSourceUrl, 'origin:', siteOrigin);
     
     try {
       const { bytes, contentType } = await fetchBytes(proxyUrl, timeoutMs);
+      console.log('[getImageAsDataUri] Proxy success:', proxyUrl, 'bytes:', bytes.length);
       if (bytes.length < 1000) throw new Error('Image bytes too small');
 
       const finalType = forcedContentType || (contentType && contentType.startsWith('image/') ? contentType : sniffContentType(bytes));
@@ -150,12 +174,19 @@ export async function getImageAsDataUri(inputUrl: string, options: GetImageAsDat
       return result;
     } catch (proxyError: any) {
       // If proxy fails, log and try direct fetch as fallback
-      console.warn('[getImageAsDataUri] Proxy failed, trying direct fetch:', proxyError?.message || proxyError);
+      console.error('[getImageAsDataUri] Proxy failed:', {
+        proxyUrl,
+        sourceUrl: absoluteSourceUrl,
+        error: proxyError?.message || proxyError,
+        errorName: proxyError?.name,
+        stack: proxyError?.stack
+      });
       
-      // Only fallback to direct if proxy explicitly failed (not timeout/network)
-      if (proxyError?.message?.includes('HTTP 4') || proxyError?.message?.includes('HTTP 5')) {
-        // Proxy returned error, try direct fetch
+      // Try direct fetch as fallback (for any proxy error)
+      console.log('[getImageAsDataUri] Trying direct fetch as fallback:', absoluteSourceUrl);
+      try {
         const { bytes, contentType } = await fetchBytes(absoluteSourceUrl, timeoutMs);
+        console.log('[getImageAsDataUri] Direct fetch success:', absoluteSourceUrl, 'bytes:', bytes.length);
         if (bytes.length < 1000) throw new Error('Image bytes too small');
 
         const finalType = forcedContentType || (contentType && contentType.startsWith('image/') ? contentType : sniffContentType(bytes));
@@ -170,10 +201,15 @@ export async function getImageAsDataUri(inputUrl: string, options: GetImageAsDat
         };
         if (cache) inMemoryCache.set(cacheKey, result);
         return result;
+      } catch (directError: any) {
+        console.error('[getImageAsDataUri] Direct fetch also failed:', {
+          sourceUrl: absoluteSourceUrl,
+          error: directError?.message || directError,
+          errorName: directError?.name
+        });
+        // Re-throw the original proxy error
+        throw proxyError;
       }
-      
-      // Re-throw other errors (timeout, network, etc.)
-      throw proxyError;
     }
   }
 
