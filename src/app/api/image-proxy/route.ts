@@ -68,6 +68,9 @@ export async function OPTIONS(request: NextRequest) {
   });
 }
 
+// Simple request counter for debug logging (in-memory, resets on worker restart)
+let debugRequestCount = 0;
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -80,18 +83,29 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // DEBUG: Log first 5 requests (prod debug mode)
+    debugRequestCount++;
+    if (debugRequestCount <= 5) {
+      console.log(`[image-proxy] DEBUG: Request #${debugRequestCount}:`, {
+        url: imageUrl.substring(0, 100),
+        origin: request.headers.get('origin') || 'none',
+        referer: request.headers.get('referer')?.substring(0, 80) || 'none'
+      });
+    }
+
     // URL'i doğrula
     let url: URL;
     try {
       url = new URL(imageUrl);
     } catch {
+      console.error(`[image-proxy] Invalid URL format: ${imageUrl.substring(0, 100)}`);
       return NextResponse.json(
         { error: 'Invalid URL format' },
         { status: 400 }
       );
     }
 
-    // Sadece HTTPS ve izin verilen domain'ler
+    // Sadece HTTPS ve izin verilen domain'ler (URL allowlist for security)
     const allowedDomains = [
       'optcgapi.com',
       'onepiece-cardgame.com',
@@ -105,15 +119,30 @@ export async function GET(request: NextRequest) {
     );
 
     if (!isAllowed) {
+      console.error(`[image-proxy] Domain not allowed: ${hostname}`);
       return NextResponse.json(
         { error: 'Domain not allowed' },
         { status: 403 }
       );
     }
 
+    // Ensure HTTPS (security)
+    if (url.protocol !== 'https:') {
+      console.error(`[image-proxy] Non-HTTPS URL rejected: ${imageUrl.substring(0, 100)}`);
+      return NextResponse.json(
+        { error: 'Only HTTPS URLs are allowed' },
+        { status: 400 }
+      );
+    }
+
     // Görseli fetch et (timeout ile - edge runtime compatible, Cloudflare Pages optimized)
     let response: Response;
     try {
+      // DEBUG: Log fetch attempt
+      if (debugRequestCount <= 5) {
+        console.log(`[image-proxy] DEBUG: Fetching image from: ${imageUrl.substring(0, 80)}...`);
+      }
+      
       response = await fetchWithTimeout(imageUrl, {
         method: 'GET',
         // NOTE (Edge runtime): keep headers minimal & safe.
@@ -127,10 +156,15 @@ export async function GET(request: NextRequest) {
       
       // DEBUG: Log redirect status if any
       if (response.redirected) {
-        console.log(`[image-proxy] Redirect followed: ${imageUrl} -> ${response.url}`);
+        console.log(`[image-proxy] Redirect followed: ${imageUrl.substring(0, 60)}... -> ${response.url.substring(0, 60)}...`);
+      }
+      
+      // DEBUG: Log response status
+      if (debugRequestCount <= 5) {
+        console.log(`[image-proxy] DEBUG: Response status: ${response.status} ${response.statusText}`);
       }
     } catch (error: any) {
-      console.error(`[image-proxy] Fetch error for ${imageUrl}:`, {
+      console.error(`[image-proxy] Fetch error for ${imageUrl.substring(0, 80)}...:`, {
         error: error?.message || error,
         errorName: error?.name
       });
@@ -145,7 +179,7 @@ export async function GET(request: NextRequest) {
 
     if (!response.ok) {
       const errorText = await response.text().catch(() => response.statusText);
-      console.error(`[image-proxy] Non-OK response for ${imageUrl}:`, {
+      console.error(`[image-proxy] Non-OK response for ${imageUrl.substring(0, 80)}...:`, {
         status: response.status,
         statusText: response.statusText,
         body: errorText.substring(0, 200)
@@ -168,10 +202,20 @@ export async function GET(request: NextRequest) {
     const uint8Array = new Uint8Array(arrayBuffer);
 
     if (uint8Array.length < 1000) {
+      console.error(`[image-proxy] Image data too small: ${uint8Array.length} bytes`);
       return NextResponse.json(
         { error: 'Image data too small' },
         { status: 400 }
       );
+    }
+
+    // DEBUG: Log successful fetch
+    if (debugRequestCount <= 5) {
+      console.log(`[image-proxy] DEBUG: Successfully fetched image:`, {
+        url: imageUrl.substring(0, 60),
+        bytes: uint8Array.length,
+        contentType: contentType || 'unknown'
+      });
     }
 
     // CORS header'ları ekle (Cloudflare Pages optimized)

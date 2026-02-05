@@ -1,11 +1,14 @@
 import { PDFDocument, rgb, PDFPage } from 'pdf-lib';
 import { DeckCard, PrintSettings } from '@/types';
 import { getImageAsDataUri } from '@/utils/imageDataUri';
+import { toAbsoluteUrl } from '@/utils/url';
 
 export class PDFGenerator {
   private pdfDoc: PDFDocument;
   private settings: PrintSettings;
-  private imageCache: Map<string, Uint8Array> = new Map();
+  // CRITICAL: Store images as base64 data URIs for guaranteed embedding
+  private imageDataUriCache: Map<string, string> = new Map(); // URL -> base64 data URI
+  private imageBytesCache: Map<string, Uint8Array> = new Map(); // URL -> bytes (for pdf-lib)
   private preloadQueue: Set<string> = new Set();
   private failedImages: Set<string> = new Set();
   private retryCount: Map<string, number> = new Map();
@@ -33,43 +36,51 @@ export class PDFGenerator {
     this.pdfDoc = null as any;
     this.abortSignal = abortSignal;
     this.failedImages.clear();
-    this.imageCache.clear();
+    this.imageDataUriCache.clear();
+    this.imageBytesCache.clear();
     this.preloadQueue.clear();
     this.retryCount.clear();
   }
 
   // MANDATORY: Preload ALL images via proxy and convert to base64 BEFORE PDF generation
-  // This is data-driven, NOT DOM-driven - works on static Cloudflare Pages
-  // Guarantees: All images are base64 data URLs before PDF render starts
+  // This is the CRITICAL step that ensures images work in production
   async preloadImages(cards: DeckCard[], progressCallback?: (current: number, total: number, message: string) => void): Promise<void> {
-    // Abort signal kontrolü
     if (this.abortSignal?.aborted) {
       throw new Error('Operation aborted');
     }
     
-    // DEBUG: Log first 5 image URLs before preload
-    const first5Urls: string[] = [];
+    // Collect all unique image URLs and normalize them
     const imageUrls = new Set<string>();
+    const urlMappings = new Map<string, string>(); // original -> absolute
+    
     for (const card of cards) {
-      const imageUrl = card.card.image_uris.full || card.card.image_uris.large || card.card.image_uris.small;
-      if (imageUrl && !this.imageCache.has(imageUrl) && !this.preloadQueue.has(imageUrl) && !this.failedImages.has(imageUrl)) {
-        imageUrls.add(imageUrl);
-        if (first5Urls.length < 5) {
-          first5Urls.push(imageUrl);
-        }
+      const imageUrl = card.card.image_uris.full || 
+                      card.card.image_uris.large || 
+                      card.card.image_uris.small;
+      if (imageUrl) {
+        // CRITICAL: Normalize to absolute URL immediately
+        const absoluteUrl = toAbsoluteUrl(imageUrl);
+        imageUrls.add(absoluteUrl);
+        urlMappings.set(imageUrl, absoluteUrl);
+        // Also store reverse mapping
+        urlMappings.set(absoluteUrl, absoluteUrl);
       }
     }
-    
-    console.log('[preloadImages] DEBUG: First 5 image URLs before preload:', first5Urls.map(url => url.substring(0, 80)));
     
     if (imageUrls.size === 0) {
       progressCallback?.(0, 0, 'Tüm görseller zaten yüklü');
       return;
     }
     
-    // Batch yükleme - her seferinde 8 görsel paralel yükle (concurrency limit)
+    console.log(`[preloadImages] Preloading ${imageUrls.size} unique images...`);
+    
+    // DEBUG: Log first 5 URLs
+    const first5Urls = Array.from(imageUrls).slice(0, 5);
+    console.log('[preloadImages] DEBUG: First 5 URLs:', first5Urls.map(url => url.substring(0, 80)));
+    
+    // Batch loading with concurrency limit
+    const batchSize = 8;
     const imageUrlsArray = Array.from(imageUrls);
-    const batchSize = 8; // Concurrency limit
     let loadedCount = 0;
     let successCount = 0;
     let failCount = 0;
@@ -82,61 +93,90 @@ export class PDFGenerator {
       const batch = imageUrlsArray.slice(i, i + batchSize);
       console.log(`[preloadImages] Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(imageUrlsArray.length / batchSize)}: ${batch.length} images`);
       
-      // Batch içindeki görselleri paralel yükle
-      const batchPromises = batch.map(async (imageUrl) => {
+      const batchPromises = batch.map(async (absoluteUrl) => {
         try {
           if (this.abortSignal?.aborted) {
             throw new Error('Operation aborted');
           }
           
-          this.preloadQueue.add(imageUrl);
-          
-          console.log(`[preloadImages] Fetching: ${imageUrl.substring(0, 80)}...`);
-          const imageData = await this.getCardImageBytes(imageUrl);
-          
-          if (imageData && imageData.length > 1000) {
-            this.imageCache.set(imageUrl, imageData);
+          // Skip if already cached
+          if (this.imageDataUriCache.has(absoluteUrl)) {
             loadedCount++;
             successCount++;
-            console.log(`[preloadImages] ✓ Success ${loadedCount}/${imageUrls.size}: ${imageUrl.substring(0, 60)}...`);
-            progressCallback?.(loadedCount, imageUrls.size, `Görsel yüklendi: ${loadedCount}/${imageUrls.size}`);
+            console.log(`[preloadImages] ✓ Already cached: ${absoluteUrl.substring(0, 60)}...`);
             return true;
-          } else {
-            throw new Error(`Invalid image data: ${imageData?.length || 0} bytes`);
           }
+          
+          this.preloadQueue.add(absoluteUrl);
+          
+          console.log(`[preloadImages] Fetching: ${absoluteUrl.substring(0, 80)}...`);
+          
+          // CRITICAL: Fetch via proxy and get base64 data URI
+          const result = await getImageAsDataUri(absoluteUrl, {
+            preferProxy: true,
+            timeoutMs: 30000,
+            cache: true,
+          });
+          
+          // CRITICAL ASSERTION: Must be base64 data URI
+          if (!result.dataUri || !result.dataUri.startsWith('data:image/')) {
+            throw new Error(`Invalid data URI: ${result.dataUri?.substring(0, 50)}`);
+          }
+          
+          if (!result.bytes || result.bytes.length < 1000) {
+            throw new Error(`Image bytes too small: ${result.bytes?.length || 0}`);
+          }
+          
+          // Store in both caches
+          this.imageDataUriCache.set(absoluteUrl, result.dataUri);
+          this.imageBytesCache.set(absoluteUrl, result.bytes);
+          
+          // Also store with original URL if different
+          const originalUrl = Array.from(urlMappings.entries()).find(([_, abs]) => abs === absoluteUrl)?.[0];
+          if (originalUrl && originalUrl !== absoluteUrl) {
+            this.imageDataUriCache.set(originalUrl, result.dataUri);
+            this.imageBytesCache.set(originalUrl, result.bytes);
+          }
+          
+          loadedCount++;
+          successCount++;
+          console.log(`[preloadImages] ✓ Success ${loadedCount}/${imageUrls.size}: ${absoluteUrl.substring(0, 60)}... (via ${result.via})`);
+          progressCallback?.(loadedCount, imageUrls.size, `Görsel yüklendi: ${loadedCount}/${imageUrls.size}`);
+          return true;
         } catch (error: any) {
           if (error.message === 'Operation aborted') {
             throw error;
           }
           failCount++;
-          console.error(`[preloadImages] ✗ Failed: ${imageUrl.substring(0, 80)}...`, {
+          console.error(`[preloadImages] ✗ Failed: ${absoluteUrl.substring(0, 80)}...`, {
             error: error?.message || error,
             errorName: error?.name
           });
-          this.failedImages.add(imageUrl);
+          this.failedImages.add(absoluteUrl);
           loadedCount++;
           progressCallback?.(loadedCount, imageUrls.size, `Görsel yüklenemedi: ${loadedCount}/${imageUrls.size}`);
           return false;
         } finally {
-          this.preloadQueue.delete(imageUrl);
+          this.preloadQueue.delete(absoluteUrl);
         }
       });
       
-      // Batch'i bekle
       await Promise.allSettled(batchPromises);
     }
     
-    // DEBUG: Log first 5 image URLs after preload (check cache)
-    const first5After: Array<{ url: string; cached: boolean; bytes: number }> = [];
-    for (const url of first5Urls) {
-      const cached = this.imageCache.get(url);
-      first5After.push({
+    // DEBUG: Verify cache
+    const first5After = first5Urls.map(url => {
+      const dataUri = this.imageDataUriCache.get(url);
+      const bytes = this.imageBytesCache.get(url);
+      return {
         url: url.substring(0, 60),
-        cached: !!cached,
-        bytes: cached?.length || 0
-      });
-    }
-    console.log('[preloadImages] DEBUG: First 5 image URLs after preload:', first5After);
+        hasDataUri: !!dataUri,
+        hasBytes: !!bytes,
+        dataUriPreview: dataUri?.substring(0, 50) + '...' || 'NOT FOUND',
+        bytesLength: bytes?.length || 0
+      };
+    });
+    console.log('[preloadImages] DEBUG: First 5 URLs after preload:', first5After);
     
     console.log(`[preloadImages] Preloading completed. Success: ${successCount}, Failed: ${failCount}, Total: ${imageUrls.size}`);
   }
@@ -144,21 +184,17 @@ export class PDFGenerator {
   async generatePDF(cards: DeckCard[], progressCallback?: (current: number, total: number, message: string) => void): Promise<Uint8Array> {
     try {
       console.log('=== PDFGenerator.generatePDF() STARTED ===');
-      console.log('Cards received:', cards);
-      console.log('Settings:', this.settings);
-      console.log('Generating PDF for', cards.length, 'card types');
+      console.log('Cards received:', cards.length);
       
-      // Abort signal kontrolü
       if (this.abortSignal?.aborted) {
         throw new Error('Operation aborted');
       }
       
-      // Cache'leri temizle (sadece failed images ve queue, imageCache'i koru - daha hızlı)
+      // Clear failed images and queue, but keep caches
       this.failedImages.clear();
       this.preloadQueue.clear();
-      // imageCache'i temizleme - önceki yüklemelerden kalan görselleri kullanabiliriz
-
-      // Görselleri önceden yükle
+      
+      // CRITICAL STEP 1: Preload all images as base64 BEFORE PDF generation
       console.log('Starting image preloading...');
       progressCallback?.(0, cards.length, 'Görseller yükleniyor - Loading images...');
       await this.preloadImages(cards, (current, total, msg) => {
@@ -166,51 +202,46 @@ export class PDFGenerator {
       });
       
       console.log('Image preloading completed');
+      console.log(`Cache stats: ${this.imageDataUriCache.size} data URIs, ${this.imageBytesCache.size} bytes cached`);
       
-      // Abort signal kontrolü
       if (this.abortSignal?.aborted) {
         throw new Error('Operation aborted');
       }
       
-      // Başarısız görsel sayısını logla
       const failedCount = this.failedImages.size;
-      const totalImages = cards.length;
       if (failedCount > 0) {
-        console.warn(`${failedCount}/${totalImages} görsel yüklenemedi, placeholder kullanılacak`);
-        progressCallback?.(totalImages, totalImages, `${failedCount} görsel yüklenemedi, placeholder kullanılıyor...`);
+        console.warn(`${failedCount}/${cards.length} görsel yüklenemedi, placeholder kullanılacak`);
+        progressCallback?.(cards.length, cards.length, `${failedCount} görsel yüklenemedi, placeholder kullanılıyor...`);
       }
-
-      // PDF dokümanı oluştur
+      
+      // CRITICAL STEP 2: Create PDF document
       console.log('Creating PDFDocument...');
       progressCallback?.(cards.length, cards.length, 'PDF oluşturuluyor - Creating PDF...');
       this.pdfDoc = await PDFDocument.create();
       console.log('PDFDocument created successfully');
-
+      
       const gridDims = { cols: 3, rows: 3, cardsPerPage: 9 };
-      console.log('Grid settings (forced 3x3):', gridDims);
-
-      // Kartları adetleriyle çoğalt
+      
+      // Expand cards by count
       const expandedCards: DeckCard[] = [];
       for (const deckCard of cards) {
         for (let i = 0; i < deckCard.count; i++) {
           expandedCards.push({ ...deckCard, count: 1 });
         }
       }
-
+      
       console.log('Total cards to print:', expandedCards.length);
-
-      // Kartları sayfalara böl
+      
+      // Split into pages
       const pages: DeckCard[][] = [];
       for (let i = 0; i < expandedCards.length; i += gridDims.cardsPerPage) {
-        const pageCards = expandedCards.slice(i, i + gridDims.cardsPerPage);
-        pages.push(pageCards);
+        pages.push(expandedCards.slice(i, i + gridDims.cardsPerPage));
       }
-
+      
       console.log('Total pages needed:', pages.length);
-
-      // Her sayfa için PDF sayfası oluştur (ön yüz)
+      
+      // Create pages
       for (let pageIndex = 0; pageIndex < pages.length; pageIndex++) {
-        // Her sayfa başlangıcında abort signal kontrolü
         if (this.abortSignal?.aborted) {
           throw new Error('Operation aborted');
         }
@@ -218,24 +249,21 @@ export class PDFGenerator {
         const pageCards = pages[pageIndex];
         console.log(`Creating page ${pageIndex + 1} with ${pageCards.length} cards`);
         
-        // Her sayfa başlangıcında progress güncelle
         const totalSteps = cards.length + pages.length;
         progressCallback?.(
-          cards.length + pageIndex, 
-          totalSteps, 
+          cards.length + pageIndex,
+          totalSteps,
           `Sayfa ${pageIndex + 1}/${pages.length} oluşturuluyor - Creating page ${pageIndex + 1}`
         );
         
         try {
           await this.createPage(pageCards, pageIndex, progressCallback, totalSteps);
           
-          // Sayfa tamamlandığında progress güncelle
           progressCallback?.(
-            cards.length + pageIndex + 1, 
-            totalSteps, 
+            cards.length + pageIndex + 1,
+            totalSteps,
             `Sayfa ${pageIndex + 1} tamamlandı - Page ${pageIndex + 1} completed`
           );
-          
         } catch (pageError: any) {
           if (pageError.message === 'Operation aborted') {
             throw pageError;
@@ -243,48 +271,38 @@ export class PDFGenerator {
           
           console.error(`Error creating page ${pageIndex + 1}:`, pageError);
           
-          // Hata detaylarını logla
-          if (pageError instanceof Error) {
-            console.error('Page error details:', pageError.message, pageError.stack);
-          }
-          
           try {
-            // Sayfa oluşturulamazsa placeholder sayfa ekle
             await this.createPlaceholderPage(pageIndex, pageCards.length);
             console.log(`Placeholder page ${pageIndex + 1} created successfully`);
           } catch (placeholderError) {
             console.error(`Failed to create placeholder page ${pageIndex + 1}:`, placeholderError);
-            // Placeholder da başarısız olursa boş sayfa ekle
             const pageWidthPt = PDFGenerator.A4_WIDTH_MM * PDFGenerator.MM_TO_POINTS;
             const pageHeightPt = PDFGenerator.A4_HEIGHT_MM * PDFGenerator.MM_TO_POINTS;
             this.pdfDoc.addPage([pageWidthPt, pageHeightPt]);
           }
         }
       }
-
-      // Arka sayfaları ekle (istenirse)
+      
+      // Back pages (if requested)
       if (this.settings.includeBackPages) {
         console.log('Including back pages...');
-        // Kart arkası görselini bir kez yükle
         try {
           this.cardBackBytes = await this.getCardBackImageBytes();
         } catch (backErr) {
           console.error('Failed to load card back image, skipping back pages:', backErr);
           this.cardBackBytes = null;
         }
-
+        
         if (this.cardBackBytes) {
           for (let pageIndex = 0; pageIndex < pages.length; pageIndex++) {
             if (this.abortSignal?.aborted) {
               throw new Error('Operation aborted');
             }
-
-            const pageCards = pages[pageIndex];
+            
             try {
-              await this.createBackPage(pageCards.length, pageIndex, progressCallback, cards.length + pages.length);
+              await this.createBackPage(pages[pageIndex].length, pageIndex, progressCallback, cards.length + pages.length);
             } catch (backPageErr) {
               console.error(`Error creating back page for page ${pageIndex + 1}:`, backPageErr);
-              // Arka sayfa başarısız olursa yine de boş bir sayfa ekleyelim ki sayfa sayısı eşleşsin
               const pageWidthPt = PDFGenerator.A4_WIDTH_MM * PDFGenerator.MM_TO_POINTS;
               const pageHeightPt = PDFGenerator.A4_HEIGHT_MM * PDFGenerator.MM_TO_POINTS;
               this.pdfDoc.addPage([pageWidthPt, pageHeightPt]);
@@ -292,38 +310,30 @@ export class PDFGenerator {
           }
         }
       }
-
+      
       console.log('PDF generation complete, saving...');
       progressCallback?.(cards.length + pages.length, cards.length + pages.length, 'PDF kaydediliyor - Finalizing PDF...');
       
-      // Final abort signal kontrolü
       if (this.abortSignal?.aborted) {
         throw new Error('Operation aborted');
       }
       
-      try {
-        const pdfBytes = await this.pdfDoc.save();
-        console.log('PDF saved successfully, byte length:', pdfBytes.length);
-        
-        if (pdfBytes.length < 1000) {
-          throw new Error('Generated PDF is too small, likely corrupted');
-        }
-        
-        return pdfBytes;
-      } catch (saveError: any) {
-        console.error('PDF save error:', saveError);
-        throw new Error(`PDF kaydedilemedi: ${saveError.message || 'Bilinmeyen hata'}`);
+      const pdfBytes = await this.pdfDoc.save();
+      console.log('PDF saved successfully, byte length:', pdfBytes.length);
+      
+      if (pdfBytes.length < 1000) {
+        throw new Error('Generated PDF is too small, likely corrupted');
       }
+      
+      return pdfBytes;
       
     } catch (error: any) {
       console.error('Error in PDFGenerator.generatePDF():', error);
       
-      // Abort error'ı özel olarak işle
       if (error.message === 'Operation aborted') {
         throw error;
       }
       
-      // Daha açıklayıcı hata mesajları
       if (error.message.includes('fetch') || error.message.includes('network')) {
         throw new Error('Görseller yüklenemedi. İnternet bağlantınızı kontrol edin.');
       } else if (error.message.includes('memory') || error.message.includes('allocation')) {
@@ -337,25 +347,21 @@ export class PDFGenerator {
   }
 
   private async createPage(
-    cards: DeckCard[], 
-    pageIndex: number, 
+    cards: DeckCard[],
+    pageIndex: number,
     progressCallback?: (current: number, total: number, message: string) => void,
     totalProgress?: number
   ): Promise<void> {
-    // Grid'i her zaman 3x3'e sabitle
     const gridDims = { cols: 3, rows: 3, cardsPerPage: 9 };
     
-    // A4 sayfa oluştur
     const pageWidthPt = PDFGenerator.A4_WIDTH_MM * PDFGenerator.MM_TO_POINTS;
     const pageHeightPt = PDFGenerator.A4_HEIGHT_MM * PDFGenerator.MM_TO_POINTS;
     
     const page = this.pdfDoc.addPage([pageWidthPt, pageHeightPt]);
     
-    // Kart boyutları (points cinsinden)
     const cardWidthPt = PDFGenerator.CARD_WIDTH_MM * PDFGenerator.MM_TO_POINTS;
     const cardHeightPt = PDFGenerator.CARD_HEIGHT_MM * PDFGenerator.MM_TO_POINTS;
     
-    // Bleed ve margin hesaplama
     const bleedPt = this.settings.includeBleed ? this.settings.bleedSize * PDFGenerator.MM_TO_POINTS : 0;
     const safeMarginPt = this.settings.safeMargin * PDFGenerator.MM_TO_POINTS;
     const cropMarkLengthPt = (this.settings.cropMarkLengthMm ?? 5) * PDFGenerator.MM_TO_POINTS;
@@ -365,7 +371,6 @@ export class PDFGenerator {
     const cardWithBleedWidth = cardWidthPt + (bleedPt * 2);
     const cardWithBleedHeight = cardHeightPt + (bleedPt * 2);
     
-    // Boşlukları hesapla (kartlar arası minimal pay)
     const totalCardsWidth = (cardWithBleedWidth * gridDims.cols) + (internalGapPt * (gridDims.cols - 1));
     const totalCardsHeight = (cardWithBleedHeight * gridDims.rows) + (internalGapPt * (gridDims.rows - 1));
     
@@ -375,115 +380,97 @@ export class PDFGenerator {
     let marginX = safeMarginPt;
     let marginY = safeMarginPt;
     
-    // Eğer kartlar sayfaya sığıyorsa ortala
     if (totalCardsWidth <= availableWidth) {
       marginX = (pageWidthPt - totalCardsWidth) / 2;
     }
     if (totalCardsHeight <= availableHeight) {
       marginY = (pageHeightPt - totalCardsHeight) / 2;
     }
-    // Güvenlik payı altına düşmeyi önle
     marginX = Math.max(marginX, safeMarginPt);
     marginY = Math.max(marginY, safeMarginPt);
-
-    // Her kart için görsel ekle
+    
+    // Draw cards
     for (let i = 0; i < cards.length && i < gridDims.cardsPerPage; i++) {
       const card = cards[i];
       
-      // Grid pozisyonu
       const col = i % gridDims.cols;
       const row = Math.floor(i / gridDims.cols);
       
-      // Kart pozisyonu (sol alt köşeden başlayarak)
       const x = marginX + (col * (cardWithBleedWidth + internalGapPt)) + bleedPt;
       const y = pageHeightPt - marginY - ((row + 1) * cardWithBleedHeight) - (row * internalGapPt) + bleedPt;
       
       await this.drawCard(page, card, x, y, cardWidthPt, cardHeightPt);
       
-      // Bleed alanı çiz (eğer aktifse)
       if (this.settings.includeBleed) {
         this.drawBleedArea(page, x - bleedPt, y - bleedPt, cardWithBleedWidth, cardWithBleedHeight);
       }
       
-      // Crop marks çiz (eğer aktifse)
       if (this.settings.includeCropMarks) {
         this.drawCropMarks(page, x, y, cardWidthPt, cardHeightPt);
       }
       
-      // Her 5 kartta bir progress güncelle
       if (totalProgress && progressCallback && (i + 1) % 5 === 0) {
         const currentProgress = totalProgress - (cards.length - i - 1);
-        progressCallback?.(
-          currentProgress, 
-          totalProgress, 
-          `Sayfa ${pageIndex + 1}: ${i + 1}/${cards.length} kart işlendi`
-        );
+        progressCallback?.(currentProgress, totalProgress, `Sayfa ${pageIndex + 1}: ${i + 1}/${cards.length} kart işlendi`);
       }
     }
-
-    // Sayfa numarası ekle
+    
     this.drawPageNumber(page, pageIndex + 1, pageWidthPt, pageHeightPt);
   }
 
-  // Arka sayfa oluştur (kart arkası görselleri)
   private async createBackPage(
     cardCount: number,
     pageIndex: number,
     progressCallback?: (current: number, total: number, message: string) => void,
     totalProgress?: number
   ): Promise<void> {
-    // 3x3 sabit grid
     const gridDims = { cols: 3, rows: 3, cardsPerPage: 9 };
-
+    
     const pageWidthPt = PDFGenerator.A4_WIDTH_MM * PDFGenerator.MM_TO_POINTS;
     const pageHeightPt = PDFGenerator.A4_HEIGHT_MM * PDFGenerator.MM_TO_POINTS;
-
+    
     const page = this.pdfDoc.addPage([pageWidthPt, pageHeightPt]);
-
+    
     const cardWidthPt = PDFGenerator.CARD_WIDTH_MM * PDFGenerator.MM_TO_POINTS;
     const cardHeightPt = PDFGenerator.CARD_HEIGHT_MM * PDFGenerator.MM_TO_POINTS;
-
+    
     const bleedPt = this.settings.includeBleed ? this.settings.bleedSize * PDFGenerator.MM_TO_POINTS : 0;
     const safeMarginPt = this.settings.safeMargin * PDFGenerator.MM_TO_POINTS;
     const cropMarkLengthPt = (this.settings.cropMarkLengthMm ?? 5) * PDFGenerator.MM_TO_POINTS;
     const cropMarkOffsetPt = (this.settings.cropMarkOffsetMm ?? 1.5) * PDFGenerator.MM_TO_POINTS;
     const internalGapPt = this.settings.includeCropMarks ? (cropMarkOffsetPt * 2) : 0;
-
+    
     const cardWithBleedWidth = cardWidthPt + (bleedPt * 2);
     const cardWithBleedHeight = cardHeightPt + (bleedPt * 2);
-
+    
     const totalCardsWidth = (cardWithBleedWidth * gridDims.cols) + (internalGapPt * (gridDims.cols - 1));
     const totalCardsHeight = (cardWithBleedHeight * gridDims.rows) + (internalGapPt * (gridDims.rows - 1));
-
+    
     const availableWidth = pageWidthPt - (safeMarginPt * 2);
     const availableHeight = pageHeightPt - (safeMarginPt * 2);
-
+    
     let marginX = safeMarginPt;
     let marginY = safeMarginPt;
-
+    
     if (totalCardsWidth <= availableWidth) {
       marginX = (pageWidthPt - totalCardsWidth) / 2;
     }
     if (totalCardsHeight <= availableHeight) {
       marginY = (pageHeightPt - totalCardsHeight) / 2;
     }
-    // Güvenlik payı altına düşmeyi önle
     marginX = Math.max(marginX, safeMarginPt);
     marginY = Math.max(marginY, safeMarginPt);
-
-    // Kart arkası görselini embed et
+    
     if (!this.cardBackBytes) return;
     const backImg = await this.pdfDoc.embedJpg(this.cardBackBytes);
-
-    // Çift taraflı baskıda doğru hizalama için yatay ayna gerekebilir; burada düz yerleştiriyoruz
+    
     for (let i = 0; i < cardCount && i < gridDims.cardsPerPage; i++) {
       const col = i % gridDims.cols;
       const row = Math.floor(i / gridDims.cols);
-
+      
       const x = marginX + (col * (cardWithBleedWidth + internalGapPt)) + bleedPt;
       const y = pageHeightPt - marginY - ((row + 1) * cardWithBleedHeight) - (row * internalGapPt) + bleedPt;
-
-      // Aynalama (gerekiyorsa) - yatay ayna için ölçek -1 ve offset uygula
+      
       if (this.settings.backMirrorHorizontally) {
         page.drawImage(backImg, {
           x: pageWidthPt - x - cardWidthPt,
@@ -494,7 +481,7 @@ export class PDFGenerator {
       } else {
         page.drawImage(backImg, { x, y, width: cardWidthPt, height: cardHeightPt });
       }
-
+      
       if (this.settings.includeBleed) {
         this.drawBleedArea(page, x - bleedPt, y - bleedPt, cardWithBleedWidth, cardWithBleedHeight);
       }
@@ -502,12 +489,11 @@ export class PDFGenerator {
         this.drawCropMarks(page, x, y, cardWidthPt, cardHeightPt);
       }
     }
-
+    
     this.drawPageNumber(page, pageIndex + 1, pageWidthPt, pageHeightPt);
   }
 
   private async getCardBackImageBytes(): Promise<Uint8Array> {
-    // Public klasöründen kart arkası görselini al
     try {
       const response = await fetch(PDFGenerator.CARD_BACK_URL, { cache: 'no-store' as any });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -521,228 +507,193 @@ export class PDFGenerator {
   }
 
   private async createPlaceholderPage(pageIndex: number, cardCount: number): Promise<void> {
-    try {
-      // Grid'i her zaman 3x3'e sabitle
-      const gridDims = { cols: 3, rows: 3, cardsPerPage: 9 };
-      const pageWidthPt = PDFGenerator.A4_WIDTH_MM * PDFGenerator.MM_TO_POINTS;
-      const pageHeightPt = PDFGenerator.A4_HEIGHT_MM * PDFGenerator.MM_TO_POINTS;
-
-      const page = this.pdfDoc.addPage([pageWidthPt, pageHeightPt]);
-
-      const cardWidthPt = PDFGenerator.CARD_WIDTH_MM * PDFGenerator.MM_TO_POINTS;
-      const cardHeightPt = PDFGenerator.CARD_HEIGHT_MM * PDFGenerator.MM_TO_POINTS;
-
-      const bleedPt = this.settings.includeBleed ? this.settings.bleedSize * PDFGenerator.MM_TO_POINTS : 0;
-      const safeMarginPt = this.settings.safeMargin * PDFGenerator.MM_TO_POINTS;
-      const cropMarkLengthPt = (this.settings.cropMarkLengthMm ?? 5) * PDFGenerator.MM_TO_POINTS;
-      const cropMarkOffsetPt = (this.settings.cropMarkOffsetMm ?? 1.5) * PDFGenerator.MM_TO_POINTS;
-      const internalGapPt = this.settings.includeCropMarks ? ((cropMarkOffsetPt + cropMarkLengthPt) * 2) : 0;
-
-      const cardWithBleedWidth = cardWidthPt + (bleedPt * 2);
-      const cardWithBleedHeight = cardHeightPt + (bleedPt * 2);
-
-      const totalCardsWidth = (cardWithBleedWidth * gridDims.cols) + (internalGapPt * (gridDims.cols - 1));
-      const totalCardsHeight = (cardWithBleedHeight * gridDims.rows) + (internalGapPt * (gridDims.rows - 1));
-
-      const availableWidth = pageWidthPt - (safeMarginPt * 2);
-      const availableHeight = pageHeightPt - (safeMarginPt * 2);
-
-      let marginX = safeMarginPt;
-      let marginY = safeMarginPt;
-
-      if (totalCardsWidth <= availableWidth) {
-        marginX = (pageWidthPt - totalCardsWidth) / 2;
-      }
-      if (totalCardsHeight <= availableHeight) {
-        marginY = (pageHeightPt - totalCardsHeight) / 2;
-      }
-      // Güvenlik payı altına düşmeyi önle
-      marginX = Math.max(marginX, safeMarginPt);
-      marginY = Math.max(marginY, safeMarginPt);
-
-      // Sayfa başlığı ekle
-      page.drawText(`Sayfa ${pageIndex + 1} - Görsel Yüklenemedi`, {
-        x: pageWidthPt / 2 - 100,
-        y: pageHeightPt - 30,
-        size: 14,
-        color: rgb(0.6, 0.3, 0.3)
-      });
-
-      for (let i = 0; i < cardCount; i++) {
-        const col = i % gridDims.cols;
-        const row = Math.floor(i / gridDims.cols);
-        const x = marginX + (col * (cardWithBleedWidth + internalGapPt)) + bleedPt;
-        const y = pageHeightPt - marginY - ((row + 1) * cardWithBleedHeight) - (row * internalGapPt) + bleedPt;
-        this.drawCardPlaceholder(page, x, y, cardWidthPt, cardHeightPt, `Kart ${i + 1}`);
-        
-        // Crop marks ekle (eğer aktifse)
-        if (this.settings.includeCropMarks) {
-          this.drawCropMarks(page, x, y, cardWidthPt, cardHeightPt);
-        }
-      }
-      
-      this.drawPageNumber(page, pageIndex + 1, pageWidthPt, pageHeightPt);
-      
-    } catch (error) {
-      console.error('Error in createPlaceholderPage:', error);
-      throw error;
+    const gridDims = { cols: 3, rows: 3, cardsPerPage: 9 };
+    const pageWidthPt = PDFGenerator.A4_WIDTH_MM * PDFGenerator.MM_TO_POINTS;
+    const pageHeightPt = PDFGenerator.A4_HEIGHT_MM * PDFGenerator.MM_TO_POINTS;
+    
+    const page = this.pdfDoc.addPage([pageWidthPt, pageHeightPt]);
+    
+    const cardWidthPt = PDFGenerator.CARD_WIDTH_MM * PDFGenerator.MM_TO_POINTS;
+    const cardHeightPt = PDFGenerator.CARD_HEIGHT_MM * PDFGenerator.MM_TO_POINTS;
+    
+    const bleedPt = this.settings.includeBleed ? this.settings.bleedSize * PDFGenerator.MM_TO_POINTS : 0;
+    const safeMarginPt = this.settings.safeMargin * PDFGenerator.MM_TO_POINTS;
+    const cropMarkLengthPt = (this.settings.cropMarkLengthMm ?? 5) * PDFGenerator.MM_TO_POINTS;
+    const cropMarkOffsetPt = (this.settings.cropMarkOffsetMm ?? 1.5) * PDFGenerator.MM_TO_POINTS;
+    const internalGapPt = this.settings.includeCropMarks ? ((cropMarkOffsetPt + cropMarkLengthPt) * 2) : 0;
+    
+    const cardWithBleedWidth = cardWidthPt + (bleedPt * 2);
+    const cardWithBleedHeight = cardHeightPt + (bleedPt * 2);
+    
+    const totalCardsWidth = (cardWithBleedWidth * gridDims.cols) + (internalGapPt * (gridDims.cols - 1));
+    const totalCardsHeight = (cardWithBleedHeight * gridDims.rows) + (internalGapPt * (gridDims.rows - 1));
+    
+    const availableWidth = pageWidthPt - (safeMarginPt * 2);
+    const availableHeight = pageHeightPt - (safeMarginPt * 2);
+    
+    let marginX = safeMarginPt;
+    let marginY = safeMarginPt;
+    
+    if (totalCardsWidth <= availableWidth) {
+      marginX = (pageWidthPt - totalCardsWidth) / 2;
     }
+    if (totalCardsHeight <= availableHeight) {
+      marginY = (pageHeightPt - totalCardsHeight) / 2;
+    }
+    marginX = Math.max(marginX, safeMarginPt);
+    marginY = Math.max(marginY, safeMarginPt);
+    
+    page.drawText(`Sayfa ${pageIndex + 1} - Görsel Yüklenemedi`, {
+      x: pageWidthPt / 2 - 100,
+      y: pageHeightPt - 30,
+      size: 14,
+      color: rgb(0.6, 0.3, 0.3)
+    });
+    
+    for (let i = 0; i < cardCount; i++) {
+      const col = i % gridDims.cols;
+      const row = Math.floor(i / gridDims.cols);
+      const x = marginX + (col * (cardWithBleedWidth + internalGapPt)) + bleedPt;
+      const y = pageHeightPt - marginY - ((row + 1) * cardWithBleedHeight) - (row * internalGapPt) + bleedPt;
+      this.drawCardPlaceholder(page, x, y, cardWidthPt, cardHeightPt, `Kart ${i + 1}`);
+      
+      if (this.settings.includeCropMarks) {
+        this.drawCropMarks(page, x, y, cardWidthPt, cardHeightPt);
+      }
+    }
+    
+    this.drawPageNumber(page, pageIndex + 1, pageWidthPt, pageHeightPt);
   }
 
+  // CRITICAL: This function now uses preloaded cache - no network calls during PDF generation
   private async drawCard(page: PDFPage, card: DeckCard, x: number, y: number, width: number, height: number): Promise<void> {
     try {
-      // Kart görselini yükle - tüm URL seçeneklerini dene
-      let imageUrl = card.card.image_uris.full || card.card.image_uris.large || card.card.image_uris.small;
+      // Get image URL
+      let imageUrl = card.card.image_uris.full || 
+                    card.card.image_uris.large || 
+                    card.card.image_uris.small;
       
       if (!imageUrl || imageUrl === 'null' || imageUrl === 'undefined') {
-        console.warn(`No image URL for card: ${card.card.name}`);
+        console.warn(`[drawCard] No image URL for card: ${card.card.name}`);
         this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
         return;
       }
-
-      // URL'yi temizle ve doğrula
-      imageUrl = imageUrl.trim();
-      if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
-        console.warn(`Invalid image URL format: ${imageUrl}`);
-        this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
-        return;
+      
+      // CRITICAL: Normalize URL to absolute
+      const originalUrl = imageUrl.trim();
+      const absoluteUrl = toAbsoluteUrl(originalUrl);
+      
+      // DEBUG: Log first 5 cards
+      if (this.imageBytesCache.size < 5) {
+        console.log(`[drawCard] DEBUG: Drawing card:`, {
+          cardName: card.card.name,
+          originalUrl: originalUrl.substring(0, 60),
+          absoluteUrl: absoluteUrl.substring(0, 60)
+        });
       }
-
-      // Cache'den kontrol et - öncelikle cache kullan
-      if (this.imageCache.has(imageUrl)) {
-        const cachedImageData = this.imageCache.get(imageUrl)!;
-        
-        // Cache'deki veriyi doğrula
-        if (cachedImageData && cachedImageData.length > 1000) {
-          try {
-            await this.embedBinaryImage(page, cachedImageData, imageUrl, x, y, width, height);
-            return; // Başarılı, çık
-          } catch (embedError) {
-            console.error(`Failed to embed cached image for ${card.card.name}:`, embedError);
-            // Cache'deki veri hatalı, sil ve yeniden yükle
-            this.imageCache.delete(imageUrl);
-          }
-        } else {
-          // Cache'deki veri geçersiz, sil
-          this.imageCache.delete(imageUrl);
+      
+      // CRITICAL: Look up in preloaded cache (both original and absolute URL)
+      let imageBytes: Uint8Array | undefined;
+      
+      if (this.imageBytesCache.has(absoluteUrl)) {
+        imageBytes = this.imageBytesCache.get(absoluteUrl);
+      } else if (originalUrl !== absoluteUrl && this.imageBytesCache.has(originalUrl)) {
+        imageBytes = this.imageBytesCache.get(originalUrl);
+        // Also store under absolute URL for future lookups
+        if (imageBytes) {
+          this.imageBytesCache.set(absoluteUrl, imageBytes);
         }
       }
       
-      // Başarısız görselleri tekrar deneme (sadece bir kez)
-      if (this.failedImages.has(imageUrl)) {
-        console.warn(`Skipping previously failed image: ${imageUrl.substring(0, 50)}...`);
-        this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
-        return;
-      }
-      
-      // Yeni görsel yükle - tüm yöntemleri dene
-      let imageData: Uint8Array | null = null;
-      let lastError: Error | null = null;
-      
-      try {
-        imageData = await this.getCardImageBytes(imageUrl);
-      } catch (error: any) {
-        lastError = error;
-        console.error(`Image loading failed for ${card.card.name} (${imageUrl.substring(0, 50)}...):`, error);
-        
-        // Alternatif URL'leri dene
-        const alternativeUrls = [
-          card.card.image_uris.full,
-          card.card.image_uris.large,
-          card.card.image_uris.small
-        ].filter(url => url && url !== imageUrl);
-        
-        for (const altUrl of alternativeUrls) {
-          if (!altUrl || altUrl === imageUrl) continue;
-          
-          try {
-            console.log(`Trying alternative URL for ${card.card.name}: ${altUrl.substring(0, 50)}...`);
-            imageData = await this.getCardImageBytes(altUrl);
-            imageUrl = altUrl; // Başarılı URL'i kullan
-            break;
-          } catch (altError) {
-            console.log(`Alternative URL also failed:`, altError);
-            continue;
-          }
+      // If not in cache, check failed images
+      if (!imageBytes) {
+        if (this.failedImages.has(absoluteUrl) || (originalUrl !== absoluteUrl && this.failedImages.has(originalUrl))) {
+          console.warn(`[drawCard] Skipping previously failed image: ${absoluteUrl.substring(0, 50)}...`);
+          this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
+          return;
         }
-      }
-      
-      if (imageData && imageData.length > 1000) {
-        // Cache'e kaydet
-        this.imageCache.set(imageUrl, imageData);
         
-        // PDF'e ekle
+        // CRITICAL: Image should have been preloaded! This is an error condition
+        console.error(`[drawCard] ERROR: Image not in cache! This should not happen.`, {
+          cardName: card.card.name,
+          originalUrl: originalUrl.substring(0, 60),
+          absoluteUrl: absoluteUrl.substring(0, 60),
+          cacheSize: this.imageBytesCache.size,
+          cacheKeys: Array.from(this.imageBytesCache.keys()).slice(0, 3).map(k => k.substring(0, 40))
+        });
+        
+        // Try to load it now as fallback (should not happen in production)
         try {
-          await this.embedBinaryImage(page, imageData, imageUrl, x, y, width, height);
-          console.log(`Successfully embedded image for ${card.card.name}`);
+          console.warn(`[drawCard] Attempting emergency load for: ${absoluteUrl.substring(0, 60)}...`);
+          const result = await getImageAsDataUri(absoluteUrl, {
+            preferProxy: true,
+            timeoutMs: 10000,
+            cache: false,
+          });
+          
+          if (result.bytes && result.bytes.length > 1000) {
+            imageBytes = result.bytes;
+            // Cache it for future use
+            this.imageBytesCache.set(absoluteUrl, imageBytes);
+            if (originalUrl !== absoluteUrl) {
+              this.imageBytesCache.set(originalUrl, imageBytes);
+            }
+          } else {
+            throw new Error('Emergency load failed: bytes too small');
+          }
+        } catch (emergencyError: any) {
+          console.error(`[drawCard] Emergency load failed:`, emergencyError);
+          this.failedImages.add(absoluteUrl);
+          if (originalUrl !== absoluteUrl) {
+            this.failedImages.add(originalUrl);
+          }
+          this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
+          return;
+        }
+      }
+      
+      // CRITICAL: Embed image using cached bytes
+      if (imageBytes && imageBytes.length > 1000) {
+        try {
+          await this.embedBinaryImage(page, imageBytes, absoluteUrl, x, y, width, height);
+          console.log(`[drawCard] ✓ Successfully embedded image for ${card.card.name}`);
         } catch (embedError) {
-          console.error(`Failed to embed image for ${card.card.name}:`, embedError);
-          this.failedImages.add(imageUrl);
+          console.error(`[drawCard] Failed to embed image for ${card.card.name}:`, embedError);
+          this.failedImages.add(absoluteUrl);
+          if (originalUrl !== absoluteUrl) {
+            this.failedImages.add(originalUrl);
+          }
           this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
         }
       } else {
-        console.error(`Invalid image data for ${card.card.name}:`, lastError);
-        this.failedImages.add(imageUrl);
+        console.error(`[drawCard] Invalid image bytes for ${card.card.name}: ${imageBytes?.length || 0} bytes`);
+        this.failedImages.add(absoluteUrl);
+        if (originalUrl !== absoluteUrl) {
+          this.failedImages.add(originalUrl);
+        }
         this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
       }
-
+      
     } catch (error) {
-      console.error(`Kart çizim hatası (${card.card.name}):`, error);
+      console.error(`[drawCard] Error drawing card (${card.card.name}):`, error);
       this.drawCardPlaceholder(page, x, y, width, height, card.card.name);
-    }
-  }
-
-  // Ana görsel yükleme metodu - CORS dayanıklı: her zaman önce same-origin image-proxy -> bytes -> embed
-  private async getCardImageBytes(url: string): Promise<Uint8Array> {
-    // Önce cache'den kontrol et
-    if (this.imageCache.has(url)) {
-      const cached = this.imageCache.get(url)!;
-      if (cached && cached.length > 1000) {
-        return cached;
-      }
-      // Cache'deki veri geçersiz, sil
-      this.imageCache.delete(url);
-    }
-
-    const retryCount = this.retryCount.get(url) || 0;
-    if (retryCount >= this.maxRetries) {
-      throw new Error(`Maximum retries exceeded for ${url}`);
-    }
-
-    try {
-      const res = await getImageAsDataUri(url, {
-        preferProxy: true,
-        timeoutMs: 30000,
-        cache: true,
-      });
-
-      if (!res.bytes || res.bytes.length < 1000) {
-        throw new Error('Image bytes too small');
-      }
-
-      this.imageCache.set(url, res.bytes);
-      return res.bytes;
-    } catch (e: any) {
-      this.retryCount.set(url, retryCount + 1);
-      throw new Error(`Image fetch failed: ${e?.message || e}`);
     }
   }
 
   // Binary görseli PDF'e göm - CORS güvenli
   private async embedBinaryImage(page: PDFPage, imageData: Uint8Array, imageUrl: string, x: number, y: number, width: number, height: number): Promise<void> {
     try {
-      // Önce binary format kontrolü yap (daha güvenilir)
+      // Format detection
       const isJPEGFormat = this.isJPEG(imageData);
       const isPNGFormat = this.isPNG(imageData);
       
       let pdfImage;
       
-      // Format tespiti - önce binary kontrol, sonra URL kontrol
       if (isJPEGFormat) {
         try {
           pdfImage = await this.pdfDoc.embedJpg(imageData);
         } catch (jpegError) {
-          console.warn('JPEG embedding failed, trying PNG:', jpegError);
+          console.warn('[embedBinaryImage] JPEG embedding failed, trying PNG:', jpegError);
           try {
             pdfImage = await this.pdfDoc.embedPng(imageData);
           } catch (pngError) {
@@ -753,7 +704,7 @@ export class PDFGenerator {
         try {
           pdfImage = await this.pdfDoc.embedPng(imageData);
         } catch (pngError) {
-          console.warn('PNG embedding failed, trying JPEG:', pngError);
+          console.warn('[embedBinaryImage] PNG embedding failed, trying JPEG:', pngError);
           try {
             pdfImage = await this.pdfDoc.embedJpg(imageData);
           } catch (jpegError) {
@@ -761,7 +712,7 @@ export class PDFGenerator {
           }
         }
       } else {
-        // Format belirlenemezse URL'den tahmin et, sonra her ikisini de dene
+        // Try both formats
         const lowerUrl = imageUrl.toLowerCase();
         if (lowerUrl.includes('.jpg') || lowerUrl.includes('.jpeg')) {
           try {
@@ -776,7 +727,6 @@ export class PDFGenerator {
             pdfImage = await this.pdfDoc.embedJpg(imageData);
           }
         } else {
-          // Her ikisini de dene
           try {
             pdfImage = await this.pdfDoc.embedJpg(imageData);
           } catch {
@@ -788,19 +738,17 @@ export class PDFGenerator {
           }
         }
       }
-
-      // PDF sayfasına çiz - görselin başarıyla embed edildiğinden emin ol
+      
       if (!pdfImage) {
         throw new Error('PDF image object is null after embedding');
       }
       
       page.drawImage(pdfImage, { x, y, width, height });
       
-      // Debug log
-      console.log(`Successfully embedded image: ${imageUrl.substring(0, 50)}...`);
+      console.log(`[embedBinaryImage] Successfully embedded image: ${imageUrl.substring(0, 50)}...`);
       
     } catch (error) {
-      console.error('Image embedding failed:', error);
+      console.error('[embedBinaryImage] Image embedding failed:', error);
       console.error('Image URL:', imageUrl);
       console.error('Image data length:', imageData.length);
       console.error('Image data first bytes:', Array.from(imageData.slice(0, 10)));
@@ -808,7 +756,6 @@ export class PDFGenerator {
     }
   }
 
-  // Görsel format tespiti için yardımcı metodlar
   private isJPEG(data: Uint8Array): boolean {
     return data.length >= 2 && data[0] === 0xFF && data[1] === 0xD8;
   }
@@ -820,9 +767,8 @@ export class PDFGenerator {
   }
 
   private drawCardPlaceholder(page: PDFPage, x: number, y: number, width: number, height: number, cardName: string): void {
-    console.log(`Drawing placeholder for ${cardName}`);
+    console.log(`[drawCardPlaceholder] Drawing placeholder for ${cardName}`);
     
-    // Placeholder dikdörtgen - daha belirgin
     page.drawRectangle({
       x,
       y,
@@ -832,8 +778,7 @@ export class PDFGenerator {
       borderWidth: 2,
       color: rgb(0.9, 0.9, 0.9)
     });
-
-    // İç dikdörtgen
+    
     page.drawRectangle({
       x: x + 2,
       y: y + 2,
@@ -843,29 +788,26 @@ export class PDFGenerator {
       borderWidth: 1,
       color: rgb(0.95, 0.95, 0.95)
     });
-
-    // Kart adı - daha okunabilir
-    const maxNameLength = Math.floor((width - 10) / 8); // Yaklaşık karakter sayısı
+    
+    const maxNameLength = Math.floor((width - 10) / 8);
     const displayName = cardName.length > maxNameLength ? 
       cardName.substring(0, maxNameLength - 3) + '...' : cardName;
     
     const fontSize = Math.min(14, Math.max(8, width / displayName.length * 1.2));
     page.drawText(displayName, {
-      x: x + (width - (displayName.length * fontSize * 0.6)) / 2, // Ortala
+      x: x + (width - (displayName.length * fontSize * 0.6)) / 2,
       y: y + height - 25,
       size: fontSize,
       color: rgb(0.2, 0.2, 0.2)
     });
-
-    // "Görsel yüklenemedi" uyarısı - daha belirgin
+    
     page.drawText('Görsel yüklenemedi', {
-      x: x + (width - 120) / 2, // Ortala
+      x: x + (width - 120) / 2,
       y: y + height - 45,
       size: 10,
       color: rgb(0.8, 0.3, 0.3)
     });
-
-    // Kart tipi bilgisi (varsa)
+    
     if (cardName.includes('(') && cardName.includes(')')) {
       const typeMatch = cardName.match(/\(([^)]+)\)/);
       if (typeMatch) {
@@ -880,7 +822,6 @@ export class PDFGenerator {
   }
 
   private drawBleedArea(page: PDFPage, x: number, y: number, width: number, height: number): void {
-    // Bleed alanını hafif gri çerçeve ile göster
     page.drawRectangle({
       x,
       y,
@@ -892,11 +833,11 @@ export class PDFGenerator {
   }
 
   private drawCropMarks(page: PDFPage, x: number, y: number, width: number, height: number): void {
-    const markLength = (this.settings.cropMarkLengthMm ?? 5) * PDFGenerator.MM_TO_POINTS; // points
-    const markOffset = (this.settings.cropMarkOffsetMm ?? 1.5) * PDFGenerator.MM_TO_POINTS; // points
-    const markThickness = this.settings.cropMarkThicknessPt ?? 0.5; // points
+    const markLength = (this.settings.cropMarkLengthMm ?? 5) * PDFGenerator.MM_TO_POINTS;
+    const markOffset = (this.settings.cropMarkOffsetMm ?? 1.5) * PDFGenerator.MM_TO_POINTS;
+    const markThickness = this.settings.cropMarkThicknessPt ?? 0.5;
     
-    // Sol üst köşe
+    // Top left
     page.drawLine({
       start: { x: x - markOffset - markLength, y: y + height },
       end: { x: x - markOffset, y: y + height },
@@ -910,7 +851,7 @@ export class PDFGenerator {
       color: rgb(0, 0, 0)
     });
     
-    // Sağ üst köşe
+    // Top right
     page.drawLine({
       start: { x: x + width + markOffset, y: y + height },
       end: { x: x + width + markOffset + markLength, y: y + height },
@@ -924,7 +865,7 @@ export class PDFGenerator {
       color: rgb(0, 0, 0)
     });
     
-    // Sol alt köşe
+    // Bottom left
     page.drawLine({
       start: { x: x - markOffset - markLength, y: y },
       end: { x: x - markOffset, y: y },
@@ -938,7 +879,7 @@ export class PDFGenerator {
       color: rgb(0, 0, 0)
     });
     
-    // Sağ alt köşe
+    // Bottom right
     page.drawLine({
       start: { x: x + width + markOffset, y: y },
       end: { x: x + width + markOffset + markLength, y: y },
