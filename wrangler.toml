@@ -1,0 +1,12 @@
+#
+# Cloudflare Pages build hints (beta: Pages reads this file during CI)
+# We use the Next-on-Pages adapter which outputs to `.vercel/output/static`.
+#
+# Ref: https://github.com/archeronur/optcg.git
+#
+name = "optcg"
+compatibility_date = "2026-02-05"
+
+# Tell Cloudflare Pages what directory to publish (instead of default `out`)
+pages_build_output_dir = ".vercel/output/static"
+
