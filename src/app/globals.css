@@ -3092,12 +3092,15 @@ body::before {
     padding: 0;
     align-items: flex-end; /* Bottom aligned on mobile */
     overflow-y: auto;
+    overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+    width: 100% !important;
+    max-width: 100vw !important;
   }
   
   .modal-content {
@@ -3108,8 +3111,10 @@ body::before {
     margin: 0;
     animation: slideUpMobile 0.3s ease;
     overflow-y: auto;
+    overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;
     position: relative;
+    box-sizing: border-box;
   }
   
   @keyframes slideUpMobile {
@@ -3127,28 +3132,32 @@ body::before {
     grid-template-columns: 1fr !important;
     gap: 20px;
     padding: 20px !important;
-    overflow: visible;
-    max-height: none;
+    overflow-x: hidden !important;
     overflow-y: auto;
+    max-height: none;
     -webkit-overflow-scrolling: touch;
-    width: 100%;
-    box-sizing: border-box;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
   
   .modal-image-section {
     padding: 20px;
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow-x: hidden;
   }
   
   .modal-card-image {
     max-height: 350px;
-    max-width: 100%;
+    max-width: 100% !important;
     width: auto;
     height: auto;
+    object-fit: contain;
   }
   
   .modal-card-name-row {
@@ -3169,8 +3178,10 @@ body::before {
   }
   
   .modal-card-details {
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box;
+    overflow-x: hidden;
   }
   
   .detail-row {
@@ -3179,7 +3190,10 @@ body::before {
     gap: 6px;
     padding: 12px 0;
     border-bottom: 1px solid #e9ecef;
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
   
   .detail-label {
@@ -3193,22 +3207,45 @@ body::before {
   
   .detail-value {
     font-size: 15px;
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     word-wrap: break-word;
     overflow-wrap: break-word;
     line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  /* Quantity controls mobile */
+  .quantity-controls {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .quantity-ctrl-btn {
+    flex-shrink: 0;
+  }
+
+  .quantity-badge {
+    flex-shrink: 0;
   }
   
   .modal-info-section {
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box;
     gap: 16px;
+    overflow-x: hidden;
   }
   
   .modal-card-text {
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box;
     padding: 16px;
+    overflow-x: hidden;
   }
   
   .modal-card-text p {
@@ -3216,18 +3253,50 @@ body::before {
     line-height: 1.6;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .modal-flavor-text {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+  }
+
+  .modal-flavor-text p {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .modal-artist {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
   }
   
   .art-variants-section {
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box;
     padding: 16px;
+    overflow-x: hidden;
   }
   
   .variants-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 10px;
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+  }
+
+  .variant-card {
+    max-width: 100%;
+    overflow-x: hidden;
   }
   
   .modal-close {
@@ -3237,11 +3306,33 @@ body::before {
     top: 12px;
     right: 12px;
     z-index: 1001;
+    position: absolute;
+    flex-shrink: 0;
   }
 
   /* On touch devices, avoid hover transforms that can make the X jumpy */
   .modal-close:hover {
     transform: none;
+  }
+
+  .change-art-btn {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  .modal-footer-mobile-close {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+  }
+
+  .modal-footer-close-button {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+    box-sizing: border-box;
   }
   
   .zoom-controls {
@@ -3283,6 +3374,9 @@ body::before {
 @media (max-width: 480px) {
   .modal-overlay {
     padding: 0;
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100vw !important;
   }
   
   .modal-content {
@@ -3290,6 +3384,8 @@ body::before {
     border-radius: 20px 20px 0 0;
     width: 100% !important;
     max-width: 100% !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box;
   }
   
   .modal-body {
@@ -3297,22 +3393,27 @@ body::before {
     gap: 16px;
     max-height: calc(100vh - 100px);
     overflow-y: auto;
+    overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;
-    width: 100%;
-    box-sizing: border-box;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
   
   .modal-image-section {
     padding: 16px;
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box;
+    overflow-x: hidden;
   }
   
   .modal-card-image {
     max-height: 300px;
-    max-width: 100%;
+    max-width: 100% !important;
     width: auto;
     height: auto;
+    object-fit: contain;
   }
   
   .modal-card-name-row {
@@ -3328,14 +3429,24 @@ body::before {
     font-size: 1.3rem;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     line-height: 1.3;
+    overflow-x: hidden;
   }
   
   .modal-info-section {
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box;
     gap: 14px;
+    overflow-x: hidden;
+  }
+  
+  .modal-card-details {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
   }
   
   .detail-row {
@@ -3343,8 +3454,10 @@ body::before {
     align-items: flex-start;
     gap: 6px;
     padding: 12px 0;
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box;
+    overflow-x: hidden;
   }
   
   .detail-label {
@@ -3358,32 +3471,80 @@ body::before {
   
   .detail-value {
     font-size: 14px;
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     word-wrap: break-word;
     overflow-wrap: break-word;
     line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  /* Quantity controls small mobile */
+  .quantity-controls {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+    flex-wrap: wrap;
+    gap: 6px;
   }
   
   .modal-card-text {
     padding: 14px;
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box;
+    overflow-x: hidden;
   }
   
   .modal-card-text p {
     font-size: 13px;
     line-height: 1.6;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .modal-flavor-text {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+  }
+
+  .modal-flavor-text p {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .modal-artist {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
   }
   
   .art-variants-section {
     padding: 14px;
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box;
+    overflow-x: hidden;
   }
   
   .variants-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+  }
+
+  .variant-card {
+    max-width: 100%;
+    overflow-x: hidden;
   }
   
   .modal-close {
@@ -3392,6 +3553,28 @@ body::before {
     font-size: 26px;
     top: 10px;
     right: 10px;
+    position: absolute;
+    flex-shrink: 0;
+  }
+
+  .change-art-btn {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  .modal-footer-mobile-close {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+  }
+
+  .modal-footer-close-button {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+    box-sizing: border-box;
   }
   
   .skeleton-grid {
