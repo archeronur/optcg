@@ -6,8 +6,8 @@ export class LayoutEngine {
   private static readonly A4_HEIGHT = 297;
   
   // Standard TCG kart boyutları (mm) - Lorcana MTG ile aynı standart
-  private static readonly CARD_WIDTH = 63.5;
-  private static readonly CARD_HEIGHT = 88.9;
+  private static readonly CARD_WIDTH = 63;
+  private static readonly CARD_HEIGHT = 88;
 
   // Grid seçenekleri
   private static readonly GRID_OPTIONS = {

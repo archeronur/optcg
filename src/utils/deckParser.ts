@@ -288,6 +288,30 @@ export class DeckParser {
       }
     }
 
+    // Yeni format: "1 OP14-020 Dracule Mihawk" veya "4 ST02-007 Jewelry Bonney"
+    // count card_id card_name (card_id kart adından önce, parantez yok)
+    const newFormatMatch = line.match(/^(\d+)\s+([A-Z]{2,3}\d{2}-\d{3}(?:_[a-z0-9]+)?)\s+(.+)$/i);
+    if (newFormatMatch) {
+      const count = parseInt(newFormatMatch[1]);
+      const rawCardId = newFormatMatch[2];
+      const name = newFormatMatch[3].trim();
+      
+      const idMatch = rawCardId.match(/^([A-Z]{2,3})(\d{2})-(\d{3})(_.+)?$/i);
+      if (idMatch) {
+        const setCode = this.normalizeSetCode(idMatch[1].toUpperCase() + idMatch[2]);
+        const number = idMatch[3];
+        const variantSuffix = idMatch[4] ? idMatch[4].toLowerCase() : '';
+        
+        return {
+          count,
+          name: name || `Card ${rawCardId}`,
+          set_code: setCode,
+          number: number + variantSuffix,
+          original_line: line
+        };
+      }
+    }
+
     // Eski format: "1 Kuzan (OP12-040)" veya "4 Tashigi (OP06-050)"
     match = line.match(/^(\d+)\s*x?\s+(.+?)(?:\s*\(([^)]+)\))?$/i);
     

@@ -663,8 +663,8 @@ body::before {
   font-size: 10px;
   color: #666;
   overflow: hidden;
-  /* Kart oranı: 63.5mm x 88.9mm */
-  aspect-ratio: 63.5 / 88.9;
+  /* Kart oranı: 63mm x 88mm */
+  aspect-ratio: 63 / 88;
   position: relative;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -1555,7 +1555,7 @@ body::before {
   .preview-grid .card-slot {
     width: 100%;
     min-height: 100px;
-    aspect-ratio: 63.5 / 88.9;
+    aspect-ratio: 63 / 88;
     max-width: 100%;
     box-sizing: border-box;
     min-width: 0;
@@ -1884,7 +1884,7 @@ body::before {
   .card-slot {
     min-height: 130px !important;
     font-size: 9px;
-    aspect-ratio: 63.5 / 88.9 !important;
+    aspect-ratio: 63 / 88 !important;
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
@@ -2048,7 +2048,7 @@ body::before {
   .card-slot {
     width: 100% !important;
     min-height: 130px !important;
-    aspect-ratio: 63.5 / 88.9 !important;
+    aspect-ratio: 63 / 88 !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
     position: relative !important;
@@ -2889,7 +2889,7 @@ body::before {
 }
 
 .skeleton-card {
-  aspect-ratio: 63.5 / 88.9;
+  aspect-ratio: 63 / 88;
   background: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%);
   border-radius: 8px;
   position: relative;
@@ -4271,7 +4271,7 @@ body::before {
 
 .variant-card img {
   width: 100%;
-  aspect-ratio: 63.5 / 88.9;
+  aspect-ratio: 63 / 88;
   object-fit: cover;
   display: block;
 }

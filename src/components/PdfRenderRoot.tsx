@@ -184,10 +184,10 @@ export function PdfRenderRoot({ cards, printSettings, onImagesReady, onRenderCom
             key={`${deckCard.card.id}-${index}`}
             style={{
               position: 'absolute',
-              left: `${(col * 63.5) + (col * 2)}mm`,
-              top: `${(row * 88.9) + (row * 2)}mm`,
-              width: '63.5mm',
-              height: '88.9mm',
+              left: `${(col * 63) + (col * 2)}mm`,
+              top: `${(row * 88) + (row * 2)}mm`,
+              width: '63mm',
+              height: '88mm',
             }}
           >
             {imageUrl ? (
