@@ -388,13 +388,6 @@ class OPTCGAPI {
       variantSuffix = cardNumber.substring(underscoreIndex);
       console.log(`Parsed variant: baseNumber=${baseNumber}, variantSuffix=${variantSuffix}`);
     }
-
-    // Reject unknown variant suffixes early to avoid resolving wrong base cards.
-    // Example: OP13-002_sy67syo should return [] (missing), not OP13-002.
-    if (variantSuffix && !this.isAllowedVariantSuffix(variantSuffix)) {
-      console.log(`Rejecting unsupported variant suffix: ${variantSuffix}`);
-      return [];
-    }
     
     const cacheKey = this.getCacheKey(`${name}_${setCode || ''}_${cardNumber || ''}`);
     const cached = this.cache.get(cacheKey);
@@ -547,7 +540,8 @@ class OPTCGAPI {
               // If we have a variant suffix, search for exact match including variant
               if (variantSuffix) {
                 const fullSearch = (baseNumber + variantSuffix).toLowerCase();
-                return cardSetId.includes(fullSearch) || cardSetId.includes(baseNumber);
+                const allowBaseFallback = this.isAllowedVariantSuffix(variantSuffix);
+                return cardSetId.includes(fullSearch) || (allowBaseFallback && cardSetId.includes(baseNumber));
               }
               
               // Otherwise just match the base number
@@ -676,7 +670,8 @@ class OPTCGAPI {
               // If we have a variant suffix, search for exact match including variant
               if (variantSuffix) {
                 const fullSearch = (baseNumber + variantSuffix).toLowerCase();
-                return cardSetId.includes(fullSearch) || cardSetId.includes(baseNumber);
+                const allowBaseFallback = this.isAllowedVariantSuffix(variantSuffix);
+                return cardSetId.includes(fullSearch) || (allowBaseFallback && cardSetId.includes(baseNumber));
               }
               
               // Otherwise just match the base number
