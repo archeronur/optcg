@@ -507,23 +507,44 @@ def scrape_meta(meta_id, meta_path):
                 if ct != "Total Leader":
                     event_type = ct
 
-        date_text = ""
+        # Prefer the full date from <time> (if available) so we can keep the correct year.
+        # If not available, egmanevents often shows dates as "3/22/26" - capture that.
+        date_text = event_info.get("date", "") or ""
+        month_day_text = ""
         for el in ev_soup.find_all(["span", "time", "p", "div"]):
             t = el.get_text(strip=True)
-            date_match = re.match(r"^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d+", t)
-            if date_match:
-                date_text = t
+
+            # Eg: 3/22/26, 03/22/2026
+            slash_match = re.search(r"\b\d{1,2}\/\d{1,2}\/\d{2,4}\b", t)
+            if slash_match:
+                date_text = slash_match.group(0)
                 break
-            date_match2 = re.match(r"^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+", t)
-            if date_match2:
-                date_text = t
-                break
+
+            if not month_day_text:
+                date_match = re.match(
+                    r"^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d+",
+                    t,
+                )
+                if date_match:
+                    month_day_text = t
+                    continue
+
+                date_match2 = re.match(
+                    r"^(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d+",
+                    t,
+                )
+                if date_match2:
+                    month_day_text = t
+                    continue
+
+        if not date_text and month_day_text:
+            date_text = month_day_text
 
         event_data = {
             "name": event_name,
             "url": ev_link["url"],
             "type": event_type or "Unofficial Event",
-            "date": date_text or event_info.get("date", ""),
+            "date": date_text,
             "players": event_info.get("players", 0),
             "rounds": event_info.get("rounds", ""),
             "leaderDistribution": event_info.get("leader_distribution", {}),

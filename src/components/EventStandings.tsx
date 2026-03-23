@@ -11,9 +11,11 @@ function placingRank(placing: string): number {
 export default function EventStandings({
   decks,
   cardsData,
+  eventDate,
 }: {
   decks: Deck[];
   cardsData: Record<string, Card>;
+  eventDate?: string;
 }) {
   const sorted = [...decks].sort(
     (a, b) => placingRank(a.placing) - placingRank(b.placing),
@@ -24,9 +26,17 @@ export default function EventStandings({
       <h2 className="mb-1 text-xl font-bold text-white">
         <T section="tracker" k="eventStandings" />
       </h2>
-      <p className="mb-4 text-xs text-gray-500">
-        <T section="tracker" k="legacyStandingsNote" />
-      </p>
+      <div className="mb-4 flex items-center gap-3">
+        <p className="text-xs text-gray-500">
+          <T section="tracker" k="legacyStandingsNote" />
+        </p>
+        {eventDate && (
+          <span className="inline-flex items-center gap-1 rounded-full bg-white/5 px-2.5 py-0.5 text-[11px] text-gray-400">
+            <span aria-hidden="true">📅</span>
+            {eventDate}
+          </span>
+        )}
+      </div>
       <div className="space-y-2">
         {sorted.map((deck, i) => {
           const info = getLeaderInfo(deck.leaderId);

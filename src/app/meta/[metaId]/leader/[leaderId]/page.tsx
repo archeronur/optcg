@@ -14,7 +14,7 @@ import { parseColors, getColorInfo } from "@/lib/colors";
 import { getCard } from "@/lib/cards";
 import CardImage from "@/components/CardImage";
 import CardGrid from "@/components/CardGrid";
-import DeckListViewer from "@/components/DeckListViewer";
+import AllAppearancesSection from "@/components/AllAppearancesSection";
 import T from "@/components/T";
 import type { Deck, Card } from "@/lib/types";
 
@@ -51,11 +51,20 @@ export default async function LeaderDetailPage({
   const colors = parseColors(info.color);
   const primaryColor = colors[0] ? getColorInfo(colors[0]) : getColorInfo("Black");
 
-  const leaderDecks: (Deck & { eventName: string })[] = [];
+  const leaderDecks: (Deck & {
+    eventName: string;
+    eventDate: string;
+    eventUrl: string;
+  })[] = [];
   for (const event of meta.events) {
     for (const deck of event.decks) {
       if (deck.leaderId === leaderId) {
-        leaderDecks.push({ ...deck, eventName: event.name });
+        leaderDecks.push({
+          ...deck,
+          eventName: event.name,
+          eventDate: event.date,
+          eventUrl: event.url,
+        });
       }
     }
   }
@@ -69,11 +78,51 @@ export default async function LeaderDetailPage({
     cardsData = await hydrateTrackerCards(cardMap);
   }
 
-  const placingDistribution: Record<string, number> = {};
+  type PlacingGroupKey = "1st" | "2nd" | "3rd" | "top4" | "top8" | "top16" | "top32";
+  const placingGroups: Record<PlacingGroupKey, number> = {
+    "1st": 0,
+    "2nd": 0,
+    "3rd": 0,
+    top4: 0,
+    top8: 0,
+    top16: 0,
+    top32: 0,
+  };
+
   for (const deck of leaderDecks) {
-    const bucket = String(deck.placing ?? "").replace(/[^0-9a-zA-Z]/g, "");
-    placingDistribution[bucket] = (placingDistribution[bucket] || 0) + 1;
+    const placingStr = String(deck.placing ?? "").trim();
+    if (!placingStr) continue;
+
+    const ord = placingStr.match(/\b(1st|2nd|3rd)\b/i);
+    if (ord?.[1]) {
+      const key = ord[1].toLowerCase() as PlacingGroupKey;
+      placingGroups[key] = (placingGroups[key] ?? 0) + 1;
+      continue;
+    }
+
+    const top = placingStr.match(/top\s*(4|8|16|32)\b/i);
+    if (top?.[1]) {
+      const key = (`top${top[1]}`.toLowerCase() as PlacingGroupKey);
+      placingGroups[key] = (placingGroups[key] ?? 0) + 1;
+    }
   }
+
+  const placingCategories: Array<{
+    key: PlacingGroupKey;
+    label: string;
+    prefixHash?: boolean;
+    style: string;
+  }> = [
+    { key: "1st", label: "1st", prefixHash: true, style: "bg-gold/10 text-gold" },
+    { key: "2nd", label: "2nd", prefixHash: true, style: "bg-silver/10 text-silver" },
+    { key: "3rd", label: "3rd", prefixHash: true, style: "bg-bronze/10 text-bronze" },
+    { key: "top4", label: "top4", style: "bg-silver/10 text-silver" },
+    { key: "top8", label: "top8", style: "bg-bronze/10 text-bronze" },
+    { key: "top16", label: "top16", style: "bg-bronze/10 text-bronze" },
+    { key: "top32", label: "top32", style: "bg-accent/10 text-accent" },
+  ];
+
+  const placingTotal = placingCategories.reduce((sum, c) => sum + (placingGroups[c.key] ?? 0), 0);
 
   const coreCards = legacyMeta
     ? []
@@ -178,23 +227,32 @@ export default async function LeaderDetailPage({
       </div>
 
       {/* Placing Distribution */}
-      {Object.keys(placingDistribution).length > 0 && (
+      {placingTotal > 0 && (
         <section className="mb-8 sm:mb-10">
           <h2 className="mb-3 text-lg sm:text-xl font-bold text-white">
             <T section="tracker" k="placingDist" />
           </h2>
           <div className="flex flex-nowrap gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible sm:gap-3">
-            {Object.entries(placingDistribution)
-              .sort(([a], [b]) => placingToNumber(a) - placingToNumber(b))
-              .map(([placing, count]) => (
+            {placingCategories
+              .filter((c) => (placingGroups[c.key] ?? 0) > 0)
+              .map((c) => (
                 <div
-                  key={placing}
+                  key={c.key}
                   className="glass-card rounded-xl px-3 py-2 text-center min-w-[3.2rem] sm:px-4 sm:py-3 sm:min-w-[4.5rem]"
                 >
-                  <div className="text-base sm:text-lg font-extrabold text-accent">
-                    {count}
+                  <div
+                    className={`text-base sm:text-lg font-extrabold ${
+                      c.style
+                        .split(" ")
+                        .filter((s) => s.startsWith("text-"))
+                        .join(" ") || "text-accent"
+                    }`}
+                  >
+                    {placingGroups[c.key] ?? 0}
                   </div>
-                  <div className="text-[9px] sm:text-[10px] text-gray-500">#{placing}</div>
+                  <div className="text-[9px] sm:text-[10px] text-gray-500">
+                    {c.prefixHash ? `#${c.label}` : c.label}
+                  </div>
                 </div>
               ))}
           </div>
@@ -210,7 +268,7 @@ export default async function LeaderDetailPage({
           <p className="mb-4 text-xs text-gray-500">
             <T section="tracker" k="coreCardsDesc" values={{ count: coreCards.length }} />
           </p>
-          <CardGrid cards={coreCards} variant="core" />
+          <CardGrid cards={coreCards} variant="core" mobileMaxRows={4} />
         </section>
       )}
 
@@ -223,52 +281,22 @@ export default async function LeaderDetailPage({
           <p className="mb-4 text-xs text-gray-500">
             <T section="tracker" k="flexCardsDesc" values={{ count: flexCards.length }} />
           </p>
-          <CardGrid cards={flexCards} variant="flex" />
+          <CardGrid cards={flexCards} variant="flex" mobileMaxRows={4} />
         </section>
       )}
 
       {/* All Appearances */}
       {leaderDecks.length > 0 && (
-        <section className="mb-10">
+        <>
           <h2 className="mb-4 text-xl font-bold text-white">
             <T section="tracker" k="allAppearances" values={{ count: leaderDecks.length }} />
           </h2>
-          <div className="glass-card rounded-xl overflow-hidden divide-y divide-white/[0.04]">
-            {leaderDecks.map((deck, i) => {
-              const placingNum = parseInt(deck.placing) || 999;
-              const placingStyle =
-                placingNum === 1
-                  ? "bg-gold/10 text-gold"
-                  : placingNum <= 4
-                  ? "bg-silver/10 text-silver"
-                  : placingNum <= 8
-                  ? "bg-bronze/10 text-bronze"
-                  : "bg-accent/10 text-accent";
-
-              return (
-                <div key={`${deck.eventName}-${deck.placing}-${i}`} className="px-4 py-3">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className={`rounded-md px-2.5 py-1 text-xs font-extrabold min-w-[2.5rem] text-center ${placingStyle}`}>
-                      #{deck.placing}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-white truncate">{deck.eventName}</p>
-                      {deck.player && (
-                        <p className="text-[10px] text-gray-500 mt-0.5">{deck.player}</p>
-                      )}
-                    </div>
-                  </div>
-                  {!legacyMeta && deck.cards.length > 0 && (
-                    <DeckListViewer
-                      deck={deck}
-                      cardsData={cardsData}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </section>
+          <AllAppearancesSection
+            leaderDecks={leaderDecks}
+            cardsData={cardsData}
+            legacyMeta={legacyMeta}
+          />
+        </>
       )}
     </div>
   );

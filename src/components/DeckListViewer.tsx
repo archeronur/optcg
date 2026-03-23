@@ -12,12 +12,14 @@ interface DeckListViewerProps {
   deck: Deck;
   cardsData: Record<string, Card>;
   placing?: string;
+  eventDate?: string;
 }
 
 export default function DeckListViewer({
   deck,
   cardsData,
   placing,
+  eventDate,
 }: DeckListViewerProps) {
   const [open, setOpen] = useState(false);
   const [popupCard, setPopupCard] = useState<
@@ -58,6 +60,12 @@ export default function DeckListViewer({
           <span className="text-sm font-semibold text-white">
             Deck ({totalCards} cards)
           </span>
+          {eventDate && (
+            <span className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-0.5 text-[11px] text-gray-400">
+              <span aria-hidden="true">📅</span>
+              {eventDate}
+            </span>
+          )}
           <div className="flex gap-1">
             {leaderColors.map((c) => {
               const ci = getColorInfo(c);

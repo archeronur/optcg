@@ -64,6 +64,8 @@ const translations = {
     coreCardsDesc: { en: "70%+ inclusion rate · {count} cards", tr: "%70+ dahil oranı · {count} kart" },
     flexCards: { en: "Flex Cards", tr: "Flex Kartlar" },
     flexCardsDesc: { en: "Below 70% inclusion rate · {count} cards", tr: "%70 altı dahil oranı · {count} kart" },
+    showMoreCards: { en: "Show more", tr: "Daha fazla göster" },
+    showLessCards: { en: "Show less", tr: "Daha az göster" },
     allAppearances: { en: "All Appearances ({count})", tr: "Tüm Görünümler ({count})" },
     leaderDist: { en: "Leader Distribution", tr: "Lider Dağılımı" },
     differentLeadersShort: { en: "{count} different leaders", tr: "{count} farklı lider" },

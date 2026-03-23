@@ -143,10 +143,11 @@ function extractEventBasics(html) {
   const h1Match = html.match(/<h1[^>]*>(.*?)<\/h1>/s);
   const name = h1Match ? stripTags(decodeHtmlEntities(h1Match[1])) : "";
 
+  const slashDate = html.match(/\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/);
   const monthDay = html.match(
     /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}\b/,
   );
-  const dateBase = monthDay ? monthDay[0] : "";
+  const dateBase = slashDate ? slashDate[0] : monthDay ? monthDay[0] : "";
 
   const writtenByMatch = html.match(/Written By\s*([^<\n\r]+)</);
   const writer = writtenByMatch ? stripTags(decodeHtmlEntities(writtenByMatch[1])) : "";

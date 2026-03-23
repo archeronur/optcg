@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CardImage from "./CardImage";
 import CardPopup from "./CardPopup";
 import { cardDisplayName } from "@/lib/cardDisplay";
+import T from "@/components/T";
 
 interface CardData {
   id: string;
@@ -26,18 +27,54 @@ interface CardData {
 interface CardGridProps {
   cards: CardData[];
   variant: "core" | "flex";
+  /**
+   * Mobile (< sm) görünüme özel: ilk N satırı gösterir, butonla açılır.
+   * grid kolonu 2 olduğu için N satır = yaklaşık N*2 kart.
+   */
+  mobileMaxRows?: number;
 }
 
-export default function CardGrid({ cards, variant }: CardGridProps) {
+export default function CardGrid({ cards, variant, mobileMaxRows }: CardGridProps) {
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   const accentColor =
     variant === "core" ? "emerald" : "amber";
 
+  useEffect(() => {
+    if (mobileMaxRows == null) return;
+
+    const mq = window.matchMedia("(max-width: 639px)"); // Tailwind `sm` breakpoint
+    const update = () => setIsMobile(mq.matches);
+    update();
+
+    if (typeof mq.addEventListener === "function") {
+      mq.addEventListener("change", update);
+      return () => mq.removeEventListener("change", update);
+    }
+
+    // Safari older fallback
+    mq.addListener(update);
+    return () => mq.removeListener(update);
+  }, [mobileMaxRows]);
+
+  useEffect(() => {
+    setExpanded(false);
+  }, [cards, variant, mobileMaxRows]);
+
+  const mobileMaxItems = mobileMaxRows != null ? mobileMaxRows * 2 : null; // mobile grid-cols-2
+  const visibleCards = useMemo(() => {
+    if (mobileMaxItems == null) return cards;
+    if (!isMobile) return cards;
+    if (expanded) return cards;
+    return cards.slice(0, mobileMaxItems);
+  }, [cards, expanded, isMobile, mobileMaxItems]);
+
   return (
     <>
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
-        {cards.map((card) => {
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-1 sm:gap-2 lg:gap-3">
+        {visibleCards.map((card) => {
           const rate = card.inclusionRate != null ? Math.round(card.inclusionRate) : null;
           const avg = card.avgCount != null ? card.avgCount.toFixed(1) : null;
 
@@ -52,24 +89,24 @@ export default function CardGrid({ cards, variant }: CardGridProps) {
                   src={card.image}
                   alt={cardDisplayName(card)}
                   cardId={card.id}
-                  className="w-full aspect-[55/77] sm:aspect-[63/88] object-cover rounded-t-lg sm:rounded-t-xl transition-transform group-hover:scale-[1.02]"
+                  className="w-full aspect-[55/70] sm:aspect-[63/88] object-cover rounded-t-lg sm:rounded-t-xl transition-transform group-hover:scale-[1.02]"
                 />
               </div>
 
-              <div className="px-2 py-1.5 sm:px-2.5 sm:py-2">
-                <p className="truncate text-[10px] sm:text-xs font-medium text-gray-300 group-hover:text-white transition-colors">
+              <div className="px-1.5 py-1 sm:px-2 sm:py-1.5">
+                <p className="truncate text-[9px] sm:text-xs font-medium text-gray-300 group-hover:text-white transition-colors">
                   {cardDisplayName(card)}
                 </p>
-                <p className="text-[8px] sm:text-[9px] text-gray-600 font-mono">{card.id}</p>
+                <p className="text-[7px] sm:text-[9px] text-gray-600 font-mono">{card.id}</p>
 
                 {rate != null && (
-                  <div className="mt-1 sm:mt-1.5">
+                  <div className="mt-0.5 sm:mt-1">
                     <div className="flex items-center justify-between mb-1">
-                      <span className={`text-[9px] sm:text-[10px] font-bold ${accentColor === "emerald" ? "text-emerald-400" : "text-amber-400"}`}>
+                      <span className={`text-[8px] sm:text-[10px] font-bold ${accentColor === "emerald" ? "text-emerald-400" : "text-amber-400"}`}>
                         {rate}%
                       </span>
                       {avg != null && (
-                        <span className="text-[8px] sm:text-[9px] text-gray-500">
+                        <span className="text-[7px] sm:text-[9px] text-gray-500">
                           avg ×{avg}
                         </span>
                       )}
@@ -87,6 +124,18 @@ export default function CardGrid({ cards, variant }: CardGridProps) {
           );
         })}
       </div>
+
+      {mobileMaxItems != null && isMobile && cards.length > mobileMaxItems && (
+        <div className="mt-3 flex justify-center">
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            className="inline-flex items-center justify-center w-full sm:w-auto max-w-[20rem] rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2 text-sm font-semibold text-white/90 hover:bg-white/[0.06] transition-colors"
+          >
+            <T section="tracker" k={expanded ? "showLessCards" : "showMoreCards"} />
+          </button>
+        </div>
+      )}
 
       {selectedCard && (
         <CardPopup

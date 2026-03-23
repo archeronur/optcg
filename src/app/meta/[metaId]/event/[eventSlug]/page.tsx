@@ -8,6 +8,7 @@ import {
 } from "@/lib/cardHelpers";
 import { hydrateTrackerCards } from "@/lib/trackerCardHydrate";
 import { isLegacyMetaThroughOp05 } from "@/lib/metaEra";
+import { formatEventDate } from "@/lib/eventDate";
 import LeaderBadge from "@/components/LeaderBadge";
 import DeckListViewer from "@/components/DeckListViewer";
 import EventStandings from "@/components/EventStandings";
@@ -78,7 +79,10 @@ export default async function EventDetailPage({
         <div className="mt-3 flex flex-wrap gap-3 text-sm">
           {event.date && (
             <span className="rounded-full bg-white/5 px-3 py-1 text-gray-400">
-              {event.date}
+              📅 {formatEventDate(event.date, {
+                eventName: event.name,
+                eventUrl: event.url,
+              })}
             </span>
           )}
           <span className="rounded-full bg-accent/10 px-3 py-1 text-accent font-medium">
@@ -133,7 +137,14 @@ export default async function EventDetailPage({
       {/* Deck lists (OP-06+) or standings only (OP-05 and earlier) */}
       {event.decks.length > 0 &&
         (legacyMeta ? (
-          <EventStandings decks={event.decks} cardsData={cardsData} />
+          <EventStandings
+            decks={event.decks}
+            cardsData={cardsData}
+            eventDate={formatEventDate(event.date, {
+              eventName: event.name,
+              eventUrl: event.url,
+            })}
+          />
         ) : (
           <section className="mb-12">
             <h2 className="mb-4 text-xl font-bold text-white">
@@ -146,6 +157,10 @@ export default async function EventDetailPage({
                   deck={deck}
                   cardsData={cardsData}
                   placing={deck.placing}
+                  eventDate={formatEventDate(event.date, {
+                    eventName: event.name,
+                    eventUrl: event.url,
+                  })}
                 />
               ))}
             </div>

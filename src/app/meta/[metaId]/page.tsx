@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getMetaData, getAllMetaIds, slugify } from "@/lib/data";
 import { getLeaderImage, getLeaderColor } from "@/lib/cardHelpers";
 import { parseColors, getColorInfo } from "@/lib/colors";
+import { formatEventDate } from "@/lib/eventDate";
 import CardImage from "@/components/CardImage";
 import T from "@/components/T";
 
@@ -202,7 +203,13 @@ export default async function MetaOverviewPage({
                       <h3 className="truncate text-sm font-bold text-white group-hover:text-accent transition-colors">
                         {event.name}
                       </h3>
-                      <p className="mt-1 text-xs text-gray-500">{event.date}</p>
+                      <p className="mt-1 inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-0.5 text-[11px] text-gray-400">
+                        <span aria-hidden="true">📅</span>
+                        {formatEventDate(event.date, {
+                          eventName: event.name,
+                          eventUrl: event.url,
+                        })}
+                      </p>
                       <div className="mt-2 flex flex-wrap gap-2">
                         <span className="rounded-full bg-white/5 px-2.5 py-0.5 text-[11px] font-medium text-gray-400">
                           {event.players} <T section="tracker" k="players" />
@@ -241,7 +248,13 @@ export default async function MetaOverviewPage({
                   <p className="truncate text-sm font-medium text-gray-300">
                     {event.name}
                   </p>
-                  <p className="text-xs text-gray-600">{event.date}</p>
+                  <p className="mt-1 inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-0.5 text-[11px] text-gray-400">
+                    <span aria-hidden="true">📅</span>
+                    {formatEventDate(event.date, {
+                      eventName: event.name,
+                      eventUrl: event.url,
+                    })}
+                  </p>
                 </div>
                 <span className="ml-4 flex-shrink-0 rounded-full bg-white/5 px-2.5 py-0.5 text-[11px] font-medium text-gray-500">
                   {event.players} <T section="tracker" k="players" />
