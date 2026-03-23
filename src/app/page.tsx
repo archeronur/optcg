@@ -12,9 +12,9 @@ export default function LandingPage() {
   const totalSets = summary.metas.length;
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 py-6 sm:py-16">
-      <div className="text-center mb-6 sm:mb-14 animate-fade-in">
-        <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold gradient-text mb-3 sm:mb-4">
+    <div className="h-[calc(100dvh-4rem)] md:min-h-[calc(100vh-4rem)] overflow-hidden flex flex-col items-center justify-center px-4 py-3 sm:py-16">
+      <div className="text-center mb-4 sm:mb-14 animate-fade-in">
+        <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold gradient-text mb-2 sm:mb-4">
           <T section="landing" k="title" />
         </h1>
         <p className="text-gray-400 text-sm sm:text-xl max-w-md sm:max-w-xl mx-auto leading-relaxed">
@@ -22,11 +22,11 @@ export default function LandingPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5 md:gap-8 w-full max-w-3xl md:max-w-4xl animate-slide-up">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-5 md:gap-8 w-full max-w-3xl md:max-w-4xl animate-slide-up">
         {/* Event Tracker Card */}
         <Link
           href="/tracker"
-          className="glass-card hover-lift p-4 sm:p-8 flex flex-col gap-3 sm:gap-4 group"
+          className="glass-card hover-lift p-3.5 sm:p-8 flex flex-col gap-2.5 sm:gap-4 group"
         >
           <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl bg-accent/10 flex items-center justify-center text-lg sm:text-2xl">
             📊
@@ -39,7 +39,7 @@ export default function LandingPage() {
               <T section="landing" k="trackerDesc" />
             </p>
           </div>
-          <div className="flex gap-2 sm:gap-4 mt-auto pt-3 sm:pt-4 border-t border-white/5">
+          <div className="flex gap-2 sm:gap-4 mt-auto pt-2.5 sm:pt-4 border-t border-white/5">
             <div className="text-center flex-1">
               <div className="text-lg sm:text-xl font-bold text-white">{totalEvents}</div>
               <div className="text-[11px] sm:text-xs text-gray-500">
@@ -70,7 +70,7 @@ export default function LandingPage() {
         {/* Proxy Print Card */}
         <Link
           href="/proxy-print"
-          className="glass-card hover-lift p-4 sm:p-8 flex flex-col gap-3 sm:gap-4 group"
+          className="glass-card hover-lift p-3.5 sm:p-8 flex flex-col gap-2.5 sm:gap-4 group"
         >
           <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl bg-accent-secondary/10 flex items-center justify-center text-lg sm:text-2xl">
             🖨️
@@ -83,7 +83,7 @@ export default function LandingPage() {
               <T section="landing" k="proxyDesc" />
             </p>
           </div>
-          <div className="flex gap-4 mt-auto pt-3 sm:pt-4 border-t border-white/5">
+          <div className="flex gap-4 mt-auto pt-2.5 sm:pt-4 border-t border-white/5">
             <div className="text-[11px] sm:text-sm text-gray-500">
               PDF · A4 · 3×3
             </div>

@@ -63,6 +63,7 @@ function extractDeckUrlAndLeaderFromDeckListsTable(html, deckListsHeading) {
   let rowMatch;
   while ((rowMatch = rowRe.exec(slice))) {
     const rowHtml = rowMatch[1];
+    leaderAnchorRe.lastIndex = 0;
 
     const placingMatch =
       rowHtml.match(/first-cell[^>]*>([^<]+)</) ||
@@ -143,11 +144,15 @@ function extractEventBasics(html) {
   const h1Match = html.match(/<h1[^>]*>(.*?)<\/h1>/s);
   const name = h1Match ? stripTags(decodeHtmlEntities(h1Match[1])) : "";
 
+  const eventDetailsDateMatch = html.match(
+    /(?:March|April|May|June|July|August|September|October|November|December|Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?)\s+\d{1,2}(?:st|nd|rd|th)?-\d{1,2}(?:st|nd|rd|th)?,\s+\d{4}/,
+  );
+  const eventDetailsDate = eventDetailsDateMatch ? eventDetailsDateMatch[0] : "";
   const slashDate = html.match(/\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/);
   const monthDay = html.match(
     /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}\b/,
   );
-  const dateBase = slashDate ? slashDate[0] : monthDay ? monthDay[0] : "";
+  const dateBase = eventDetailsDate || (slashDate ? slashDate[0] : monthDay ? monthDay[0] : "");
 
   const writtenByMatch = html.match(/Written By\s*([^<\n\r]+)</);
   const writer = writtenByMatch ? stripTags(decodeHtmlEntities(writtenByMatch[1])) : "";
@@ -158,7 +163,7 @@ function extractEventBasics(html) {
   const roundsMatch = html.match(/(\d+)\s*Rounds of Swiss[^<]*(Cut|Into Top|Top\s*16)?[^<]*/i);
   const rounds = roundsMatch ? stripTags(roundsMatch[0]) : "";
 
-  return { name, type, date: writer ? `${dateBase}Written By${writer}` : dateBase, players, rounds };
+  return { name, type, date: dateBase, players, rounds };
 }
 
 async function fetchText(url) {
@@ -196,13 +201,16 @@ async function main() {
   const tournamentsUrl = "https://egmanevents.com/one-piece-op14-tournaments";
   const tournamentsHtml = await fetchText(tournamentsUrl);
   const eventUrls = extractEventUrlsFromOp14Page(tournamentsHtml);
-
-  const newEventUrls = eventUrls.filter((u) => !existingUrls.has(u));
-  console.log(`OP14: existing=${existingUrls.size}, found=${eventUrls.length}, new=${newEventUrls.length}`);
+  const cliUrls = process.argv.slice(2).filter((s) => /^https?:\/\//.test(s));
+  const targetUrls = cliUrls.length ? cliUrls : eventUrls;
+  const newEventUrls = targetUrls.filter((u) => !existingUrls.has(u));
+  console.log(
+    `OP14: existing=${existingUrls.size}, found=${eventUrls.length}, target=${targetUrls.length}, new=${newEventUrls.length}`,
+  );
 
   const newEvents = [];
 
-  for (const eventUrl of newEventUrls) {
+  for (const eventUrl of targetUrls) {
     console.log(`Scraping ${eventUrl}`);
     const html = await fetchText(eventUrl);
 
@@ -232,11 +240,13 @@ async function main() {
   }
 
   if (!newEvents.length) {
-    console.log("No new events to add.");
+    console.log("No events to update.");
     return;
   }
 
-  op14Json.events = [...newEvents, ...(op14Json.events || [])];
+  const refreshedUrls = new Set(newEvents.map((e) => e.url));
+  const preservedEvents = (op14Json.events || []).filter((e) => !refreshedUrls.has(e.url));
+  op14Json.events = [...newEvents, ...preservedEvents];
 
   // Recompute meta summary fields for OP14
   let totalDecks = 0;
