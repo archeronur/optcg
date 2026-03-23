@@ -3165,20 +3165,22 @@
    ======================== */
 @media (max-width: 768px) {
   .modal-overlay {
-    --mobile-top-offset: calc(env(safe-area-inset-top, 0px) + 56px);
+    --mobile-top-offset: calc(env(safe-area-inset-top, 0px) + 88px);
     padding: var(--mobile-top-offset) 0 0;
     align-items: flex-end;
     overflow: hidden;
     -webkit-overflow-scrolling: touch;
     position: fixed;
     inset: 0;
+    touch-action: pan-y;
+    overscroll-behavior: contain;
   }
   
   .modal-content {
     width: 100% !important;
     max-width: 100vw !important;
     max-height: calc(100dvh - var(--mobile-top-offset));
-    min-height: min(78dvh, 640px);
+    min-height: min(68dvh, 560px);
     border-radius: 16px 16px 0 0;
     margin: 0;
     animation: slideUpMobile 0.3s ease;
@@ -3187,6 +3189,8 @@
     -webkit-overflow-scrolling: touch;
     box-sizing: border-box;
     padding-bottom: env(safe-area-inset-bottom, 0);
+    touch-action: pan-y;
+    overscroll-behavior: contain;
   }
   
   @keyframes slideUpMobile {
@@ -3233,6 +3237,8 @@
     overflow-y: auto;
     width: 100%;
     box-sizing: border-box;
+    touch-action: pan-y;
+    overscroll-behavior: contain;
   }
   
   /* Image: compact, centered */
@@ -3513,7 +3519,7 @@
 @media (max-width: 480px) {
   .modal-content {
     max-height: calc(100dvh - var(--mobile-top-offset));
-    min-height: 82dvh;
+    min-height: min(66dvh, 520px);
     border-radius: 14px 14px 0 0;
   }
 
@@ -3527,7 +3533,7 @@
     width: 36px;
     height: 36px;
     font-size: 20px;
-    top: 8px;
+    top: calc(8px + env(safe-area-inset-top, 0px));
     right: 8px;
   }
   
