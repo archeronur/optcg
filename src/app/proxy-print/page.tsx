@@ -49,6 +49,7 @@
  */
 
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { DeckCard, ParsedDeckEntry, PrintSettings, Card } from '@/proxy-print/types';
 import { DeckParser } from '@/proxy-print/utils/deckParser';
 import { optcgAPI } from '@/proxy-print/services/api';
@@ -61,6 +62,7 @@ import { proxyImageUrl } from '@/proxy-print/utils/imageProxy';
 import CardSearchPanel from '@/proxy-print/components/CardSearchPanel';
 
 export default function Home() {
+  const searchParams = useSearchParams();
   // State
   const [inputText, setInputText] = useState('');
   const [parsedDeck, setParsedDeck] = useState<ParsedDeckEntry[]>([]);
@@ -100,6 +102,7 @@ export default function Home() {
   const [stagingGateActive, setStagingGateActive] = useState(false);
   const [stagingGateChecked, setStagingGateChecked] = useState(false);
   const gateRetryCountRef = useRef(0);
+  const prefilledFromQueryRef = useRef(false);
   
   // Enhanced mobile detection - SSR-safe for Cloudflare Pages
   useEffect(() => {
@@ -539,6 +542,47 @@ export default function Home() {
       setIsLoading(false);
     }
   }, [inputText, resolveCards, showError, showSuccess, t, tp]);
+
+  useEffect(() => {
+    if (prefilledFromQueryRef.current) return;
+
+    const encodedDeckList = searchParams.get('decklist');
+    if (!encodedDeckList) return;
+
+    prefilledFromQueryRef.current = true;
+
+    let decodedDeckList = '';
+    try {
+      decodedDeckList = decodeURIComponent(encodedDeckList);
+    } catch {
+      decodedDeckList = encodedDeckList;
+    }
+
+    if (!decodedDeckList.trim()) return;
+
+    setInputText(decodedDeckList);
+
+    const parseFromUrl = async () => {
+      setIsLoading(true);
+      setError('');
+      try {
+        const parsed = DeckParser.parseText(decodedDeckList);
+        if (parsed.length === 0) {
+          showError(t('warningEmptyDeck'));
+          return;
+        }
+        setParsedDeck(parsed);
+        await resolveCards(parsed);
+        showSuccess(t('successDeckParsed'));
+      } catch (err) {
+        showError(tp('errorParseDetail', { detail: String(err) }));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void parseFromUrl();
+  }, [searchParams, resolveCards, showError, showSuccess, t, tp]);
 
 
   // Generate PDF

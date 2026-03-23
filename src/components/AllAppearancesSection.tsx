@@ -2,7 +2,9 @@
 
 import { useMemo, useState } from "react";
 import DeckListViewer from "@/components/DeckListViewer";
+import T from "@/components/T";
 import { formatEventDate } from "@/lib/eventDate";
+import { useI18n } from "@/lib/i18n";
 import type { Card, Deck } from "@/lib/types";
 
 type LeaderDeckAppearance = Deck & {
@@ -69,6 +71,7 @@ export default function AllAppearancesSection({
   cardsData: Record<string, Card>;
   legacyMeta: boolean;
 }) {
+  const { t } = useI18n();
   const [query, setQuery] = useState("");
   const [filterMode, setFilterMode] = useState<FilterMode>("all");
   const [sortMode, setSortMode] = useState<SortMode>("placingBest");
@@ -101,7 +104,8 @@ export default function AllAppearancesSection({
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Event veya oyuncu ara"
+          placeholder={t("tracker", "searchEventOrPlayer")}
+          aria-label={t("tracker", "searchEventOrPlayer")}
           className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-gray-500 focus:border-accent/60 focus:outline-none"
         />
         <select
@@ -109,28 +113,32 @@ export default function AllAppearancesSection({
           onChange={(e) => setFilterMode(e.target.value as FilterMode)}
           className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-accent/60 focus:outline-none"
         >
-          <option value="all">Tum placing</option>
-          <option value="winners">Sadece 1st</option>
-          <option value="podium">Podium (1-3)</option>
-          <option value="top8">Top 8</option>
-          <option value="top16">Top 16</option>
-          <option value="top32">Top 32</option>
+          <option value="all"><T section="tracker" k="allPlacing" /></option>
+          <option value="winners"><T section="tracker" k="winnersOnly" /></option>
+          <option value="podium"><T section="tracker" k="podium" /></option>
+          <option value="top8"><T section="tracker" k="top8" /></option>
+          <option value="top16"><T section="tracker" k="top16" /></option>
+          <option value="top32"><T section="tracker" k="top32" /></option>
         </select>
         <select
           value={sortMode}
           onChange={(e) => setSortMode(e.target.value as SortMode)}
           className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-accent/60 focus:outline-none"
         >
-          <option value="placingBest">Best placing</option>
-          <option value="placingWorst">Worst placing</option>
-          <option value="dateNewest">Tarih (Yeni - Eski)</option>
-          <option value="dateOldest">Tarih (Eski - Yeni)</option>
-          <option value="eventAZ">Event A-Z</option>
+          <option value="placingBest"><T section="tracker" k="bestPlacing" /></option>
+          <option value="placingWorst"><T section="tracker" k="worstPlacing" /></option>
+          <option value="dateNewest"><T section="tracker" k="dateNewestOldest" /></option>
+          <option value="dateOldest"><T section="tracker" k="dateOldestNewest" /></option>
+          <option value="eventAZ"><T section="tracker" k="eventAZ" /></option>
         </select>
       </div>
 
       <p className="mb-3 text-xs text-gray-500">
-        {filteredDecks.length} / {leaderDecks.length} goruntuleniyor
+        <T
+          section="tracker"
+          k="showingCount"
+          values={{ shown: filteredDecks.length, total: leaderDecks.length }}
+        />
       </p>
 
       <div className="glass-card rounded-xl overflow-hidden divide-y divide-white/[0.04]">
@@ -179,7 +187,9 @@ export default function AllAppearancesSection({
       </div>
 
       {filteredDecks.length === 0 && (
-        <p className="mt-3 text-sm text-gray-500">Secilen filtrede sonuc bulunamadi.</p>
+        <p className="mt-3 text-sm text-gray-500">
+          <T section="tracker" k="noResultsForFilter" />
+        </p>
       )}
     </section>
   );

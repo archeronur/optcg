@@ -95,16 +95,16 @@ export default async function LeaderRankingPage({
             <span className="font-bold text-white">10pt</span> <T section="tracker" k="win" />
           </span>
           <span className="rounded-full bg-white/5 px-2.5 py-1 text-gray-400">
-            <span className="font-bold text-white">6pt</span> Top 4
+            <span className="font-bold text-white">6pt</span> <T section="tracker" k="top4" />
           </span>
           <span className="rounded-full bg-white/5 px-2.5 py-1 text-gray-400">
-            <span className="font-bold text-white">4pt</span> Top 8
+            <span className="font-bold text-white">4pt</span> <T section="tracker" k="top8" />
           </span>
           <span className="rounded-full bg-white/5 px-2.5 py-1 text-gray-400">
-            <span className="font-bold text-white">2pt</span> Top 16
+            <span className="font-bold text-white">2pt</span> <T section="tracker" k="top16" />
           </span>
           <span className="rounded-full bg-white/5 px-2.5 py-1 text-gray-400">
-            <span className="font-bold text-white">1pt</span> Top 32
+            <span className="font-bold text-white">1pt</span> <T section="tracker" k="top32" />
           </span>
         </div>
       </div>
@@ -138,7 +138,9 @@ export default async function LeaderRankingPage({
                   <p className="mt-1 text-center text-xs font-bold text-white/80 px-2 truncate w-full">
                     {info.name}
                   </p>
-                  <p className="mt-0.5 text-[10px] text-white/60">{leader.points} pts</p>
+                  <p className="mt-0.5 text-[10px] text-white/60">
+                    {leader.points} <T section="tracker" k="pointsShort" />
+                  </p>
                 </div>
               </Link>
             );
@@ -173,7 +175,9 @@ export default async function LeaderRankingPage({
                   <p className="truncate text-sm font-bold text-white">{info.name}</p>
                   <p className="text-xs text-gray-500">{leader.leaderId}</p>
                 </div>
-                <span className="text-sm font-extrabold text-accent">{leader.points} pts</span>
+                <span className="text-sm font-extrabold text-accent">
+                  {leader.points} <T section="tracker" k="pointsShort" />
+                </span>
               </Link>
             );
           })}

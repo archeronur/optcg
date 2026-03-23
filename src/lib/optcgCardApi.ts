@@ -1,5 +1,7 @@
 import type { Card } from "@/lib/types";
 
+const CARD_API_TIMEOUT_MS = 2_500;
+
 type OptcgRow = {
   card_name?: string;
   card_image?: string;
@@ -48,7 +50,10 @@ function rowToCard(cardId: string, row: OptcgRow): Card {
 
 async function tryFetch(url: string): Promise<OptcgRow | null> {
   try {
-    const res = await fetch(url, { next: { revalidate: 86_400 } });
+    const res = await fetch(url, {
+      next: { revalidate: 86_400 },
+      signal: AbortSignal.timeout(CARD_API_TIMEOUT_MS),
+    });
     if (!res.ok) return null;
     const data: unknown = await res.json();
     if (Array.isArray(data) && data.length > 0 && typeof data[0] === "object") {
@@ -84,7 +89,10 @@ type LimitlessRow = {
 async function tryLimitless(cardId: string): Promise<Card | null> {
   try {
     const url = `https://onepiece.limitlesstcg.com/api/cards/${encodeURIComponent(cardId)}`;
-    const res = await fetch(url, { next: { revalidate: 86_400 } });
+    const res = await fetch(url, {
+      next: { revalidate: 86_400 },
+      signal: AbortSignal.timeout(CARD_API_TIMEOUT_MS),
+    });
     if (!res.ok) return null;
     const data = (await res.json()) as LimitlessRow;
     const name = data.name || data.card_name || "";

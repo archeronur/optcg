@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import CardImage from "./CardImage";
 import { parseColors, getColorInfo } from "@/lib/colors";
 import { cardDisplayName } from "@/lib/cardDisplay";
+import { useI18n } from "@/lib/i18n";
 
 interface CardPopupProps {
   card: {
@@ -37,6 +38,7 @@ export default function CardPopup({
   avgCount,
   variant,
 }: CardPopupProps) {
+  const { t } = useI18n();
   useEffect(() => {
     document.body.style.overflow = "hidden";
     const handleKey = (e: KeyboardEvent) => {
@@ -112,23 +114,23 @@ export default function CardPopup({
 
               <div className="mt-1 flex flex-wrap gap-x-5 gap-y-2 text-sm text-gray-400">
                 {card.cost && card.cost !== "?" && (
-                  <span>Cost <strong className="text-white">{card.cost}</strong></span>
+                  <span>{t("tracker", "cost")} <strong className="text-white">{card.cost}</strong></span>
                 )}
                 {card.power && card.power !== "?" && (
-                  <span>Power <strong className="text-white">{card.power}</strong></span>
+                  <span>{t("tracker", "power")} <strong className="text-white">{card.power}</strong></span>
                 )}
                 {card.life && card.life !== "?" && (
-                  <span>Life <strong className="text-white">{card.life}</strong></span>
+                  <span>{t("tracker", "life")} <strong className="text-white">{card.life}</strong></span>
                 )}
                 {card.attribute && card.attribute !== "?" && (
-                  <span>Attr <strong className="text-white">{card.attribute}</strong></span>
+                  <span>{t("tracker", "attr")} <strong className="text-white">{card.attribute}</strong></span>
                 )}
               </div>
 
               {count != null && (
                 <span
                   className="inline-flex w-fit rounded-lg border border-accent/30 bg-accent/15 px-3 py-1.5 text-base font-black tabular-nums text-accent"
-                  title="Copies in this deck"
+                  title={t("tracker", "copiesInDeck")}
                 >
                   {count}×
                 </span>
@@ -164,10 +166,10 @@ export default function CardPopup({
                 </span>
               </div>
               <div className="text-sm text-gray-400">
-                <p>Inclusion rate</p>
+                <p>{t("tracker", "inclusionRate")}</p>
                 {avgCount != null && (
                   <p className="mt-1">
-                    Avg count: <strong className="text-white">{avgCount.toFixed(1)}</strong>
+                    {t("tracker", "avgCopies")}: <strong className="text-white">{avgCount.toFixed(1)}</strong>
                   </p>
                 )}
               </div>
