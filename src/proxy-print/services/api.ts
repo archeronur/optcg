@@ -629,26 +629,36 @@ class OPTCGAPI {
 
           // Fallback to Limitless API when OPTCG returned no results
           if (searchResults.length === 0 && baseNumber) {
-            console.log(`OPTCG returned empty for ${setCode}, falling back to Limitless API...`);
-            const limitlessSetCode = setCode.replace('-', '');
-            const paddedNumber = baseNumber.padStart(3, '0');
-            const cardId = variantSuffix
-              ? `${limitlessSetCode}-${paddedNumber}${variantSuffix}`
-              : `${limitlessSetCode}-${paddedNumber}`;
-            let limitlessCard = await this.getCardFromLimitless(cardId);
+            const allowLimitlessFallback =
+              !variantSuffix || this.isAllowedVariantSuffix(variantSuffix);
 
-            if (limitlessCard && limitlessCard._isFallback && variantSuffix) {
-              const baseCardId = `${limitlessSetCode}-${paddedNumber}`;
-              const baseCard = await this.getCardFromLimitless(baseCardId);
-              if (baseCard && !baseCard._isFallback) {
-                limitlessCard = baseCard;
-                limitlessCard._requestedVariantSuffix = variantSuffix;
+            if (!allowLimitlessFallback) {
+              console.log(
+                `OPTCG returned empty for ${setCode}, skipping Limitless fallback (unsupported variant suffix: ${variantSuffix})`,
+              );
+              // Keep searchResults empty -> treat as missing.
+            } else {
+              console.log(`OPTCG returned empty for ${setCode}, falling back to Limitless API...`);
+              const limitlessSetCode = setCode.replace('-', '');
+              const paddedNumber = baseNumber.padStart(3, '0');
+              const cardId = variantSuffix
+                ? `${limitlessSetCode}-${paddedNumber}${variantSuffix}`
+                : `${limitlessSetCode}-${paddedNumber}`;
+              let limitlessCard = await this.getCardFromLimitless(cardId);
+
+              if (limitlessCard && limitlessCard._isFallback && variantSuffix) {
+                const baseCardId = `${limitlessSetCode}-${paddedNumber}`;
+                const baseCard = await this.getCardFromLimitless(baseCardId);
+                if (baseCard && !baseCard._isFallback) {
+                  limitlessCard = baseCard;
+                  limitlessCard._requestedVariantSuffix = variantSuffix;
+                }
               }
-            }
 
-            if (limitlessCard) {
-              searchResults = [limitlessCard];
-              console.log(`Limitless fallback found: ${limitlessCard.name}`);
+              if (limitlessCard) {
+                searchResults = [limitlessCard];
+                console.log(`Limitless fallback found: ${limitlessCard.name}`);
+              }
             }
           }
         }
