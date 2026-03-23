@@ -120,7 +120,7 @@ export default async function LeaderRankingPage({
                     {info.name}
                   </p>
                   <p className="mt-0.5 text-[10px] text-white/60">
-                    {leader.points} <T section="tracker" k="pointsShort" />
+                    {leader.points ?? 0} <T section="tracker" k="pointsShort" />
                   </p>
                 </div>
               </Link>
@@ -157,7 +157,7 @@ export default async function LeaderRankingPage({
                   <p className="text-xs text-gray-500">{leader.leaderId}</p>
                 </div>
                 <span className="text-sm font-extrabold text-accent">
-                  {leader.points} <T section="tracker" k="pointsShort" />
+                  {leader.points ?? 0} <T section="tracker" k="pointsShort" />
                 </span>
               </Link>
             );
@@ -187,7 +187,8 @@ export default async function LeaderRankingPage({
               const colors = parseColors(info.color);
               const topCount =
                 leader.wins + (leader.second || 0) + (leader.third || 0) + (leader.fourth || 0) + leader.top8;
-              const barW = maxPoints > 0 ? (leader.points / maxPoints) * 100 : 0;
+              const points = leader.points ?? 0;
+              const barW = maxPoints > 0 ? (points / maxPoints) * 100 : 0;
 
               return (
                 <tr
@@ -226,7 +227,7 @@ export default async function LeaderRankingPage({
                       <div className="hidden lg:block w-16 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
                         <div className="h-full rounded-full bg-accent" style={{ width: `${barW}%` }} />
                       </div>
-                      <span className="font-bold text-accent">{leader.points}</span>
+                      <span className="font-bold text-accent">{points}</span>
                     </div>
                   </td>
                   <td className="py-3 pr-4 text-right text-white">{leader.wins}</td>
@@ -275,7 +276,7 @@ export default async function LeaderRankingPage({
                     })}
                   </div>
                 </div>
-                <span className="text-lg font-extrabold text-accent">{leader.points}</span>
+                <span className="text-lg font-extrabold text-accent">{leader.points ?? 0}</span>
               </div>
 
               <div className="grid grid-cols-3 gap-2 text-center">
