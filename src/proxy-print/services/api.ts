@@ -35,6 +35,14 @@ class OPTCGAPI {
   private optcgThrottled = false;
   private optcgThrottledUntil = 0;
 
+  // Only these variant suffixes are considered valid in this app.
+  // Unknown suffixes (e.g. `_sy67syo`) must NOT match base cards,
+  // otherwise deploy (API reachable) resolves wrong cards.
+  private isAllowedVariantSuffix(variantSuffix?: string): boolean {
+    if (!variantSuffix) return false;
+    return /^_(p\d+|aa|sp|manga)$/i.test(variantSuffix);
+  }
+
   private isOptcgThrottled(): boolean {
     if (!this.optcgThrottled) return false;
     if (Date.now() > this.optcgThrottledUntil) {
@@ -379,6 +387,13 @@ class OPTCGAPI {
       baseNumber = cardNumber.substring(0, underscoreIndex);
       variantSuffix = cardNumber.substring(underscoreIndex);
       console.log(`Parsed variant: baseNumber=${baseNumber}, variantSuffix=${variantSuffix}`);
+    }
+
+    // Reject unknown variant suffixes early to avoid resolving wrong base cards.
+    // Example: OP13-002_sy67syo should return [] (missing), not OP13-002.
+    if (variantSuffix && !this.isAllowedVariantSuffix(variantSuffix)) {
+      console.log(`Rejecting unsupported variant suffix: ${variantSuffix}`);
+      return [];
     }
     
     const cacheKey = this.getCacheKey(`${name}_${setCode || ''}_${cardNumber || ''}`);
