@@ -48,7 +48,7 @@
  * - No "Görsel yüklenemedi" errors in PDFs
  */
 
-import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import React, { Suspense, useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { DeckCard, ParsedDeckEntry, PrintSettings, Card } from '@/proxy-print/types';
 import { DeckParser } from '@/proxy-print/utils/deckParser';
@@ -61,7 +61,7 @@ import { downloadPDF } from '@/proxy-print/utils/downloadHelper';
 import { proxyImageUrl } from '@/proxy-print/utils/imageProxy';
 import CardSearchPanel from '@/proxy-print/components/CardSearchPanel';
 
-export default function Home() {
+function ProxyPrintPageContent() {
   const searchParams = useSearchParams();
   // State
   const [inputText, setInputText] = useState('');
@@ -1798,5 +1798,13 @@ export default function Home() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="container" />}>
+      <ProxyPrintPageContent />
+    </Suspense>
   );
 }
