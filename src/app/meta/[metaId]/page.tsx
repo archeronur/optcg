@@ -4,16 +4,12 @@ import { getMetaData, getAllMetaIds, slugify } from "@/lib/data";
 import { getLeaderImage, getLeaderColor } from "@/lib/cardHelpers";
 import { parseColors, getColorInfo } from "@/lib/colors";
 import { formatEventDate } from "@/lib/eventDate";
+import { computeLeaderStatsFromMeta } from "@/lib/leaderRanking";
 import CardImage from "@/components/CardImage";
 import T from "@/components/T";
 
 export function generateStaticParams() {
   return getAllMetaIds().map((id) => ({ metaId: id }));
-}
-
-function extractLeaderId(leader: string): string {
-  const match = leader.match(/^([A-Z0-9]+-\d+)/);
-  return match ? match[1] : "";
 }
 
 function extractLeaderName(leader: string): string {
@@ -32,15 +28,9 @@ export default async function MetaOverviewPage({
   const eventsWithDecks = meta.events.filter((e) => e.decks.length > 0);
   const eventsWithoutDecks = meta.events.filter((e) => e.decks.length === 0);
   const totalDecks = meta.events.reduce((sum, e) => sum + e.decks.length, 0);
-  const uniqueLeaders = new Set(meta.leaderStats.map((l) => l.leaderId));
-  const PW = { win: 10, top4: 6, top8: 4, top16: 2, top32: 1 };
-  const topLeaders = [...meta.leaderStats]
-    .sort((a, b) => {
-      const sa = a.points ?? (a.wins * PW.win + a.top4 * PW.top4 + a.top8 * PW.top8 + a.top16 * PW.top16 + a.top32 * PW.top32);
-      const sb = b.points ?? (b.wins * PW.win + b.top4 * PW.top4 + b.top8 * PW.top8 + b.top16 * PW.top16 + b.top32 * PW.top32);
-      return sb - sa;
-    })
-    .slice(0, 6);
+  const rankedLeaders = computeLeaderStatsFromMeta(meta);
+  const uniqueLeaders = new Set(rankedLeaders.map((l) => l.leaderId));
+  const topLeaders = rankedLeaders.slice(0, 6);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">

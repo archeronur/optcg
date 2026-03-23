@@ -9,6 +9,9 @@ export interface LeaderStats {
   leaderId: string;
   totalAppearances: number;
   wins: number;
+  second?: number;
+  third?: number;
+  fourth?: number;
   top4: number;
   top8: number;
   top16: number;

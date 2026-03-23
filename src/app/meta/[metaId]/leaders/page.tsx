@@ -5,32 +5,10 @@ import { getLeaderInfo } from "@/lib/cardHelpers";
 import { parseColors, getColorInfo } from "@/lib/colors";
 import CardImage from "@/components/CardImage";
 import T from "@/components/T";
-import type { LeaderStats } from "@/lib/types";
+import { computeLeaderStatsFromMeta, POINT_WEIGHTS } from "@/lib/leaderRanking";
 
 export function generateStaticParams() {
   return getAllMetaIds().map((id) => ({ metaId: id }));
-}
-
-const POINT_WEIGHTS = { win: 10, top4: 6, top8: 4, top16: 2, top32: 1 };
-
-function computeScore(l: LeaderStats, totalAppearances: number): {
-  points: number;
-  winRate: number;
-  convRate: number;
-  metaShare: number;
-} {
-  const points = l.points ?? (
-    l.wins * POINT_WEIGHTS.win +
-    l.top4 * POINT_WEIGHTS.top4 +
-    l.top8 * POINT_WEIGHTS.top8 +
-    l.top16 * POINT_WEIGHTS.top16 +
-    l.top32 * POINT_WEIGHTS.top32
-  );
-  const winRate = l.winRate ?? (l.totalAppearances > 0 ? Math.round((l.wins / l.totalAppearances) * 100) : 0);
-  const topCount = l.top4 + l.top8;
-  const convRate = l.conversionRate ?? (l.totalAppearances > 0 ? Math.round((topCount / l.totalAppearances) * 100) : 0);
-  const metaShare = l.metaShare ?? (totalAppearances > 0 ? Math.round((l.totalAppearances / totalAppearances) * 100) : 0);
-  return { points, winRate, convRate, metaShare };
 }
 
 export default async function LeaderRankingPage({
@@ -42,11 +20,8 @@ export default async function LeaderRankingPage({
   const meta = await getMetaData(metaId);
   if (!meta) notFound();
 
-  const totalAppearances = meta.leaderStats.reduce((s, l) => s + l.totalAppearances, 0);
-
-  const ranked = [...meta.leaderStats]
-    .map((l) => ({ ...l, ...computeScore(l, totalAppearances) }))
-    .sort((a, b) => b.points - a.points);
+  const ranked = computeLeaderStatsFromMeta(meta);
+  const totalAppearances = ranked.reduce((s, l) => s + l.totalAppearances, 0);
 
   const top3 = ranked.slice(0, 3);
   const podiumOrder = top3.length === 3 ? [top3[1], top3[0], top3[2]] : top3;
@@ -92,19 +67,25 @@ export default async function LeaderRankingPage({
         </p>
         <div className="flex flex-wrap gap-3 text-xs">
           <span className="rounded-full bg-white/5 px-2.5 py-1 text-gray-400">
-            <span className="font-bold text-white">10pt</span> <T section="tracker" k="win" />
+            <span className="font-bold text-white">{POINT_WEIGHTS.first}pt</span> <T section="tracker" k="first" />
           </span>
           <span className="rounded-full bg-white/5 px-2.5 py-1 text-gray-400">
-            <span className="font-bold text-white">6pt</span> <T section="tracker" k="top4" />
+            <span className="font-bold text-white">{POINT_WEIGHTS.second}pt</span> <T section="tracker" k="second" />
           </span>
           <span className="rounded-full bg-white/5 px-2.5 py-1 text-gray-400">
-            <span className="font-bold text-white">4pt</span> <T section="tracker" k="top8" />
+            <span className="font-bold text-white">{POINT_WEIGHTS.third}pt</span> <T section="tracker" k="third" />
           </span>
           <span className="rounded-full bg-white/5 px-2.5 py-1 text-gray-400">
-            <span className="font-bold text-white">2pt</span> <T section="tracker" k="top16" />
+            <span className="font-bold text-white">{POINT_WEIGHTS.fourth}pt</span> <T section="tracker" k="fourth" />
           </span>
           <span className="rounded-full bg-white/5 px-2.5 py-1 text-gray-400">
-            <span className="font-bold text-white">1pt</span> <T section="tracker" k="top32" />
+            <span className="font-bold text-white">{POINT_WEIGHTS.top8}pt</span> <T section="tracker" k="top8" />
+          </span>
+          <span className="rounded-full bg-white/5 px-2.5 py-1 text-gray-400">
+            <span className="font-bold text-white">{POINT_WEIGHTS.top16}pt</span> <T section="tracker" k="top16" />
+          </span>
+          <span className="rounded-full bg-white/5 px-2.5 py-1 text-gray-400">
+            <span className="font-bold text-white">{POINT_WEIGHTS.top32}pt</span> <T section="tracker" k="top32" />
           </span>
         </div>
       </div>
@@ -204,7 +185,8 @@ export default async function LeaderRankingPage({
             {ranked.map((leader, i) => {
               const info = getLeaderInfo(leader.leaderId);
               const colors = parseColors(info.color);
-              const topCount = leader.top4 + leader.top8;
+              const topCount =
+                leader.wins + (leader.second || 0) + (leader.third || 0) + (leader.fourth || 0) + leader.top8;
               const barW = maxPoints > 0 ? (leader.points / maxPoints) * 100 : 0;
 
               return (
@@ -250,9 +232,9 @@ export default async function LeaderRankingPage({
                   <td className="py-3 pr-4 text-right text-white">{leader.wins}</td>
                   <td className="py-3 pr-4 text-right text-gray-400">{topCount}</td>
                   <td className="py-3 pr-4 text-right text-gray-400">{leader.totalAppearances}</td>
-                  <td className="py-3 pr-4 text-right text-gray-400">{leader.winRate}%</td>
-                  <td className="py-3 pr-4 text-right text-gray-400">{leader.convRate}%</td>
-                  <td className="py-3 text-right text-gray-400">{leader.metaShare}%</td>
+                  <td className="py-3 pr-4 text-right text-gray-400">{leader.winRate ?? 0}%</td>
+                  <td className="py-3 pr-4 text-right text-gray-400">{leader.conversionRate ?? 0}%</td>
+                  <td className="py-3 text-right text-gray-400">{leader.metaShare ?? 0}%</td>
                 </tr>
               );
             })}
@@ -265,7 +247,8 @@ export default async function LeaderRankingPage({
         {ranked.map((leader, i) => {
           const info = getLeaderInfo(leader.leaderId);
           const colors = parseColors(info.color);
-          const topCount = leader.top4 + leader.top8;
+          const topCount =
+            leader.wins + (leader.second || 0) + (leader.third || 0) + (leader.fourth || 0) + leader.top8;
 
           return (
             <Link
@@ -311,9 +294,9 @@ export default async function LeaderRankingPage({
               </div>
 
               <div className="mt-2 flex justify-between text-[10px] text-gray-500 px-1">
-                <span><T section="tracker" k="winPct" /> {leader.winRate}%</span>
-                <span><T section="tracker" k="topPct" /> {leader.convRate}%</span>
-                <span><T section="tracker" k="sharePct" /> {leader.metaShare}%</span>
+                <span><T section="tracker" k="winPct" /> {leader.winRate ?? 0}%</span>
+                <span><T section="tracker" k="topPct" /> {leader.conversionRate ?? 0}%</span>
+                <span><T section="tracker" k="sharePct" /> {leader.metaShare ?? 0}%</span>
               </div>
             </Link>
           );

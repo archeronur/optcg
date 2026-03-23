@@ -581,6 +581,9 @@ def compute_leader_stats(meta_data):
                     "leaderId": leader_id,
                     "totalAppearances": 0,
                     "wins": 0,
+                    "second": 0,
+                    "third": 0,
+                    "fourth": 0,
                     "top4": 0,
                     "top8": 0,
                     "top16": 0,
@@ -597,10 +600,15 @@ def compute_leader_stats(meta_data):
             if placing == "1st":
                 stats["wins"] += 1
                 stats["top4"] += 1
-                stats["top8"] += 1
-            elif placing in ("2nd", "3rd", "4th"):
+            elif placing == "2nd":
+                stats["second"] += 1
                 stats["top4"] += 1
-                stats["top8"] += 1
+            elif placing == "3rd":
+                stats["third"] += 1
+                stats["top4"] += 1
+            elif placing in ("4th", "Top 4"):
+                stats["fourth"] += 1
+                stats["top4"] += 1
             elif placing in ("5th", "6th", "7th", "8th") or placing == "Top 8":
                 stats["top8"] += 1
             elif "Top 16" in placing or placing in ("9th", "10th", "11th", "12th",
@@ -662,7 +670,19 @@ def compute_leader_stats(meta_data):
         del stats["decks"]
         result.append(stats)
 
-    result.sort(key=lambda x: (-x["wins"], -x["top8"], -x["totalAppearances"]))
+    score_weights = {"first": 10, "second": 8, "third": 7, "fourth": 6, "top8": 4, "top16": 2, "top32": 1}
+    for stats in result:
+        points = (
+            stats.get("wins", 0) * score_weights["first"]
+            + stats.get("second", 0) * score_weights["second"]
+            + stats.get("third", 0) * score_weights["third"]
+            + stats.get("fourth", 0) * score_weights["fourth"]
+            + stats.get("top8", 0) * score_weights["top8"]
+            + stats.get("top16", 0) * score_weights["top16"]
+            + stats.get("top32", 0) * score_weights["top32"]
+        )
+        stats["points"] = points
+    result.sort(key=lambda x: (-x.get("points", 0), -x["wins"], -x["totalAppearances"]))
     return result
 
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { getSummary } from "@/lib/data";
+import { getSummary, getMetaData } from "@/lib/data";
 import { getLeaderImage } from "@/lib/cardHelpers";
+import { computeLeaderStatsFromMeta } from "@/lib/leaderRanking";
 import CardImage from "@/components/CardImage";
 import T from "@/components/T";
 
@@ -9,8 +10,15 @@ function extractLeaderId(topLeader: string): string {
   return match ? match[1] : "";
 }
 
-export default function TrackerHomePage() {
+export default async function TrackerHomePage() {
   const summary = getSummary();
+  const topLeaderByMetaId = new Map<string, string>();
+  for (const meta of summary.metas) {
+    const metaData = await getMetaData(meta.id);
+    if (!metaData) continue;
+    const ranked = computeLeaderStatsFromMeta(metaData);
+    if (ranked[0]?.leaderId) topLeaderByMetaId.set(meta.id, ranked[0].leaderId);
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -59,8 +67,8 @@ export default function TrackerHomePage() {
           return numB - numA;
         }).map((meta) => {
           const isEmpty = meta.eventCount === 0;
-          const firstLeader = meta.topLeaders?.[0] || "";
-          const leaderId = extractLeaderId(firstLeader);
+          const leaderId = topLeaderByMetaId.get(meta.id) || extractLeaderId(meta.topLeaders?.[0] || "");
+          const firstLeader = leaderId;
           const topLeaderImage = leaderId ? getLeaderImage(leaderId) : "";
 
           const cardContent = (

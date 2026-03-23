@@ -12,6 +12,7 @@ import { hydrateTrackerCards } from "@/lib/trackerCardHydrate";
 import { isLegacyMetaThroughOp05 } from "@/lib/metaEra";
 import { parseColors, getColorInfo } from "@/lib/colors";
 import { getCard } from "@/lib/cards";
+import { computeLeaderStatsFromMeta } from "@/lib/leaderRanking";
 import CardImage from "@/components/CardImage";
 import CardGrid from "@/components/CardGrid";
 import AllAppearancesSection from "@/components/AllAppearancesSection";
@@ -44,7 +45,8 @@ export default async function LeaderDetailPage({
   const meta = await getMetaData(metaId);
   if (!meta) notFound();
 
-  const stats = meta.leaderStats.find((l) => l.leaderId === leaderId);
+  const ranked = computeLeaderStatsFromMeta(meta);
+  const stats = ranked.find((l) => l.leaderId === leaderId);
   if (!stats) notFound();
 
   const info = getLeaderInfo(leaderId);
@@ -78,12 +80,12 @@ export default async function LeaderDetailPage({
     cardsData = await hydrateTrackerCards(cardMap);
   }
 
-  type PlacingGroupKey = "1st" | "2nd" | "3rd" | "top4" | "top8" | "top16" | "top32";
+  type PlacingGroupKey = "1st" | "2nd" | "3rd" | "4th" | "top8" | "top16" | "top32";
   const placingGroups: Record<PlacingGroupKey, number> = {
     "1st": 0,
     "2nd": 0,
     "3rd": 0,
-    top4: 0,
+    "4th": 0,
     top8: 0,
     top16: 0,
     top32: 0,
@@ -93,10 +95,16 @@ export default async function LeaderDetailPage({
     const placingStr = String(deck.placing ?? "").trim();
     if (!placingStr) continue;
 
-    const ord = placingStr.match(/\b(1st|2nd|3rd)\b/i);
+    const ord = placingStr.match(/\b(1st|2nd|3rd|4th)\b/i);
     if (ord?.[1]) {
       const key = ord[1].toLowerCase() as PlacingGroupKey;
       placingGroups[key] = (placingGroups[key] ?? 0) + 1;
+      continue;
+    }
+
+    const top4 = placingStr.match(/top\s*4\b/i);
+    if (top4) {
+      placingGroups["4th"] = (placingGroups["4th"] ?? 0) + 1;
       continue;
     }
 
@@ -116,7 +124,7 @@ export default async function LeaderDetailPage({
     { key: "1st", label: "1st", prefixHash: true, style: "bg-gold/10 text-gold" },
     { key: "2nd", label: "2nd", prefixHash: true, style: "bg-silver/10 text-silver" },
     { key: "3rd", label: "3rd", prefixHash: true, style: "bg-bronze/10 text-bronze" },
-    { key: "top4", label: "top4", style: "bg-silver/10 text-silver" },
+    { key: "4th", label: "4th", prefixHash: true, style: "bg-silver/10 text-silver" },
     { key: "top8", label: "top8", style: "bg-bronze/10 text-bronze" },
     { key: "top16", label: "top16", style: "bg-bronze/10 text-bronze" },
     { key: "top32", label: "top32", style: "bg-accent/10 text-accent" },
@@ -154,7 +162,8 @@ export default async function LeaderDetailPage({
         avgCount: number;
       })[]);
 
-  const topCount = stats.top4 + stats.top8;
+  const topCount =
+    stats.wins + (stats.second || 0) + (stats.third || 0) + (stats.fourth || 0) + stats.top8;
   const winRate = stats.winRate ?? (stats.totalAppearances > 0 ? Math.round((stats.wins / stats.totalAppearances) * 100) : 0);
   const convRate = stats.conversionRate ?? (stats.totalAppearances > 0 ? Math.round((topCount / stats.totalAppearances) * 100) : 0);
 

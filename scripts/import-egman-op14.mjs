@@ -166,6 +166,136 @@ function extractEventBasics(html) {
   return { name, type, date: dateBase, players, rounds };
 }
 
+function classifyPlacing(placing) {
+  const p = String(placing || "").trim().toLowerCase();
+  if (!p) return null;
+  if (p === "1st") return "first";
+  if (p === "2nd") return "second";
+  if (p === "3rd") return "third";
+  if (p === "4th") return "fourth";
+  if (/top\s*4\b/.test(p)) return "fourth";
+  if (["5th", "6th", "7th", "8th"].includes(p)) return "top8";
+  if (/top\s*8\b/.test(p)) return "top8";
+  if (/top\s*16\b/.test(p)) return "top16";
+  if (/top\s*32\b/.test(p)) return "top32";
+  return null;
+}
+
+function computeLeaderStats(events) {
+  const statsByLeader = new Map();
+  let totalAppearances = 0;
+
+  for (const event of events || []) {
+    for (const deck of event.decks || []) {
+      const leaderId = deck.leaderId || deck.leader || "";
+      if (!leaderId) continue;
+      totalAppearances += 1;
+      if (!statsByLeader.has(leaderId)) {
+        statsByLeader.set(leaderId, {
+          leader: leaderId,
+          leaderId,
+          totalAppearances: 0,
+          wins: 0,
+          second: 0,
+          third: 0,
+          fourth: 0,
+          top4: 0,
+          top8: 0,
+          top16: 0,
+          top32: 0,
+          uniquePlayers: 0,
+          uniqueEvents: 0,
+          players: new Set(),
+          events: new Set(),
+        });
+      }
+      const s = statsByLeader.get(leaderId);
+      s.totalAppearances += 1;
+      if (deck.player) s.players.add(deck.player);
+      if (event.name) s.events.add(event.name);
+
+      const cls = classifyPlacing(deck.placing);
+      if (cls === "first") {
+        s.wins += 1;
+        s.top4 += 1;
+      } else if (cls === "second") {
+        s.second += 1;
+        s.top4 += 1;
+      } else if (cls === "third") {
+        s.third += 1;
+        s.top4 += 1;
+      } else if (cls === "fourth") {
+        s.fourth += 1;
+        s.top4 += 1;
+      } else if (cls === "top8") {
+        s.top8 += 1;
+      } else if (cls === "top16") {
+        s.top16 += 1;
+      } else if (cls === "top32") {
+        s.top32 += 1;
+      }
+    }
+  }
+
+  const POINT_WEIGHTS = {
+    first: 10,
+    second: 8,
+    third: 7,
+    fourth: 6,
+    top8: 4,
+    top16: 2,
+    top32: 1,
+  };
+
+  const arr = Array.from(statsByLeader.values()).map((s) => {
+    const uniquePlayers = s.players.size;
+    const uniqueEvents = s.events.size;
+    const points =
+      s.wins * POINT_WEIGHTS.first +
+      s.second * POINT_WEIGHTS.second +
+      s.third * POINT_WEIGHTS.third +
+      s.fourth * POINT_WEIGHTS.fourth +
+      s.top8 * POINT_WEIGHTS.top8 +
+      s.top16 * POINT_WEIGHTS.top16 +
+      s.top32 * POINT_WEIGHTS.top32;
+    const topCount = s.wins + s.second + s.third + s.fourth + s.top8;
+    const winRate = s.totalAppearances > 0 ? Math.round((s.wins / s.totalAppearances) * 100) : 0;
+    const conversionRate =
+      s.totalAppearances > 0 ? Math.round((topCount / s.totalAppearances) * 100) : 0;
+    const metaShare =
+      totalAppearances > 0 ? Math.round((s.totalAppearances / totalAppearances) * 100) : 0;
+
+    return {
+      leader: s.leader,
+      leaderId: s.leaderId,
+      totalAppearances: s.totalAppearances,
+      wins: s.wins,
+      second: s.second,
+      third: s.third,
+      fourth: s.fourth,
+      top4: s.top4,
+      top8: s.top8,
+      top16: s.top16,
+      top32: s.top32,
+      uniquePlayers,
+      uniqueEvents,
+      players: Array.from(s.players),
+      events: Array.from(s.events),
+      points,
+      winRate,
+      conversionRate,
+      metaShare,
+    };
+  });
+
+  arr.sort((a, b) => {
+    if (b.points !== a.points) return b.points - a.points;
+    if (b.wins !== a.wins) return b.wins - a.wins;
+    return b.totalAppearances - a.totalAppearances;
+  });
+  return arr;
+}
+
 async function fetchText(url) {
   const res = await fetch(url, { headers: { "user-agent": "op2-importer/1.0" } });
   if (!res.ok) throw new Error(`Fetch failed ${res.status} ${url}`);
@@ -247,6 +377,7 @@ async function main() {
   const refreshedUrls = new Set(newEvents.map((e) => e.url));
   const preservedEvents = (op14Json.events || []).filter((e) => !refreshedUrls.has(e.url));
   op14Json.events = [...newEvents, ...preservedEvents];
+  op14Json.leaderStats = computeLeaderStats(op14Json.events);
 
   // Recompute meta summary fields for OP14
   let totalDecks = 0;
@@ -260,10 +391,11 @@ async function main() {
     }
   }
 
-  const topLeaderIds = Array.from(leaderCounts.entries())
-    .sort((a, b) => b[1] - a[1])
+  const topLeaderIds = (op14Json.leaderStats || [])
+    .slice()
+    .sort((a, b) => (b.points || 0) - (a.points || 0))
     .slice(0, 5)
-    .map(([leaderId]) => leaderId);
+    .map((s) => s.leaderId);
 
   const metaIdx = (summaryJson.metas || []).findIndex((m) => m.id === "op14");
   if (metaIdx >= 0) {
