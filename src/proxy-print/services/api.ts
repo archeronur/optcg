@@ -835,8 +835,17 @@ class OPTCGAPI {
     if (!m?.[1]) return null;
     const baseFromUrl = m[1].toUpperCase();
     if (baseFromUrl !== setStemUp) return null;
-    const suffix = (m[2] || "").toLowerCase();
-    if (!suffix) return null;
+    const rawSuffix = m[2];
+    // If there is no suffix at all, keep previous behavior (do not derive ID).
+    if (!rawSuffix) return null;
+
+    const suffix = rawSuffix.toLowerCase();
+    // OPTCG static filenames sometimes include a random hash suffix (e.g. `_sy67syo`)
+    // that is NOT a real variant. Only accept known variant suffixes.
+    if (!this.isAllowedVariantSuffix(suffix)) {
+      // Return base card id so "OP13-002" doesn't become "OP13-002_sy67syo".
+      return baseFromUrl;
+    }
     return `${baseFromUrl}${suffix}`;
   }
 
