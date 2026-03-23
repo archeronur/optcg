@@ -60,7 +60,7 @@ export default function DeckListViewer({
       .map((card) => `${card.count}x${card.id}`)
       .join("\n");
 
-    return `/proxy-print?decklist=${encodeURIComponent(deckInputText)}`;
+    return `https://hastekparcacilar.com/proxy-print?decklist=${encodeURIComponent(deckInputText)}`;
   }, [deck.cards, deck.leaderId]);
 
   return (
