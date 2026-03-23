@@ -1,0 +1,6 @@
+# Cloudflare Pages (Git): `pages_build_output_dir` only — do not add `[assets]` here;
+# Pages reserves the ASSETS binding; OpenNext needs run_worker_first behavior, applied in scripts/cf-pages-prep.mjs.
+name = "optcg-tools"
+compatibility_date = "2025-03-20"
+compatibility_flags = [ "nodejs_compat" ]
+pages_build_output_dir = ".open-next"

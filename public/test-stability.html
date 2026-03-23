@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lorcana Stabilite Testi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .test-button.danger {
+            background: #dc3545;
+        }
+        .test-button.danger:hover {
+            background: #c82333;
+        }
+        .test-button.success {
+            background: #28a745;
+        }
+        .test-button.success:hover {
+            background: #218838;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .status.healthy { background: #d4edda; color: #155724; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        .status.critical { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Lorcana Stabilite Testi</h1>
+    
+    <div class="test-section">
+        <h2>📊 Sistem Durumu</h2>
+        <div id="systemStatus" class="status healthy">Sistem durumu kontrol ediliyor...</div>
+        <button class="test-button" onclick="checkSystemHealth()">Sistem Durumunu Kontrol Et</button>
+        <button class="test-button" onclick="clearLogs()">Logları Temizle</button>
+    </div>
+
+    <div class="test-section">
+        <h2>🧠 Bellek Testleri</h2>
+        <button class="test-button" onclick="testMemoryLeak()">Bellek Sızıntısı Testi</button>
+        <button class="test-button" onclick="testMemoryUsage()">Bellek Kullanımını Kontrol Et</button>
+        <button class="test-button danger" onclick="forceGarbageCollection()">Garbage Collection Zorla</button>
+    </div>
+
+    <div class="test-section">
+        <h2>🌐 Ağ Testleri</h2>
+        <button class="test-button" onclick="testNetworkConnectivity()">Ağ Bağlantısını Test Et</button>
+        <button class="test-button" onclick="testImageLoading()">Görsel Yükleme Testi</button>
+        <button class="test-button" onclick="testAPIEndpoints()">API Endpoint Testi</button>
+    </div>
+
+    <div class="test-section">
+        <h2>⚡ Performans Testleri</h2>
+        <button class="test-button" onclick="testPerformance()">Performans Testi</button>
+        <button class="test-button" onclick="testStress()">Stres Testi</button>
+        <button class="test-button" onclick="testConcurrent()">Eşzamanlı İşlem Testi</button>
+    </div>
+
+    <div class="test-section">
+        <h2>📝 Test Logları</h2>
+        <div id="testLog" class="log"></div>
+    </div>
+
+    <script>
+        // Test log sistemi
+        function log(message, type = 'info') {
+            const logElement = document.getElementById('testLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.color = type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : '#007bff';
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logElement.appendChild(logEntry);
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('testLog').innerHTML = '';
+            log('Loglar temizlendi', 'success');
+        }
+
+        // Sistem durumu kontrolü
+        async function checkSystemHealth() {
+            log('Sistem durumu kontrol ediliyor...');
+            
+            try {
+                // Basit health check
+                const checks = [
+                    { name: 'DOM Ready', check: () => document.readyState === 'complete' },
+                    { name: 'JavaScript', check: () => typeof window !== 'undefined' },
+                    { name: 'Console', check: () => typeof console !== 'undefined' },
+                    { name: 'Performance API', check: () => typeof performance !== 'undefined' },
+                    { name: 'Fetch API', check: () => typeof fetch !== 'undefined' }
+                ];
+
+                let passedChecks = 0;
+                const results = [];
+
+                for (const check of checks) {
+                    try {
+                        const passed = check.check();
+                        if (passed) passedChecks++;
+                        results.push({ name: check.name, passed });
+                        log(`${check.name}: ${passed ? '✅' : '❌'}`);
+                    } catch (error) {
+                        results.push({ name: check.name, passed: false });
+                        log(`${check.name}: ❌ Hata: ${error.message}`, 'error');
+                    }
+                }
+
+                const healthPercentage = (passedChecks / checks.length) * 100;
+                const statusElement = document.getElementById('systemStatus');
+                
+                if (healthPercentage === 100) {
+                    statusElement.className = 'status healthy';
+                    statusElement.textContent = `✅ Sistem Sağlıklı (${healthPercentage}%)`;
+                } else if (healthPercentage >= 80) {
+                    statusElement.className = 'status warning';
+                    statusElement.textContent = `⚠️ Sistem Uyarı (${healthPercentage}%)`;
+                } else {
+                    statusElement.className = 'status critical';
+                    statusElement.textContent = `❌ Sistem Kritik (${healthPercentage}%)`;
+                }
+
+                log(`Sistem durumu: ${healthPercentage}% başarılı`, 'success');
+                
+            } catch (error) {
+                log(`Sistem durumu kontrolü başarısız: ${error.message}`, 'error');
+            }
+        }
+
+        // Bellek testleri
+        function testMemoryLeak() {
+            log('Bellek sızıntısı testi başlatılıyor...');
+            
+            // Simulated memory leak
+            const leakyArray = [];
+            for (let i = 0; i < 10000; i++) {
+                leakyArray.push({
+                    id: i,
+                    data: new Array(1000).fill('leak'),
+                    timestamp: Date.now()
+                });
+            }
+            
+            log(`Test verisi oluşturuldu: ${leakyArray.length} obje, ~${(leakyArray.length * 1000 * 8 / 1024 / 1024).toFixed(2)}MB`);
+            
+            // Cleanup after test
+            setTimeout(() => {
+                leakyArray.length = 0;
+                log('Test verisi temizlendi', 'success');
+            }, 5000);
+        }
+
+        function testMemoryUsage() {
+            if ('memory' in performance) {
+                const memoryInfo = performance.memory;
+                const usedMB = (memoryInfo.usedJSHeapSize / 1024 / 1024).toFixed(2);
+                const totalMB = (memoryInfo.totalJSHeapSize / 1024 / 1024).toFixed(2);
+                const limitMB = (memoryInfo.jsHeapSizeLimit / 1024 / 1024).toFixed(2);
+                
+                log(`Bellek kullanımı: ${usedMB}MB / ${totalMB}MB (limit: ${limitMB}MB)`);
+                
+                const usagePercentage = (memoryInfo.usedJSHeapSize / memoryInfo.jsHeapSizeLimit) * 100;
+                if (usagePercentage > 80) {
+                    log('⚠️ Yüksek bellek kullanımı tespit edildi', 'warning');
+                } else if (usagePercentage > 60) {
+                    log('⚠️ Orta bellek kullanımı', 'warning');
+                } else {
+                    log('✅ Normal bellek kullanımı', 'success');
+                }
+            } else {
+                log('Bellek bilgisi mevcut değil', 'warning');
+            }
+        }
+
+        function forceGarbageCollection() {
+            if ('gc' in window) {
+                try {
+                    (window as any).gc();
+                    log('Garbage collection zorlandı', 'success');
+                } catch (error) {
+                    log(`Garbage collection başarısız: ${error.message}`, 'error');
+                }
+            } else {
+                log('Garbage collection API mevcut değil', 'warning');
+            }
+        }
+
+        // Ağ testleri
+        async function testNetworkConnectivity() {
+            log('Ağ bağlantısı test ediliyor...');
+            
+            try {
+                const startTime = performance.now();
+                const response = await fetch('https://httpbin.org/get', { 
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                const endTime = performance.now();
+                
+                if (response.ok) {
+                    const latency = endTime - startTime;
+                    log(`✅ Ağ bağlantısı başarılı (${latency.toFixed(2)}ms)`, 'success');
+                } else {
+                    log(`❌ Ağ bağlantısı başarısız: HTTP ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Ağ bağlantısı hatası: ${error.message}`, 'error');
+            }
+        }
+
+        async function testImageLoading() {
+            log('Görsel yükleme testi başlatılıyor...');
+            
+            const testImages = [
+                'https://httpbin.org/image/png',
+                'https://httpbin.org/image/jpeg',
+                'https://httpbin.org/image/webp'
+            ];
+            
+            let successCount = 0;
+            const startTime = performance.now();
+            
+            for (const imageUrl of testImages) {
+                try {
+                    const response = await fetch(imageUrl);
+                    if (response.ok) {
+                        successCount++;
+                        log(`✅ ${imageUrl}: Yüklendi`);
+                    } else {
+                        log(`❌ ${imageUrl}: HTTP ${response.status}`);
+                    }
+                } catch (error) {
+                    log(`❌ ${imageUrl}: Hata - ${error.message}`, 'error');
+                }
+            }
+            
+            const endTime = performance.now();
+            const totalTime = endTime - startTime;
+            
+            log(`Görsel testi tamamlandı: ${successCount}/${testImages.length} başarılı (${totalTime.toFixed(2)}ms)`, 
+                successCount === testImages.length ? 'success' : 'warning');
+        }
+
+        async function testAPIEndpoints() {
+            log('API endpoint testi başlatılıyor...');
+            
+            try {
+                // Test local API endpoint
+                const response = await fetch('/api/img?src=https://httpbin.org/image/png');
+                if (response.ok) {
+                    log('✅ Yerel API endpoint çalışıyor', 'success');
+                } else {
+                    log(`⚠️ Yerel API endpoint: HTTP ${response.status}`, 'warning');
+                }
+            } catch (error) {
+                log(`❌ Yerel API endpoint hatası: ${error.message}`, 'error');
+            }
+        }
+
+        // Performans testleri
+        function testPerformance() {
+            log('Performans testi başlatılıyor...');
+            
+            const iterations = 1000000;
+            const startTime = performance.now();
+            
+            // CPU intensive operation
+            let result = 0;
+            for (let i = 0; i < iterations; i++) {
+                result += Math.sqrt(i) * Math.sin(i);
+            }
+            
+            const endTime = performance.now();
+            const duration = endTime - startTime;
+            
+            log(`CPU testi tamamlandı: ${iterations.toLocaleString()} iterasyon, ${duration.toFixed(2)}ms`);
+            log(`Sonuç: ${result.toFixed(6)}`);
+            
+            if (duration < 100) {
+                log('✅ Mükemmel performans', 'success');
+            } else if (duration < 500) {
+                log('✅ İyi performans', 'success');
+            } else if (duration < 1000) {
+                log('⚠️ Orta performans', 'warning');
+            } else {
+                log('❌ Düşük performans', 'error');
+            }
+        }
+
+        function testStress() {
+            log('Stres testi başlatılıyor...');
+            
+            const promises = [];
+            const startTime = performance.now();
+            
+            // Create many concurrent operations
+            for (let i = 0; i < 100; i++) {
+                promises.push(
+                    new Promise(resolve => {
+                        setTimeout(() => {
+                            // Simulate some work
+                            let result = 0;
+                            for (let j = 0; j < 10000; j++) {
+                                result += j * i;
+                            }
+                            resolve(result);
+                        }, Math.random() * 100);
+                    })
+                );
+            }
+            
+            Promise.all(promises).then(() => {
+                const endTime = performance.now();
+                const duration = endTime - startTime;
+                log(`Stres testi tamamlandı: 100 eşzamanlı işlem, ${duration.toFixed(2)}ms`, 'success');
+            }).catch(error => {
+                log(`Stres testi hatası: ${error.message}`, 'error');
+            });
+        }
+
+        function testConcurrent() {
+            log('Eşzamanlı işlem testi başlatılıyor...');
+            
+            const concurrentCount = 10;
+            let completedCount = 0;
+            const startTime = performance.now();
+            
+            for (let i = 0; i < concurrentCount; i++) {
+                setTimeout(() => {
+                    completedCount++;
+                    if (completedCount === concurrentCount) {
+                        const endTime = performance.now();
+                        const duration = endTime - startTime;
+                        log(`Eşzamanlı işlem testi tamamlandı: ${concurrentCount} işlem, ${duration.toFixed(2)}ms`, 'success');
+                    }
+                }, Math.random() * 1000);
+            }
+        }
+
+        // Sayfa yüklendiğinde otomatik test
+        window.addEventListener('load', () => {
+            log('Sayfa yüklendi, otomatik testler başlatılıyor...', 'success');
+            setTimeout(() => {
+                checkSystemHealth();
+                testMemoryUsage();
+            }, 1000);
+        });
+
+        // Error handling
+        window.addEventListener('error', (event) => {
+            log(`JavaScript hatası: ${event.message}`, 'error');
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            log(`Promise hatası: ${event.reason}`, 'error');
+        });
+    </script>
+</body>
+</html>

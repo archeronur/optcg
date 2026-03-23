@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI Test Sayfası</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        html, body {
+            max-width: 100vw;
+            overflow-x: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        body {
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        .input-section {
+            padding: 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            min-height: 400px;
+        }
+
+        .preview-section {
+            padding: 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            min-height: 400px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            margin: 5px;
+            display: inline-block;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .button:hover {
+            background: #5a6fd8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .button.secondary {
+            background: #6c757d;
+        }
+
+        .button.secondary:hover {
+            background: #5a6268;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            background: #e9ecef;
+            color: #495057;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab:hover:not(.active) {
+            background: #dee2e6;
+        }
+
+        .textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        .textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .select {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .checkbox-group {
+            margin: 15px 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            font-size: 14px;
+            color: #495057;
+        }
+
+        .margin-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .margin-slider {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #e9ecef;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .margin-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+
+        .margin-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+
+        .margin-value {
+            font-weight: 600;
+            color: #495057;
+            min-width: 40px;
+        }
+
+        .stats {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            margin: 20px 0;
+        }
+
+        .stats h3 {
+            margin-bottom: 15px;
+            color: #495057;
+            font-size: 18px;
+        }
+
+        .stats p {
+            margin: 8px 0;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .preview-section-container {
+            margin-top: 20px;
+        }
+
+        .page-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .page-select {
+            min-width: 120px;
+        }
+
+        .page-nav-button {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .preview-grid {
+            display: grid;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .preview-grid-3x3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .preview-grid-3x4 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .preview-grid-4x3 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .card-slot {
+            aspect-ratio: 2.5/3.5;
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 12px;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .card-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .card-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .bleed-indicator {
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 2px solid #ff6b6b;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .crop-marks-indicator {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 1px solid #495057;
+            border-radius: 10px;
+            pointer-events: none;
+        }
+
+        .progress-container {
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .error, .success, .warning {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .info-box strong {
+            color: #0056b3;
+        }
+
+        .info-box ul {
+            margin: 10px 0 0 20px;
+            color: #0056b3;
+        }
+
+        .info-box li {
+            margin: 5px 0;
+        }
+
+        .legal-notice {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .legal-notice h4 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .legal-notice p {
+            color: #6c757d;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .page-selector {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .page-nav-button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div>
+                    <h1>Lorcana Proxy Baskı Sitesi</h1>
+                    <p>Disney Lorcana kartları için profesyonel proxy baskı aracı</p>
+                </div>
+                <div>
+                    <button class="button secondary">TR</button>
+                    <button class="button">EN</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-layout">
+            <!-- Sol panel - Girdi -->
+            <div class="input-section">
+                <h2>Deck Girişi</h2>
+                
+                <!-- Tab navigation -->
+                <div class="tabs">
+                    <button class="tab active">Metin Girişi</button>
+                    <button class="tab">URL Girişi</button>
+                    <button class="tab">CSV Yükleme</button>
+                </div>
+
+                <!-- Tab içerikleri -->
+                <div>
+                    <textarea
+                        class="textarea"
+                        placeholder="Deck listenizi buraya yapıştırın:
+
+4x Stitch - Rock Star (TFC 101)
+3x Ariel - Spectacular Singer (ROTF 45)
+2x Simba - Future King (UR 12)
+1x Elsa - Snow Queen
+
+Desteklenen formatlar:
+• 'Adet x Kart Adı (Set Kodu/Numara)'
+• 'Adet Kart Adı'
+• Sadece 'Kart Adı' (adet 1 varsayılır)"
+                        style="min-height: 200px"
+                    ></textarea>
+                    <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                        <strong>Test için örnek deck:</strong>
+                        <br />
+                        <button 
+                            type="button" 
+                            style="background: none; border: 1px solid #ccc; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;"
+                        >
+                            Örnek Deck Yükle
+                        </button>
+                    </div>
+                    <button class="button">Deck'i Analiz Et</button>
+                </div>
+            </div>
+
+            <!-- Sağ panel - Önizleme ve ayarlar -->
+            <div class="preview-section">
+                <h2>Önizleme ve Ayarlar</h2>
+
+                <!-- Baskı ayarları -->
+                <div style="margin-bottom: 20px;">
+                    <h3>Baskı Ayarları</h3>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label>Izgara Düzeni: </label>
+                        <select class="select">
+                            <option value="3x3">3×3 (9 kart/Sayfa)</option>
+                            <option value="3x4">3×4 (12 kart/Sayfa)</option>
+                            <option value="4x3">4×3 (12 kart/Sayfa)</option>
+                        </select>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="bleed" />
+                            <label for="bleed">Bleed Ekle (3mm)</label>
+                        </div>
+
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cropmarks" />
+                            <label for="cropmarks">Kesim İşaretleri</label>
+                        </div>
+
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="backpages" />
+                            <label for="backpages">Kart Arkası Sayfaları</label>
+                        </div>
+                    </div>
+
+                    <div class="margin-control">
+                        <label>Güvenlik Payı (mm): </label>
+                        <input
+                            type="range"
+                            min="2"
+                            max="10"
+                            step="0.5"
+                            value="5"
+                            class="margin-slider"
+                        />
+                        <span class="margin-value">5mm</span>
+                    </div>
+                </div>
+
+                <!-- İstatistikler -->
+                <div class="stats">
+                    <h3>Deck İstatistikleri</h3>
+                    <p><strong>Toplam Kart:</strong> 0</p>
+                    <p><strong>Benzersiz Kart:</strong> 0</p>
+                    <p><strong>Toplam Sayfa:</strong> 0</p>
+                    <p><strong>Sayfa Başına Kart:</strong> 9</p>
+                    <p><strong>Son Sayfa Doluluk:</strong> 0%</p>
+                    <p><strong>Tahmini Baskı Süresi:</strong> 0 dakika</p>
+                    <p><strong>Kağıt Verimliliği:</strong> 0%</p>
+                </div>
+
+                <!-- Export butonları -->
+                <div style="margin-top: 20px;">
+                    <button class="button" style="display: block; width: 100%; margin-bottom: 10px;">
+                        PDF İndir
+                    </button>
+                    
+                    <!-- PDF oluşturma ipuçları -->
+                    <div class="info-box">
+                        <strong>💡 İpuçları:</strong>
+                        <ul>
+                            <li>İlk kez PDF oluştururken görseller yüklenir (1-2 dakika)</li>
+                            <li>Büyük desteler için daha uzun sürebilir</li>
+                            <li>İnternet bağlantınızın stabil olduğundan emin olun</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Yasal uyarı -->
+        <div class="legal-notice">
+            <h4>Yasal Uyarı</h4>
+            <p>Bu araç yalnızca kişisel kullanım ve pratik amaçları içindir. Proxy kartlar resmi Disney Lorcana turnuvalarında kullanılamaz.</p>
+            <p style="margin-top: 10px; font-size: 11px;">
+                Yazıcınızda "Gerçek boyut" veya "100% ölçek" seçeneğini kullanın. "Sayfaya sığdır" seçeneğini kapatın.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Tab functionality
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        // Margin slider functionality
+        const marginSlider = document.querySelector('.margin-slider');
+        const marginValue = document.querySelector('.margin-value');
+        if (marginSlider && marginValue) {
+            marginSlider.addEventListener('input', (e) => {
+                marginValue.textContent = e.target.value + 'mm';
+            });
+        }
+
+        // Example deck loader
+        const exampleButton = document.querySelector('button[type="button"]');
+        const textarea = document.querySelector('.textarea');
+        if (exampleButton && textarea) {
+            exampleButton.addEventListener('click', () => {
+                textarea.value = '4x Stitch - Rock Star (TFC 101)\n3x Ariel - Spectacular Singer (ROTF 45)\n2x Simba - Future King (UR 12)';
+            });
+        }
+
+        // Language switcher
+        const languageButtons = document.querySelectorAll('.button');
+        languageButtons.forEach(button => {
+            if (button.textContent === 'TR' || button.textContent === 'EN') {
+                button.addEventListener('click', () => {
+                    languageButtons.forEach(b => b.classList.remove('active'));
+                    button.classList.add('active');
+                });
+            }
+        });
+
+        // Grid layout preview
+        const gridSelect = document.querySelector('.select');
+        const previewGrid = document.querySelector('.preview-grid');
+        if (gridSelect && previewGrid) {
+            gridSelect.addEventListener('change', (e) => {
+                previewGrid.className = `preview-grid preview-grid-${e.target.value}`;
+            });
+        }
+    </script>
+</body>
+</html>

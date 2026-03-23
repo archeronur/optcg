@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "optcg-tools",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-03-20",
+  "compatibility_flags": ["nodejs_compat"],
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "optcg-tools"
+    }
+  ],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  }
+}
