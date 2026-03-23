@@ -3182,7 +3182,7 @@
     gap: 16px;
     padding: 12px 16px 24px !important;
     overflow-x: hidden;
-    overflow-y: visible;
+    overflow-y: auto;
     width: 100%;
     box-sizing: border-box;
   }

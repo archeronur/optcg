@@ -179,22 +179,22 @@ export default async function LeaderDetailPage({
 
       {/* Placing Distribution */}
       {Object.keys(placingDistribution).length > 0 && (
-        <section className="mb-10">
-          <h2 className="mb-4 text-xl font-bold text-white">
+        <section className="mb-8 sm:mb-10">
+          <h2 className="mb-3 text-lg sm:text-xl font-bold text-white">
             <T section="tracker" k="placingDist" />
           </h2>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-nowrap gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible sm:gap-3">
             {Object.entries(placingDistribution)
               .sort(([a], [b]) => placingToNumber(a) - placingToNumber(b))
               .map(([placing, count]) => (
                 <div
                   key={placing}
-                  className="glass-card rounded-xl px-4 py-3 text-center min-w-[4.5rem]"
+                  className="glass-card rounded-xl px-3 py-2 text-center min-w-[3.2rem] sm:px-4 sm:py-3 sm:min-w-[4.5rem]"
                 >
-                  <div className="text-lg font-extrabold text-accent">
+                  <div className="text-base sm:text-lg font-extrabold text-accent">
                     {count}
                   </div>
-                  <div className="text-[10px] text-gray-500">#{placing}</div>
+                  <div className="text-[9px] sm:text-[10px] text-gray-500">#{placing}</div>
                 </div>
               ))}
           </div>
@@ -203,8 +203,8 @@ export default async function LeaderDetailPage({
 
       {/* Core Cards */}
       {coreCards.length > 0 && (
-        <section className="mb-10">
-          <h2 className="text-xl font-bold text-white">
+        <section className="mb-8 sm:mb-10">
+          <h2 className="text-lg sm:text-xl font-bold text-white">
             <T section="tracker" k="coreCards" />
           </h2>
           <p className="mb-4 text-xs text-gray-500">
@@ -216,8 +216,8 @@ export default async function LeaderDetailPage({
 
       {/* Flex Cards */}
       {flexCards.length > 0 && (
-        <section className="mb-10">
-          <h2 className="text-xl font-bold text-white">
+        <section className="mb-8 sm:mb-10">
+          <h2 className="text-lg sm:text-xl font-bold text-white">
             <T section="tracker" k="flexCards" />
           </h2>
           <p className="mb-4 text-xs text-gray-500">

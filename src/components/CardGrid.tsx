@@ -36,7 +36,7 @@ export default function CardGrid({ cards, variant }: CardGridProps) {
 
   return (
     <>
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
         {cards.map((card) => {
           const rate = card.inclusionRate != null ? Math.round(card.inclusionRate) : null;
           const avg = card.avgCount != null ? card.avgCount.toFixed(1) : null;
@@ -45,31 +45,31 @@ export default function CardGrid({ cards, variant }: CardGridProps) {
             <button
               key={card.id}
               onClick={() => setSelectedCard(card)}
-              className="group text-left rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.1] transition-all overflow-hidden"
+              className="group text-left rounded-lg sm:rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.1] transition-all overflow-hidden"
             >
               <div className="relative">
                 <CardImage
                   src={card.image}
                   alt={cardDisplayName(card)}
                   cardId={card.id}
-                  className="w-full aspect-[63/88] object-cover rounded-t-xl transition-transform group-hover:scale-[1.03]"
+                  className="w-full aspect-[55/77] sm:aspect-[63/88] object-cover rounded-t-lg sm:rounded-t-xl transition-transform group-hover:scale-[1.02]"
                 />
               </div>
 
-              <div className="px-2.5 py-2">
-                <p className="truncate text-xs font-medium text-gray-300 group-hover:text-white transition-colors">
+              <div className="px-2 py-1.5 sm:px-2.5 sm:py-2">
+                <p className="truncate text-[10px] sm:text-xs font-medium text-gray-300 group-hover:text-white transition-colors">
                   {cardDisplayName(card)}
                 </p>
-                <p className="text-[9px] text-gray-600 font-mono">{card.id}</p>
+                <p className="text-[8px] sm:text-[9px] text-gray-600 font-mono">{card.id}</p>
 
                 {rate != null && (
-                  <div className="mt-1.5">
+                  <div className="mt-1 sm:mt-1.5">
                     <div className="flex items-center justify-between mb-1">
-                      <span className={`text-[10px] font-bold ${accentColor === "emerald" ? "text-emerald-400" : "text-amber-400"}`}>
+                      <span className={`text-[9px] sm:text-[10px] font-bold ${accentColor === "emerald" ? "text-emerald-400" : "text-amber-400"}`}>
                         {rate}%
                       </span>
                       {avg != null && (
-                        <span className="text-[9px] text-gray-500">
+                        <span className="text-[8px] sm:text-[9px] text-gray-500">
                           avg ×{avg}
                         </span>
                       )}
