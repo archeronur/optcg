@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "OPENNEXT_CLOUDFLARE_DEV=1 next dev",
+    "dev": "next dev",
     "dev:cf": "OPENNEXT_CLOUDFLARE_DEV=1 next dev",
     "dev:clean": "npm run clean && next dev",
     "build": "opennextjs-cloudflare build && node scripts/cf-pages-prep.mjs",

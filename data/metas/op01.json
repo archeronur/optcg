@@ -7,7 +7,7 @@
       "name": "[OP-01] Play!TCG’s Dallas Treasure Cup",
       "url": "https://egmanevents.com/op-op01/dallas-tc",
       "type": "Unofficial Event",
-      "date": "Mar 1Written ByHayden \"The Egman\" Kaustinen",
+      "date": "Mar 1",
       "players": 512,
       "rounds": "9 Rounds of Swiss",
       "leaderDistribution": {
@@ -1010,7 +1010,7 @@
       "name": "[OP-01] Chile Treasure Cup",
       "url": "https://egmanevents.com/op-op01/chile-tc",
       "type": "Unofficial Event",
-      "date": "Mar 1Written ByHayden \"The Egman\" Kaustinen",
+      "date": "Mar 1",
       "players": 2023256,
       "rounds": "8 Rounds of Swiss",
       "leaderDistribution": {
@@ -2022,7 +2022,7 @@
       "name": "[OP-01] Play!TCG’s LVL Up Expo Treasure Cup",
       "url": "https://egmanevents.com/op-op01/lvl-up-tc",
       "type": "Unofficial Event",
-      "date": "Feb 22Written ByHayden \"The Egman\" Kaustinen",
+      "date": "Feb 22",
       "players": 256,
       "rounds": "8 Rounds of Swiss",
       "leaderDistribution": {
@@ -3111,7 +3111,7 @@
       "name": "[OP-01] Raid’n’Trade’s Karlsruhe Treasure Cup",
       "url": "https://egmanevents.com/op-op01/rnd-tc",
       "type": "Unofficial Event",
-      "date": "Feb 20Written ByHayden \"The Egman\" Kaustinen",
+      "date": "Feb 20",
       "players": 512,
       "rounds": "9 Rounds of Swiss",
       "leaderDistribution": {
@@ -4130,7 +4130,7 @@
       "name": "[OP-01] Let’s Play Games’ Australian Treasure Cup",
       "url": "https://egmanevents.com/op-op01/lpsaustc",
       "type": "Unofficial Event",
-      "date": "Feb 14Written ByHayden \"The Egman\" Kaustinen",
+      "date": "Feb 14",
       "players": 256,
       "rounds": "8 Rounds of Swiss",
       "leaderDistribution": {
@@ -5198,7 +5198,7 @@
       "name": "[OP-01] Pro-Play Games’ Miami Treasure Cup",
       "url": "https://egmanevents.com/op-op01/ppgtcmiami",
       "type": "Unofficial Event",
-      "date": "Feb 12Written ByHayden \"The Egman\" Kaustinen",
+      "date": "Feb 12",
       "players": 506,
       "rounds": "9 Rounds of Swiss",
       "leaderDistribution": {
@@ -6387,7 +6387,7 @@
       "name": "[OP-01] Organized Play Event’s UK Birmingham Treasure Cup",
       "url": "https://egmanevents.com/op-op01/blog-post-title-one-ygwa5-7n3xd-z8fws",
       "type": "Unofficial Event",
-      "date": "Feb 8Written ByHayden \"The Egman\" Kaustinen",
+      "date": "Feb 8",
       "players": 512,
       "rounds": "9 Rounds of Swiss",
       "leaderDistribution": {
@@ -7547,7 +7547,7 @@
       "name": "[OP-01] Carta Magica’s Niagara Treasure Cup",
       "url": "https://egmanevents.com/op-op01/blog-post-title-one-ygwa5-7n3xd",
       "type": "Unofficial Event",
-      "date": "Feb 7Written ByGuest User",
+      "date": "Feb 7",
       "players": 512,
       "rounds": "9 Rounds of Swiss",
       "leaderDistribution": {
@@ -8669,7 +8669,7 @@
       "name": "[OP-01] CoreTCG’s Long Beach Treasure Cup",
       "url": "https://egmanevents.com/op-op01/blog-post-title-one-ygwa5",
       "type": "Unofficial Event",
-      "date": "Feb 6Written ByGuest User",
+      "date": "Feb 6",
       "players": 492,
       "rounds": "9 Rounds of Swiss",
       "leaderDistribution": {
@@ -9688,20 +9688,23 @@
       "leaderId": "ST02-001",
       "totalAppearances": 57,
       "wins": 5,
-      "top4": 9,
-      "top8": 25,
+      "second": 4,
+      "third": 0,
+      "fourth": 8,
+      "top4": 17,
+      "top8": 16,
       "top16": 24,
       "top32": 0,
       "events": [
+        "[OP-01] Pro-Play Games’ Miami Treasure Cup",
         "[OP-01] Carta Magica’s Niagara Treasure Cup",
-        "[OP-01] Play!TCG’s Dallas Treasure Cup",
-        "[OP-01] Organized Play Event’s UK Birmingham Treasure Cup",
+        "[OP-01] Raid’n’Trade’s Karlsruhe Treasure Cup",
         "[OP-01] Let’s Play Games’ Australian Treasure Cup",
         "[OP-01] Chile Treasure Cup",
-        "[OP-01] Pro-Play Games’ Miami Treasure Cup",
-        "[OP-01] Play!TCG’s LVL Up Expo Treasure Cup",
-        "[OP-01] Raid’n’Trade’s Karlsruhe Treasure Cup",
-        "[OP-01] CoreTCG’s Long Beach Treasure Cup"
+        "[OP-01] Organized Play Event’s UK Birmingham Treasure Cup",
+        "[OP-01] CoreTCG’s Long Beach Treasure Cup",
+        "[OP-01] Play!TCG’s Dallas Treasure Cup",
+        "[OP-01] Play!TCG’s LVL Up Expo Treasure Cup"
       ],
       "players": [],
       "uniquePlayers": 0,
@@ -9909,27 +9912,31 @@
           "inclusionRate": 1.8,
           "avgCount": 2.0
         }
-      ]
+      ],
+      "points": 242
     },
     {
       "leader": "OP01-002 Trafalgar Law",
       "leaderId": "OP01-002",
       "totalAppearances": 20,
       "wins": 3,
-      "top4": 5,
-      "top8": 6,
+      "second": 2,
+      "third": 0,
+      "fourth": 1,
+      "top4": 6,
+      "top8": 1,
       "top16": 13,
       "top32": 0,
       "events": [
+        "[OP-01] Pro-Play Games’ Miami Treasure Cup",
         "[OP-01] Carta Magica’s Niagara Treasure Cup",
-        "[OP-01] Play!TCG’s Dallas Treasure Cup",
-        "[OP-01] Organized Play Event’s UK Birmingham Treasure Cup",
+        "[OP-01] Raid’n’Trade’s Karlsruhe Treasure Cup",
         "[OP-01] Let’s Play Games’ Australian Treasure Cup",
         "[OP-01] Chile Treasure Cup",
-        "[OP-01] Pro-Play Games’ Miami Treasure Cup",
-        "[OP-01] Play!TCG’s LVL Up Expo Treasure Cup",
-        "[OP-01] Raid’n’Trade’s Karlsruhe Treasure Cup",
-        "[OP-01] CoreTCG’s Long Beach Treasure Cup"
+        "[OP-01] Organized Play Event’s UK Birmingham Treasure Cup",
+        "[OP-01] CoreTCG’s Long Beach Treasure Cup",
+        "[OP-01] Play!TCG’s Dallas Treasure Cup",
+        "[OP-01] Play!TCG’s LVL Up Expo Treasure Cup"
       ],
       "players": [],
       "uniquePlayers": 0,
@@ -10167,216 +10174,31 @@
           "inclusionRate": 5.0,
           "avgCount": 4.0
         }
-      ]
-    },
-    {
-      "leader": "ST01-001 Monkey D. Luffy",
-      "leaderId": "ST01-001",
-      "totalAppearances": 12,
-      "wins": 1,
-      "top4": 1,
-      "top8": 2,
-      "top16": 8,
-      "top32": 0,
-      "events": [
-        "[OP-01] Carta Magica’s Niagara Treasure Cup",
-        "[OP-01] Play!TCG’s Dallas Treasure Cup",
-        "[OP-01] Organized Play Event’s UK Birmingham Treasure Cup",
-        "[OP-01] Pro-Play Games’ Miami Treasure Cup",
-        "[OP-01] CoreTCG’s Long Beach Treasure Cup"
       ],
-      "players": [],
-      "uniquePlayers": 0,
-      "uniqueEvents": 5,
-      "coreCards": [
-        {
-          "id": "ST01-030",
-          "inclusionRate": 90.0,
-          "avgCount": 3.3
-        },
-        {
-          "id": "ST01-001",
-          "inclusionRate": 70.0,
-          "avgCount": 2.6
-        },
-        {
-          "id": "ST01-006",
-          "inclusionRate": 70.0,
-          "avgCount": 4.0
-        }
-      ],
-      "flexCards": [
-        {
-          "id": "OP01-023",
-          "inclusionRate": 40.0,
-          "avgCount": 3.2
-        },
-        {
-          "id": "OP01-025",
-          "inclusionRate": 40.0,
-          "avgCount": 4.0
-        },
-        {
-          "id": "ST01-051",
-          "inclusionRate": 40.0,
-          "avgCount": 1.2
-        },
-        {
-          "id": "ST01-016",
-          "inclusionRate": 30.0,
-          "avgCount": 1.7
-        },
-        {
-          "id": "OP01-012",
-          "inclusionRate": 30.0,
-          "avgCount": 4.0
-        },
-        {
-          "id": "ST01-013",
-          "inclusionRate": 30.0,
-          "avgCount": 3.7
-        },
-        {
-          "id": "OP01-074",
-          "inclusionRate": 30.0,
-          "avgCount": 1.7
-        },
-        {
-          "id": "ST01-062",
-          "inclusionRate": 30.0,
-          "avgCount": 2.0
-        },
-        {
-          "id": "ST01-007",
-          "inclusionRate": 20.0,
-          "avgCount": 2.0
-        },
-        {
-          "id": "ST01-043",
-          "inclusionRate": 20.0,
-          "avgCount": 3.0
-        },
-        {
-          "id": "ST01-021",
-          "inclusionRate": 20.0,
-          "avgCount": 2.0
-        },
-        {
-          "id": "ST01-011",
-          "inclusionRate": 20.0,
-          "avgCount": 2.5
-        },
-        {
-          "id": "OP01-044",
-          "inclusionRate": 20.0,
-          "avgCount": 2.0
-        },
-        {
-          "id": "ST01-014",
-          "inclusionRate": 20.0,
-          "avgCount": 2.0
-        },
-        {
-          "id": "OP01-026",
-          "inclusionRate": 20.0,
-          "avgCount": 4.0
-        },
-        {
-          "id": "ST01-020",
-          "inclusionRate": 10.0,
-          "avgCount": 4.0
-        },
-        {
-          "id": "OP01-005",
-          "inclusionRate": 10.0,
-          "avgCount": 2.0
-        },
-        {
-          "id": "OP01-062",
-          "inclusionRate": 10.0,
-          "avgCount": 2.0
-        },
-        {
-          "id": "OP01-063",
-          "inclusionRate": 10.0,
-          "avgCount": 1.0
-        },
-        {
-          "id": "P23-020",
-          "inclusionRate": 10.0,
-          "avgCount": 1.0
-        },
-        {
-          "id": "P23-006",
-          "inclusionRate": 10.0,
-          "avgCount": 1.0
-        },
-        {
-          "id": "P23-013",
-          "inclusionRate": 10.0,
-          "avgCount": 1.0
-        },
-        {
-          "id": "P23-019",
-          "inclusionRate": 10.0,
-          "avgCount": 4.0
-        },
-        {
-          "id": "OP01-054",
-          "inclusionRate": 10.0,
-          "avgCount": 4.0
-        },
-        {
-          "id": "OP01-027",
-          "inclusionRate": 10.0,
-          "avgCount": 4.0
-        },
-        {
-          "id": "OP01-031",
-          "inclusionRate": 10.0,
-          "avgCount": 3.0
-        },
-        {
-          "id": "OP01-020",
-          "inclusionRate": 10.0,
-          "avgCount": 4.0
-        },
-        {
-          "id": "ST01-044",
-          "inclusionRate": 10.0,
-          "avgCount": 2.0
-        },
-        {
-          "id": "ST01-073",
-          "inclusionRate": 10.0,
-          "avgCount": 2.0
-        },
-        {
-          "id": "ST01-072",
-          "inclusionRate": 10.0,
-          "avgCount": 2.0
-        }
-      ]
+      "points": 82
     },
     {
       "leader": "ST04-001 Kaido",
       "leaderId": "ST04-001",
       "totalAppearances": 20,
       "wins": 0,
-      "top4": 2,
-      "top8": 8,
+      "second": 2,
+      "third": 0,
+      "fourth": 1,
+      "top4": 3,
+      "top8": 6,
       "top16": 11,
       "top32": 0,
       "events": [
+        "[OP-01] Pro-Play Games’ Miami Treasure Cup",
         "[OP-01] Carta Magica’s Niagara Treasure Cup",
-        "[OP-01] Play!TCG’s Dallas Treasure Cup",
-        "[OP-01] Organized Play Event’s UK Birmingham Treasure Cup",
+        "[OP-01] Raid’n’Trade’s Karlsruhe Treasure Cup",
         "[OP-01] Let’s Play Games’ Australian Treasure Cup",
         "[OP-01] Chile Treasure Cup",
-        "[OP-01] Pro-Play Games’ Miami Treasure Cup",
-        "[OP-01] Play!TCG’s LVL Up Expo Treasure Cup",
-        "[OP-01] Raid’n’Trade’s Karlsruhe Treasure Cup",
-        "[OP-01] CoreTCG’s Long Beach Treasure Cup"
+        "[OP-01] Organized Play Event’s UK Birmingham Treasure Cup",
+        "[OP-01] CoreTCG’s Long Beach Treasure Cup",
+        "[OP-01] Play!TCG’s Dallas Treasure Cup",
+        "[OP-01] Play!TCG’s LVL Up Expo Treasure Cup"
       ],
       "players": [],
       "uniquePlayers": 0,
@@ -10684,22 +10506,219 @@
           "inclusionRate": 5.0,
           "avgCount": 2.0
         }
-      ]
+      ],
+      "points": 68
+    },
+    {
+      "leader": "ST01-001 Monkey D. Luffy",
+      "leaderId": "ST01-001",
+      "totalAppearances": 12,
+      "wins": 1,
+      "second": 0,
+      "third": 0,
+      "fourth": 2,
+      "top4": 3,
+      "top8": 1,
+      "top16": 8,
+      "top32": 0,
+      "events": [
+        "[OP-01] Carta Magica’s Niagara Treasure Cup",
+        "[OP-01] Pro-Play Games’ Miami Treasure Cup",
+        "[OP-01] Organized Play Event’s UK Birmingham Treasure Cup",
+        "[OP-01] CoreTCG’s Long Beach Treasure Cup",
+        "[OP-01] Play!TCG’s Dallas Treasure Cup"
+      ],
+      "players": [],
+      "uniquePlayers": 0,
+      "uniqueEvents": 5,
+      "coreCards": [
+        {
+          "id": "ST01-030",
+          "inclusionRate": 90.0,
+          "avgCount": 3.3
+        },
+        {
+          "id": "ST01-001",
+          "inclusionRate": 70.0,
+          "avgCount": 2.6
+        },
+        {
+          "id": "ST01-006",
+          "inclusionRate": 70.0,
+          "avgCount": 4.0
+        }
+      ],
+      "flexCards": [
+        {
+          "id": "OP01-023",
+          "inclusionRate": 40.0,
+          "avgCount": 3.2
+        },
+        {
+          "id": "OP01-025",
+          "inclusionRate": 40.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "ST01-051",
+          "inclusionRate": 40.0,
+          "avgCount": 1.2
+        },
+        {
+          "id": "ST01-016",
+          "inclusionRate": 30.0,
+          "avgCount": 1.7
+        },
+        {
+          "id": "OP01-012",
+          "inclusionRate": 30.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "ST01-013",
+          "inclusionRate": 30.0,
+          "avgCount": 3.7
+        },
+        {
+          "id": "OP01-074",
+          "inclusionRate": 30.0,
+          "avgCount": 1.7
+        },
+        {
+          "id": "ST01-062",
+          "inclusionRate": 30.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "ST01-007",
+          "inclusionRate": 20.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "ST01-043",
+          "inclusionRate": 20.0,
+          "avgCount": 3.0
+        },
+        {
+          "id": "ST01-021",
+          "inclusionRate": 20.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "ST01-011",
+          "inclusionRate": 20.0,
+          "avgCount": 2.5
+        },
+        {
+          "id": "OP01-044",
+          "inclusionRate": 20.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "ST01-014",
+          "inclusionRate": 20.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP01-026",
+          "inclusionRate": 20.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "ST01-020",
+          "inclusionRate": 10.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP01-005",
+          "inclusionRate": 10.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP01-062",
+          "inclusionRate": 10.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP01-063",
+          "inclusionRate": 10.0,
+          "avgCount": 1.0
+        },
+        {
+          "id": "P23-020",
+          "inclusionRate": 10.0,
+          "avgCount": 1.0
+        },
+        {
+          "id": "P23-006",
+          "inclusionRate": 10.0,
+          "avgCount": 1.0
+        },
+        {
+          "id": "P23-013",
+          "inclusionRate": 10.0,
+          "avgCount": 1.0
+        },
+        {
+          "id": "P23-019",
+          "inclusionRate": 10.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP01-054",
+          "inclusionRate": 10.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP01-027",
+          "inclusionRate": 10.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP01-031",
+          "inclusionRate": 10.0,
+          "avgCount": 3.0
+        },
+        {
+          "id": "OP01-020",
+          "inclusionRate": 10.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "ST01-044",
+          "inclusionRate": 10.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "ST01-073",
+          "inclusionRate": 10.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "ST01-072",
+          "inclusionRate": 10.0,
+          "avgCount": 2.0
+        }
+      ],
+      "points": 42
     },
     {
       "leader": "OP01-003 Monkey D. Luffy",
       "leaderId": "OP01-003",
       "totalAppearances": 10,
       "wins": 0,
-      "top4": 1,
-      "top8": 4,
+      "second": 1,
+      "third": 0,
+      "fourth": 2,
+      "top4": 3,
+      "top8": 3,
       "top16": 4,
       "top32": 0,
       "events": [
-        "[OP-01] Play!TCG’s LVL Up Expo Treasure Cup",
-        "[OP-01] Raid’n’Trade’s Karlsruhe Treasure Cup",
+        "[OP-01] Let’s Play Games’ Australian Treasure Cup",
         "[OP-01] Chile Treasure Cup",
-        "[OP-01] Let’s Play Games’ Australian Treasure Cup"
+        "[OP-01] Raid’n’Trade’s Karlsruhe Treasure Cup",
+        "[OP-01] Play!TCG’s LVL Up Expo Treasure Cup"
       ],
       "players": [],
       "uniquePlayers": 0,
@@ -10867,14 +10886,190 @@
           "inclusionRate": 11.1,
           "avgCount": 3.0
         }
-      ]
+      ],
+      "points": 40
+    },
+    {
+      "leader": "OP01-060 Donquixote Doflamingo",
+      "leaderId": "OP01-060",
+      "totalAppearances": 8,
+      "wins": 0,
+      "second": 0,
+      "third": 0,
+      "fourth": 3,
+      "top4": 3,
+      "top8": 1,
+      "top16": 4,
+      "top32": 0,
+      "events": [
+        "[OP-01] CoreTCG’s Long Beach Treasure Cup",
+        "[OP-01] Pro-Play Games’ Miami Treasure Cup",
+        "[OP-01] Let’s Play Games’ Australian Treasure Cup",
+        "[OP-01] Play!TCG’s LVL Up Expo Treasure Cup"
+      ],
+      "players": [],
+      "uniquePlayers": 0,
+      "uniqueEvents": 4,
+      "coreCards": [
+        {
+          "id": "ST03-004",
+          "inclusionRate": 112.5,
+          "avgCount": 3.9
+        },
+        {
+          "id": "ST03-005",
+          "inclusionRate": 112.5,
+          "avgCount": 3.9
+        },
+        {
+          "id": "ST03-008",
+          "inclusionRate": 112.5,
+          "avgCount": 3.7
+        },
+        {
+          "id": "ST03-012",
+          "inclusionRate": 112.5,
+          "avgCount": 3.3
+        },
+        {
+          "id": "ST03-014",
+          "inclusionRate": 112.5,
+          "avgCount": 3.3
+        },
+        {
+          "id": "ST03-030",
+          "inclusionRate": 112.5,
+          "avgCount": 3.0
+        },
+        {
+          "id": "OP01-060",
+          "inclusionRate": 100.0,
+          "avgCount": 3.5
+        },
+        {
+          "id": "OP01-064",
+          "inclusionRate": 100.0,
+          "avgCount": 3.8
+        },
+        {
+          "id": "OP01-065",
+          "inclusionRate": 75.0,
+          "avgCount": 2.7
+        },
+        {
+          "id": "ST03-009",
+          "inclusionRate": 75.0,
+          "avgCount": 2.8
+        }
+      ],
+      "flexCards": [
+        {
+          "id": "ST03-017",
+          "inclusionRate": 62.5,
+          "avgCount": 3.4
+        },
+        {
+          "id": "OP01-013",
+          "inclusionRate": 62.5,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP01-020",
+          "inclusionRate": 62.5,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP01-070",
+          "inclusionRate": 37.5,
+          "avgCount": 2.7
+        },
+        {
+          "id": "OP01-088",
+          "inclusionRate": 37.5,
+          "avgCount": 2.3
+        },
+        {
+          "id": "OP01-071",
+          "inclusionRate": 25.0,
+          "avgCount": 1.5
+        },
+        {
+          "id": "OP01-067",
+          "inclusionRate": 25.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP01-082",
+          "inclusionRate": 25.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP01-003",
+          "inclusionRate": 12.5,
+          "avgCount": 3.0
+        },
+        {
+          "id": "OP01-075",
+          "inclusionRate": 12.5,
+          "avgCount": 2.0
+        },
+        {
+          "id": "ST03-007",
+          "inclusionRate": 12.5,
+          "avgCount": 1.0
+        },
+        {
+          "id": "ST03-001",
+          "inclusionRate": 12.5,
+          "avgCount": 4.0
+        },
+        {
+          "id": "ST03-013",
+          "inclusionRate": 12.5,
+          "avgCount": 4.0
+        },
+        {
+          "id": "ST03-020",
+          "inclusionRate": 12.5,
+          "avgCount": 4.0
+        },
+        {
+          "id": "ST03-060",
+          "inclusionRate": 12.5,
+          "avgCount": 4.0
+        },
+        {
+          "id": "ST03-064",
+          "inclusionRate": 12.5,
+          "avgCount": 4.0
+        },
+        {
+          "id": "ST03-065",
+          "inclusionRate": 12.5,
+          "avgCount": 3.0
+        },
+        {
+          "id": "ST03-082",
+          "inclusionRate": 12.5,
+          "avgCount": 2.0
+        },
+        {
+          "id": "ST03-088",
+          "inclusionRate": 12.5,
+          "avgCount": 3.0
+        }
+      ],
+      "points": 30
     },
     {
       "leader": "OP01-001 Roronoa Zoro",
       "leaderId": "OP01-001",
       "totalAppearances": 8,
       "wins": 0,
-      "top4": 0,
+      "second": 0,
+      "third": 0,
+      "fourth": 1,
+      "top4": 1,
       "top8": 3,
       "top16": 4,
       "top32": 0,
@@ -10882,8 +11077,8 @@
         "[OP-01] Carta Magica’s Niagara Treasure Cup",
         "[OP-01] Let’s Play Games’ Australian Treasure Cup",
         "[OP-01] Chile Treasure Cup",
-        "[OP-01] Play!TCG’s LVL Up Expo Treasure Cup",
-        "[OP-01] CoreTCG’s Long Beach Treasure Cup"
+        "[OP-01] CoreTCG’s Long Beach Treasure Cup",
+        "[OP-01] Play!TCG’s LVL Up Expo Treasure Cup"
       ],
       "players": [],
       "uniquePlayers": 0,
@@ -11061,181 +11256,17 @@
           "inclusionRate": 14.3,
           "avgCount": 3.0
         }
-      ]
-    },
-    {
-      "leader": "OP01-060 Donquixote Doflamingo",
-      "leaderId": "OP01-060",
-      "totalAppearances": 8,
-      "wins": 0,
-      "top4": 0,
-      "top8": 1,
-      "top16": 4,
-      "top32": 0,
-      "events": [
-        "[OP-01] Play!TCG’s LVL Up Expo Treasure Cup",
-        "[OP-01] Pro-Play Games’ Miami Treasure Cup",
-        "[OP-01] CoreTCG’s Long Beach Treasure Cup",
-        "[OP-01] Let’s Play Games’ Australian Treasure Cup"
       ],
-      "players": [],
-      "uniquePlayers": 0,
-      "uniqueEvents": 4,
-      "coreCards": [
-        {
-          "id": "ST03-004",
-          "inclusionRate": 112.5,
-          "avgCount": 3.9
-        },
-        {
-          "id": "ST03-005",
-          "inclusionRate": 112.5,
-          "avgCount": 3.9
-        },
-        {
-          "id": "ST03-008",
-          "inclusionRate": 112.5,
-          "avgCount": 3.7
-        },
-        {
-          "id": "ST03-012",
-          "inclusionRate": 112.5,
-          "avgCount": 3.3
-        },
-        {
-          "id": "ST03-014",
-          "inclusionRate": 112.5,
-          "avgCount": 3.3
-        },
-        {
-          "id": "ST03-030",
-          "inclusionRate": 112.5,
-          "avgCount": 3.0
-        },
-        {
-          "id": "OP01-060",
-          "inclusionRate": 100.0,
-          "avgCount": 3.5
-        },
-        {
-          "id": "OP01-064",
-          "inclusionRate": 100.0,
-          "avgCount": 3.8
-        },
-        {
-          "id": "OP01-065",
-          "inclusionRate": 75.0,
-          "avgCount": 2.7
-        },
-        {
-          "id": "ST03-009",
-          "inclusionRate": 75.0,
-          "avgCount": 2.8
-        }
-      ],
-      "flexCards": [
-        {
-          "id": "ST03-017",
-          "inclusionRate": 62.5,
-          "avgCount": 3.4
-        },
-        {
-          "id": "OP01-013",
-          "inclusionRate": 62.5,
-          "avgCount": 4.0
-        },
-        {
-          "id": "OP01-020",
-          "inclusionRate": 62.5,
-          "avgCount": 4.0
-        },
-        {
-          "id": "OP01-070",
-          "inclusionRate": 37.5,
-          "avgCount": 2.7
-        },
-        {
-          "id": "OP01-088",
-          "inclusionRate": 37.5,
-          "avgCount": 2.3
-        },
-        {
-          "id": "OP01-071",
-          "inclusionRate": 25.0,
-          "avgCount": 1.5
-        },
-        {
-          "id": "OP01-067",
-          "inclusionRate": 25.0,
-          "avgCount": 2.0
-        },
-        {
-          "id": "OP01-082",
-          "inclusionRate": 25.0,
-          "avgCount": 2.0
-        },
-        {
-          "id": "OP01-003",
-          "inclusionRate": 12.5,
-          "avgCount": 3.0
-        },
-        {
-          "id": "OP01-075",
-          "inclusionRate": 12.5,
-          "avgCount": 2.0
-        },
-        {
-          "id": "ST03-007",
-          "inclusionRate": 12.5,
-          "avgCount": 1.0
-        },
-        {
-          "id": "ST03-001",
-          "inclusionRate": 12.5,
-          "avgCount": 4.0
-        },
-        {
-          "id": "ST03-013",
-          "inclusionRate": 12.5,
-          "avgCount": 4.0
-        },
-        {
-          "id": "ST03-020",
-          "inclusionRate": 12.5,
-          "avgCount": 4.0
-        },
-        {
-          "id": "ST03-060",
-          "inclusionRate": 12.5,
-          "avgCount": 4.0
-        },
-        {
-          "id": "ST03-064",
-          "inclusionRate": 12.5,
-          "avgCount": 4.0
-        },
-        {
-          "id": "ST03-065",
-          "inclusionRate": 12.5,
-          "avgCount": 3.0
-        },
-        {
-          "id": "ST03-082",
-          "inclusionRate": 12.5,
-          "avgCount": 2.0
-        },
-        {
-          "id": "ST03-088",
-          "inclusionRate": 12.5,
-          "avgCount": 3.0
-        }
-      ]
+      "points": 26
     },
     {
       "leader": "OP01-001 Monkey D. Luffy",
       "leaderId": "OP01-001",
       "totalAppearances": 1,
       "wins": 0,
+      "second": 0,
+      "third": 0,
+      "fourth": 0,
       "top4": 0,
       "top8": 1,
       "top16": 0,
@@ -11268,13 +11299,17 @@
           "avgCount": 3.0
         }
       ],
-      "flexCards": []
+      "flexCards": [],
+      "points": 4
     },
     {
       "leader": "OP01-061 Kaido",
       "leaderId": "OP01-061",
       "totalAppearances": 1,
       "wins": 0,
+      "second": 0,
+      "third": 0,
+      "fourth": 0,
       "top4": 0,
       "top8": 1,
       "top16": 0,
@@ -11357,13 +11392,17 @@
           "avgCount": 3.0
         }
       ],
-      "flexCards": []
+      "flexCards": [],
+      "points": 4
     },
     {
       "leader": "OP01-031 Kozuki Oden",
       "leaderId": "OP01-031",
       "totalAppearances": 1,
       "wins": 0,
+      "second": 0,
+      "third": 0,
+      "fourth": 0,
       "top4": 0,
       "top8": 0,
       "top16": 1,
@@ -11461,13 +11500,17 @@
           "avgCount": 3.0
         }
       ],
-      "flexCards": []
+      "flexCards": [],
+      "points": 2
     },
     {
       "leader": "ST03-001 Crocodile",
       "leaderId": "ST03-001",
       "totalAppearances": 1,
       "wins": 0,
+      "second": 0,
+      "third": 0,
+      "fourth": 0,
       "top4": 0,
       "top8": 0,
       "top16": 1,
@@ -11575,13 +11618,17 @@
           "avgCount": 4.0
         }
       ],
-      "flexCards": []
+      "flexCards": [],
+      "points": 2
     },
     {
       "leader": "OP01-060 Doffy",
       "leaderId": "OP01-060",
       "totalAppearances": 1,
       "wins": 0,
+      "second": 0,
+      "third": 0,
+      "fourth": 0,
       "top4": 0,
       "top8": 0,
       "top16": 1,
@@ -11664,7 +11711,8 @@
           "avgCount": 4.0
         }
       ],
-      "flexCards": []
+      "flexCards": [],
+      "points": 2
     }
   ]
 }

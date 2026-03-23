@@ -28,7 +28,22 @@ type SortMode =
   | "eventAZ";
 
 function placingToNumber(placing: string): number {
-  const n = parseInt(placing);
+  const normalized = String(placing ?? "").trim().toLowerCase();
+  if (!normalized) return 999;
+
+  const topMatch = normalized.match(/top\s*(\d+)/i);
+  if (topMatch?.[1]) {
+    const topN = Number.parseInt(topMatch[1], 10);
+    if (!Number.isNaN(topN)) return topN;
+  }
+
+  const ordinalMatch = normalized.match(/^(\d+)(st|nd|rd|th)?$/i);
+  if (ordinalMatch?.[1]) {
+    const ordinal = Number.parseInt(ordinalMatch[1], 10);
+    if (!Number.isNaN(ordinal)) return ordinal;
+  }
+
+  const n = Number.parseInt(normalized, 10);
   return Number.isNaN(n) ? 999 : n;
 }
 

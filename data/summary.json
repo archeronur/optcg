@@ -1,108 +1,86 @@
 {
   "metas": [
     {
-      "id": "op15",
-      "name": "OP15",
-      "url": "https://egmanevents.com/one-piece-op15-tournaments",
-      "eventCount": 0,
-      "totalDecks": 0,
-      "topLeaders": []
+      "id": "op01",
+      "name": "OP01 - Romance Dawn",
+      "url": "https://egmanevents.com/op-op01",
+      "eventCount": 9,
+      "totalDecks": 140,
+      "topLeaders": [
+        "ST02-001 Eustass \"Captain\" Kid",
+        "OP01-002 Trafalgar Law",
+        "ST04-001 Kaido",
+        "ST01-001 Monkey D. Luffy",
+        "OP01-003 Monkey D. Luffy"
+      ]
     },
     {
-      "id": "op14",
-      "name": "OP14 - The Azure Sea's Seven",
-      "url": "https://egmanevents.com/one-piece-op14-tournaments",
+      "id": "op02",
+      "name": "OP02 - Paramount War",
+      "url": "https://egmanevents.com/one-piece-op02",
       "eventCount": 20,
-      "totalDecks": 314,
+      "totalDecks": 190,
       "topLeaders": [
-        "OP14-020",
-        "OP13-079",
-        "OP13-002",
-        "OP14-041",
-        "OP12-061"
+        "OP01-001 Roronoa Zoro",
+        "OP01-002 Trafalgar Law",
+        "OP02-001 Edward Newgate",
+        "ST01-001 Monkey D. Luffy",
+        "OP02-025 Kin'emon"
       ]
     },
     {
-      "id": "op13",
-      "name": "OP13 - The Warring Kingdoms",
-      "url": "https://egmanevents.com/one-piece-op13-tournaments",
-      "eventCount": 17,
-      "totalDecks": 362,
-      "topLeaders": [
-        "OP13-079 Imu",
-        "OP13-002 Portgas.D.Ace",
-        "OP12-020 Roronoa Zoro",
-        "OP12-001 Silvers Rayleigh",
-        "OP13-003 Gol.D.Roger"
-      ]
-    },
-    {
-      "id": "op12",
-      "name": "OP12 - A Transgenerational Bond",
-      "url": "https://egmanevents.com/one-piece-op12-tournaments",
+      "id": "op03",
+      "name": "OP03 - Pillars of Strength",
+      "url": "https://egmanevents.com/one-piece-op03",
       "eventCount": 20,
-      "totalDecks": 413,
+      "totalDecks": 208,
       "topLeaders": [
-        "OP11-040 Monkey.D.Luffy",
-        "OP07-019 Jewelry Bonney",
-        "OP12-001 Silvers Rayleigh",
-        "OP12-020 Roronoa Zoro",
-        "EB02-010 Monkey.D.Luffy"
+        "OP02-001 Edward Newgate",
+        "OP01-001 Roronoa Zoro",
+        "OP01-002 Trafalgar Law",
+        "OP03-099 Charlotte Katakuri",
+        "OP01-060 Donquixote Doflamingo"
       ]
     },
     {
-      "id": "op11",
-      "name": "OP11 - Uta",
-      "url": "https://egmanevents.com/one-piece-op11-tournaments",
-      "eventCount": 16,
-      "totalDecks": 278,
+      "id": "op04",
+      "name": "OP04 - Kingdoms of Intrigue",
+      "url": "https://egmanevents.com/one-piece-op04",
+      "eventCount": 20,
+      "totalDecks": 375,
       "topLeaders": [
-        "OP05-002 Belo Betty",
-        "OP11-040 Monkey.D.Luffy",
-        "EB02-010 Monkey.D.Luffy",
+        "OP03-099 Charlotte Katakuri",
+        "OP04-019 Donquixote Doflamingo",
+        "OP02-001 Edward Newgate",
+        "OP01-002 Trafalgar Law",
+        "ST02-001 Eustass \"Captain\" Kid"
+      ]
+    },
+    {
+      "id": "op05",
+      "name": "OP05 - Awakening of the New Era",
+      "url": "https://egmanevents.com/one-piece-op05",
+      "eventCount": 20,
+      "totalDecks": 385,
+      "topLeaders": [
+        "OP05-041 Sakazuki",
         "OP05-060 Monkey.D.Luffy",
-        "OP09-081 Marshall.D.Teach"
+        "OP05-098 Enel",
+        "OP03-099 Charlotte Katakuri",
+        "OP01-001 Roronoa Zoro"
       ]
     },
     {
-      "id": "op10",
-      "name": "OP10 - Royal Blood",
-      "url": "https://egmanevents.com/one-piece-op10-tournaments",
+      "id": "op06",
+      "name": "OP06 - Wings of the Captain",
+      "url": "https://egmanevents.com/one-piece-op06",
       "eventCount": 20,
-      "totalDecks": 338,
+      "totalDecks": 506,
       "topLeaders": [
-        "EB02-010 Monkey.D.Luffy",
-        "OP09-001 Shanks",
-        "OP01-060 Donquixote Doflamingo",
-        "OP07-019 Jewelry Bonney",
-        "OP09-022 Lim"
-      ]
-    },
-    {
-      "id": "op09",
-      "name": "OP09 - The Four Emperors",
-      "url": "https://egmanevents.com/one-piece-op09",
-      "eventCount": 20,
-      "totalDecks": 349,
-      "topLeaders": [
-        "OP01-060 Donquixote Doflamingo",
+        "OP06-080 Gecko Moria",
+        "OP05-041 Sakazuki",
+        "ST10-001 Trafalgar Law",
         "ST13-003 Monkey.D.Luffy",
-        "OP07-079 Rob Lucci",
-        "OP09-001 Shanks",
-        "OP05-098 Enel"
-      ]
-    },
-    {
-      "id": "op08",
-      "name": "OP08 - Two Legends",
-      "url": "https://egmanevents.com/one-piece-op08",
-      "eventCount": 20,
-      "totalDecks": 487,
-      "topLeaders": [
-        "ST13-003 Monkey.D.Luffy",
-        "OP01-060 Donquixote Doflamingo",
-        "OP07-079 Rob Lucci",
-        "OP07-019 Jewelry Bonney",
         "OP05-098 Enel"
       ]
     },
@@ -121,90 +99,110 @@
       ]
     },
     {
-      "id": "op06",
-      "name": "OP06 - Wings of the Captain",
-      "url": "https://egmanevents.com/one-piece-op06",
+      "id": "op08",
+      "name": "OP08 - Two Legends",
+      "url": "https://egmanevents.com/one-piece-op08",
       "eventCount": 20,
-      "totalDecks": 506,
+      "totalDecks": 487,
       "topLeaders": [
-        "OP06-080 Gecko Moria",
-        "OP05-041 Sakazuki",
-        "ST10-001 Trafalgar Law",
         "ST13-003 Monkey.D.Luffy",
+        "OP01-060 Donquixote Doflamingo",
+        "OP07-079 Rob Lucci",
+        "OP07-019 Jewelry Bonney",
         "OP05-098 Enel"
       ]
     },
     {
-      "id": "op05",
-      "name": "OP05 - Awakening of the New Era",
-      "url": "https://egmanevents.com/one-piece-op05",
+      "id": "op09",
+      "name": "OP09 - The Four Emperors",
+      "url": "https://egmanevents.com/one-piece-op09",
       "eventCount": 20,
-      "totalDecks": 385,
+      "totalDecks": 546,
       "topLeaders": [
-        "OP05-041 Sakazuki",
-        "OP05-060 Monkey.D.Luffy",
-        "OP05-098 Enel",
-        "OP01-001 Roronoa Zoro",
-        "OP03-099 Charlotte Katakuri"
-      ]
-    },
-    {
-      "id": "op04",
-      "name": "OP04 - Kingdoms of Intrigue",
-      "url": "https://egmanevents.com/one-piece-op04",
-      "eventCount": 20,
-      "totalDecks": 375,
-      "topLeaders": [
-        "OP03-099 Charlotte Katakuri",
-        "OP04-019 Donquixote Doflamingo",
-        "OP02-001 Edward Newgate",
-        "OP01-002 Trafalgar Law",
-        "ST02-001 Eustass \"Captain\" Kid"
-      ]
-    },
-    {
-      "id": "op03",
-      "name": "OP03 - Pillars of Strength",
-      "url": "https://egmanevents.com/one-piece-op03",
-      "eventCount": 20,
-      "totalDecks": 208,
-      "topLeaders": [
-        "OP02-001 Edward Newgate",
-        "OP01-001 Roronoa Zoro",
-        "OP01-002 Trafalgar Law",
         "OP01-060 Donquixote Doflamingo",
-        "OP03-099 Charlotte Katakuri"
+        "ST13-003 Monkey.D.Luffy",
+        "OP05-060 Monkey.D.Luffy",
+        "OP07-079 Rob Lucci",
+        "OP09-001 Shanks"
       ]
     },
     {
-      "id": "op02",
-      "name": "OP02 - Paramount War",
-      "url": "https://egmanevents.com/one-piece-op02",
+      "id": "op10",
+      "name": "OP10 - Royal Blood",
+      "url": "https://egmanevents.com/one-piece-op10-tournaments",
       "eventCount": 20,
-      "totalDecks": 190,
+      "totalDecks": 338,
       "topLeaders": [
-        "OP01-002 Trafalgar Law",
-        "OP01-001 Roronoa Zoro",
-        "OP02-001 Edward Newgate",
-        "ST01-001 Monkey D. Luffy",
-        "OP02-001 Edward Newgate (Straw Hat)"
+        "OP09-001 Shanks",
+        "EB02-010 Monkey.D.Luffy",
+        "OP09-081 Marshall.D.Teach",
+        "OP01-060 Donquixote Doflamingo",
+        "OP07-079 Rob Lucci"
       ]
     },
     {
-      "id": "op01",
-      "name": "OP01 - Romance Dawn",
-      "url": "https://egmanevents.com/op-op01",
-      "eventCount": 9,
-      "totalDecks": 140,
+      "id": "op11",
+      "name": "OP11 - Uta",
+      "url": "https://egmanevents.com/one-piece-op11-tournaments",
+      "eventCount": 16,
+      "totalDecks": 278,
       "topLeaders": [
-        "ST02-001 Eustass \"Captain\" Kid",
-        "OP01-002 Trafalgar Law",
-        "ST01-001 Monkey D. Luffy",
-        "ST04-001 Kaido",
-        "OP01-003 Monkey D. Luffy"
+        "OP05-002 Belo Betty",
+        "OP11-040 Monkey.D.Luffy",
+        "EB02-010 Monkey.D.Luffy",
+        "OP09-042 Buggy",
+        "OP07-019 Jewelry Bonney"
       ]
+    },
+    {
+      "id": "op12",
+      "name": "OP12 - A Transgenerational Bond",
+      "url": "https://egmanevents.com/one-piece-op12-tournaments",
+      "eventCount": 20,
+      "totalDecks": 413,
+      "topLeaders": [
+        "OP11-040 Monkey.D.Luffy",
+        "EB02-010 Monkey.D.Luffy",
+        "OP07-019 Jewelry Bonney",
+        "OP12-001 Silvers Rayleigh",
+        "OP12-020 Roronoa Zoro"
+      ]
+    },
+    {
+      "id": "op13",
+      "name": "OP13 - The Warring Kingdoms",
+      "url": "https://egmanevents.com/one-piece-op13-tournaments",
+      "eventCount": 17,
+      "totalDecks": 362,
+      "topLeaders": [
+        "OP13-079 Imu",
+        "OP13-002 Portgas.D.Ace",
+        "OP12-020 Roronoa Zoro",
+        "OP13-003 Gol.D.Roger",
+        "OP12-001 Silvers Rayleigh"
+      ]
+    },
+    {
+      "id": "op14",
+      "name": "OP14 - The Azure Sea's Seven",
+      "url": "https://egmanevents.com/one-piece-op14-tournaments",
+      "eventCount": 20,
+      "totalDecks": 313,
+      "topLeaders": [
+        "OP14-020 Dracule Mihawk",
+        "OP13-079 Imu",
+        "OP13-002 Portgas.D.Ace",
+        "OP14-041 Boa Hancock",
+        "OP12-061 Donquixote Rosinante"
+      ]
+    },
+    {
+      "id": "op15",
+      "name": "OP15",
+      "url": "https://egmanevents.com/one-piece-op15-tournaments",
+      "eventCount": 0,
+      "totalDecks": 0,
+      "topLeaders": []
     }
-  ],
-  "totalEvents": 260,
-  "totalDecks": 4562
+  ]
 }
