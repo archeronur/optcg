@@ -2,6 +2,1324 @@
   "id": "op15",
   "name": "OP15",
   "url": "https://egmanevents.com/one-piece-op15-tournaments",
-  "events": [],
-  "leaderStats": []
+  "events": [
+    {
+      "name": "[ENG OP15] Chinoize Cup 2026 #34",
+      "url": "https://egmanevents.com/one-piece-op15-tournaments/chinoizecup-2026-34",
+      "type": "Large Official Event",
+      "date": "Mar 24",
+      "players": 64,
+      "rounds": "6 Rounds of Swiss",
+      "leaderDistribution": {
+        "OP15-002 Lucy": 2,
+        "OP15-058 Enel": 2,
+        "OP14-060 Donquixote Doflamingo": 1,
+        "EB04-001 Jewelry Bonney": 1,
+        "OP13-002 Portgas.D.Ace": 1,
+        "OP11-041 Nami": 1
+      },
+      "decks": [
+        {
+          "placing": "1st",
+          "leader": "OP15-002 Lucy",
+          "leaderId": "OP15-002",
+          "player": "Solmyr",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-002:1,OP15-040:4,OP15-052:4,OP15-053:4,OP10-045:4,OP15-046:4,OP09-118:1,OP10-059:4,OP05-019:3,OP15-054:4,OP15-021:3,OP10-060:4,OP15-020:4,OP15-056:3,OP15-057:4&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-002",
+              "count": 1
+            },
+            {
+              "id": "OP15-040",
+              "count": 4
+            },
+            {
+              "id": "OP15-052",
+              "count": 4
+            },
+            {
+              "id": "OP15-053",
+              "count": 4
+            },
+            {
+              "id": "OP10-045",
+              "count": 4
+            },
+            {
+              "id": "OP15-046",
+              "count": 4
+            },
+            {
+              "id": "OP09-118",
+              "count": 1
+            },
+            {
+              "id": "OP10-059",
+              "count": 4
+            },
+            {
+              "id": "OP05-019",
+              "count": 3
+            },
+            {
+              "id": "OP15-054",
+              "count": 4
+            },
+            {
+              "id": "OP15-021",
+              "count": 3
+            },
+            {
+              "id": "OP10-060",
+              "count": 4
+            },
+            {
+              "id": "OP15-020",
+              "count": 4
+            },
+            {
+              "id": "OP15-056",
+              "count": 3
+            },
+            {
+              "id": "OP15-057",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "placing": "2nd",
+          "leader": "OP14-060 Donquixote Doflamingo",
+          "leaderId": "OP14-060",
+          "player": "tsvaac",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP14-060:1,OP10-065:4,OP14-067:4,OP10-066:1,ST18-001:4,OP14-072:4,OP14-063:2,OP14-061:4,OP14-074:4,OP10-072:2,OP12-076:2,EB04-038:2,OP10-071:4,OP14-069:2,OP13-076:3,OP15-077:2,OP15-078:2,OP07-076:3,OP14-078:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP14-060",
+              "count": 1
+            },
+            {
+              "id": "OP10-065",
+              "count": 4
+            },
+            {
+              "id": "OP14-067",
+              "count": 4
+            },
+            {
+              "id": "OP10-066",
+              "count": 1
+            },
+            {
+              "id": "ST18-001",
+              "count": 4
+            },
+            {
+              "id": "OP14-072",
+              "count": 4
+            },
+            {
+              "id": "OP14-063",
+              "count": 2
+            },
+            {
+              "id": "OP14-061",
+              "count": 4
+            },
+            {
+              "id": "OP14-074",
+              "count": 4
+            },
+            {
+              "id": "OP10-072",
+              "count": 2
+            },
+            {
+              "id": "OP12-076",
+              "count": 2
+            },
+            {
+              "id": "EB04-038",
+              "count": 2
+            },
+            {
+              "id": "OP10-071",
+              "count": 4
+            },
+            {
+              "id": "OP14-069",
+              "count": 2
+            },
+            {
+              "id": "OP13-076",
+              "count": 3
+            },
+            {
+              "id": "OP15-077",
+              "count": 2
+            },
+            {
+              "id": "OP15-078",
+              "count": 2
+            },
+            {
+              "id": "OP07-076",
+              "count": 3
+            },
+            {
+              "id": "OP14-078",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "3rd",
+          "leader": "OP15-002 Lucy",
+          "leaderId": "OP15-002",
+          "player": "keeftcg",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-002:1,OP15-040:4,OP15-052:4,OP15-053:4,OP05-015:2,OP10-045:4,OP10-049:2,OP15-046:4,OP09-118:1,OP05-019:2,OP07-017:1,OP15-021:4,OP15-054:4,OP10-060:4,OP15-020:4,OP06-058:2,OP15-057:4&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-002",
+              "count": 1
+            },
+            {
+              "id": "OP15-040",
+              "count": 4
+            },
+            {
+              "id": "OP15-052",
+              "count": 4
+            },
+            {
+              "id": "OP15-053",
+              "count": 4
+            },
+            {
+              "id": "OP05-015",
+              "count": 2
+            },
+            {
+              "id": "OP10-045",
+              "count": 4
+            },
+            {
+              "id": "OP10-049",
+              "count": 2
+            },
+            {
+              "id": "OP15-046",
+              "count": 4
+            },
+            {
+              "id": "OP09-118",
+              "count": 1
+            },
+            {
+              "id": "OP05-019",
+              "count": 2
+            },
+            {
+              "id": "OP07-017",
+              "count": 1
+            },
+            {
+              "id": "OP15-021",
+              "count": 4
+            },
+            {
+              "id": "OP15-054",
+              "count": 4
+            },
+            {
+              "id": "OP10-060",
+              "count": 4
+            },
+            {
+              "id": "OP15-020",
+              "count": 4
+            },
+            {
+              "id": "OP06-058",
+              "count": 2
+            },
+            {
+              "id": "OP15-057",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "placing": "4th",
+          "leader": "EB04-001 Jewelry Bonney",
+          "leaderId": "EB04-001",
+          "player": "Dissonance075",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=EB04-001:1,EB04-002:4,OP06-106:4,ST21-003:2,OP12-112:4,OP15-113:2,EB03-053:4,EB04-058:4,EB04-007:4,EB04-054:4,OP13-108:3,EB04-061:3,OP06-115:2,OP07-114:4,OP07-115:4,EB01-059:2&type=optcg",
+          "cards": [
+            {
+              "id": "EB04-001",
+              "count": 1
+            },
+            {
+              "id": "EB04-002",
+              "count": 4
+            },
+            {
+              "id": "OP06-106",
+              "count": 4
+            },
+            {
+              "id": "ST21-003",
+              "count": 2
+            },
+            {
+              "id": "OP12-112",
+              "count": 4
+            },
+            {
+              "id": "OP15-113",
+              "count": 2
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "EB04-007",
+              "count": 4
+            },
+            {
+              "id": "EB04-054",
+              "count": 4
+            },
+            {
+              "id": "OP13-108",
+              "count": 3
+            },
+            {
+              "id": "EB04-061",
+              "count": 3
+            },
+            {
+              "id": "OP06-115",
+              "count": 2
+            },
+            {
+              "id": "OP07-114",
+              "count": 4
+            },
+            {
+              "id": "OP07-115",
+              "count": 4
+            },
+            {
+              "id": "EB01-059",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "placing": "5th",
+          "leader": "OP13-002 Portgas.D.Ace",
+          "leaderId": "OP13-002",
+          "player": "Lexinator22",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP13-002:1,OP13-016:4,OP13-043:4,ST22-002:4,ST15-004:3,PRB02-008:4,OP08-040:2,OP10-045:2,OP13-054:4,OP08-047:4,ST23-001:2,OP07-051:2,EB04-007:4,OP13-042:4,OP09-118:2,EB04-008:1,ST22-015:4&type=optcg",
+          "cards": [
+            {
+              "id": "OP13-002",
+              "count": 1
+            },
+            {
+              "id": "OP13-016",
+              "count": 4
+            },
+            {
+              "id": "OP13-043",
+              "count": 4
+            },
+            {
+              "id": "ST22-002",
+              "count": 4
+            },
+            {
+              "id": "ST15-004",
+              "count": 3
+            },
+            {
+              "id": "PRB02-008",
+              "count": 4
+            },
+            {
+              "id": "OP08-040",
+              "count": 2
+            },
+            {
+              "id": "OP10-045",
+              "count": 2
+            },
+            {
+              "id": "OP13-054",
+              "count": 4
+            },
+            {
+              "id": "OP08-047",
+              "count": 4
+            },
+            {
+              "id": "ST23-001",
+              "count": 2
+            },
+            {
+              "id": "OP07-051",
+              "count": 2
+            },
+            {
+              "id": "EB04-007",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 4
+            },
+            {
+              "id": "OP09-118",
+              "count": 2
+            },
+            {
+              "id": "EB04-008",
+              "count": 1
+            },
+            {
+              "id": "ST22-015",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "placing": "6th",
+          "leader": "OP15-058 Enel",
+          "leaderId": "OP15-058",
+          "player": "yung_mlody",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-058:1,OP12-071:4,OP15-061:4,OP15-066:4,OP15-067:4,OP15-071:4,OP07-064:4,OP15-060:4,OP15-118:4,OP15-075:4,OP15-076:4,OP15-077:4,OP15-078:4,OP13-076:2&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-058",
+              "count": 1
+            },
+            {
+              "id": "OP12-071",
+              "count": 4
+            },
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP15-066",
+              "count": 4
+            },
+            {
+              "id": "OP15-067",
+              "count": 4
+            },
+            {
+              "id": "OP15-071",
+              "count": 4
+            },
+            {
+              "id": "OP07-064",
+              "count": 4
+            },
+            {
+              "id": "OP15-060",
+              "count": 4
+            },
+            {
+              "id": "OP15-118",
+              "count": 4
+            },
+            {
+              "id": "OP15-075",
+              "count": 4
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 4
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP13-076",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "placing": "7th",
+          "leader": "OP15-058 Enel",
+          "leaderId": "OP15-058",
+          "player": "Wortaxx",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-058:1,OP15-061:4,OP15-066:4,OP15-063:2,OP15-071:4,ST10-010:2,OP07-064:4,OP15-060:4,OP07-073:3,OP15-118:2,OP15-075:4,OP15-076:4,OP15-077:4,OP15-078:4,OP13-076:3,OP09-077:2&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-058",
+              "count": 1
+            },
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP15-066",
+              "count": 4
+            },
+            {
+              "id": "OP15-063",
+              "count": 2
+            },
+            {
+              "id": "OP15-071",
+              "count": 4
+            },
+            {
+              "id": "ST10-010",
+              "count": 2
+            },
+            {
+              "id": "OP07-064",
+              "count": 4
+            },
+            {
+              "id": "OP15-060",
+              "count": 4
+            },
+            {
+              "id": "OP07-073",
+              "count": 3
+            },
+            {
+              "id": "OP15-118",
+              "count": 2
+            },
+            {
+              "id": "OP15-075",
+              "count": 4
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 4
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP13-076",
+              "count": 3
+            },
+            {
+              "id": "OP09-077",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "placing": "8th",
+          "leader": "OP11-041 Nami",
+          "leaderId": "OP11-041",
+          "player": "Spartacus2224",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP11-041:1,P-096:4,OP06-106:4,OP11-106:3,OP15-047:1,OP06-104:4,OP12-112:3,PRB02-008:2,OP15-113:2,EB03-053:4,EB04-058:4,OP09-107:1,EB03-055:4,OP10-112:2,OP13-042:2,EB03-060:4,OP07-115:4,OP07-056:1,OP06-058:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP11-041",
+              "count": 1
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "OP06-106",
+              "count": 4
+            },
+            {
+              "id": "OP11-106",
+              "count": 3
+            },
+            {
+              "id": "OP15-047",
+              "count": 1
+            },
+            {
+              "id": "OP06-104",
+              "count": 4
+            },
+            {
+              "id": "OP12-112",
+              "count": 3
+            },
+            {
+              "id": "PRB02-008",
+              "count": 2
+            },
+            {
+              "id": "OP15-113",
+              "count": 2
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "OP09-107",
+              "count": 1
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP10-112",
+              "count": 2
+            },
+            {
+              "id": "OP13-042",
+              "count": 2
+            },
+            {
+              "id": "EB03-060",
+              "count": 4
+            },
+            {
+              "id": "OP07-115",
+              "count": 4
+            },
+            {
+              "id": "OP07-056",
+              "count": 1
+            },
+            {
+              "id": "OP06-058",
+              "count": 1
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "leaderStats": [
+    {
+      "leader": "OP15-002 Lucy",
+      "leaderId": "OP15-002",
+      "totalAppearances": 2,
+      "wins": 1,
+      "second": 0,
+      "third": 1,
+      "fourth": 0,
+      "top4": 2,
+      "top8": 0,
+      "top16": 0,
+      "top32": 0,
+      "events": [
+        "[ENG OP15] Chinoize Cup 2026 #34"
+      ],
+      "players": [
+        "Solmyr",
+        "keeftcg"
+      ],
+      "uniquePlayers": 2,
+      "uniqueEvents": 1,
+      "coreCards": [
+        {
+          "id": "OP15-002",
+          "inclusionRate": 100.0,
+          "avgCount": 1.0
+        },
+        {
+          "id": "OP15-040",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP15-052",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP15-053",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP10-045",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP15-046",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP09-118",
+          "inclusionRate": 100.0,
+          "avgCount": 1.0
+        },
+        {
+          "id": "OP05-019",
+          "inclusionRate": 100.0,
+          "avgCount": 2.5
+        },
+        {
+          "id": "OP15-054",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP15-021",
+          "inclusionRate": 100.0,
+          "avgCount": 3.5
+        },
+        {
+          "id": "OP10-060",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP15-020",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP15-057",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        }
+      ],
+      "flexCards": [
+        {
+          "id": "OP10-059",
+          "inclusionRate": 50.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP15-056",
+          "inclusionRate": 50.0,
+          "avgCount": 3.0
+        },
+        {
+          "id": "OP05-015",
+          "inclusionRate": 50.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP10-049",
+          "inclusionRate": 50.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP07-017",
+          "inclusionRate": 50.0,
+          "avgCount": 1.0
+        },
+        {
+          "id": "OP06-058",
+          "inclusionRate": 50.0,
+          "avgCount": 2.0
+        }
+      ],
+      "points": 17
+    },
+    {
+      "leader": "OP15-058 Enel",
+      "leaderId": "OP15-058",
+      "totalAppearances": 2,
+      "wins": 0,
+      "second": 0,
+      "third": 0,
+      "fourth": 0,
+      "top4": 0,
+      "top8": 2,
+      "top16": 0,
+      "top32": 0,
+      "events": [
+        "[ENG OP15] Chinoize Cup 2026 #34"
+      ],
+      "players": [
+        "Wortaxx",
+        "yung_mlody"
+      ],
+      "uniquePlayers": 2,
+      "uniqueEvents": 1,
+      "coreCards": [
+        {
+          "id": "OP15-058",
+          "inclusionRate": 100.0,
+          "avgCount": 1.0
+        },
+        {
+          "id": "OP15-061",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP15-066",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP15-071",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP07-064",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP15-060",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP15-118",
+          "inclusionRate": 100.0,
+          "avgCount": 3.0
+        },
+        {
+          "id": "OP15-075",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP15-076",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP15-077",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP15-078",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP13-076",
+          "inclusionRate": 100.0,
+          "avgCount": 2.5
+        }
+      ],
+      "flexCards": [
+        {
+          "id": "OP12-071",
+          "inclusionRate": 50.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP15-067",
+          "inclusionRate": 50.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP15-063",
+          "inclusionRate": 50.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "ST10-010",
+          "inclusionRate": 50.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP07-073",
+          "inclusionRate": 50.0,
+          "avgCount": 3.0
+        },
+        {
+          "id": "OP09-077",
+          "inclusionRate": 50.0,
+          "avgCount": 2.0
+        }
+      ],
+      "points": 8
+    },
+    {
+      "leader": "OP14-060 Donquixote Doflamingo",
+      "leaderId": "OP14-060",
+      "totalAppearances": 1,
+      "wins": 0,
+      "second": 1,
+      "third": 0,
+      "fourth": 0,
+      "top4": 1,
+      "top8": 0,
+      "top16": 0,
+      "top32": 0,
+      "events": [
+        "[ENG OP15] Chinoize Cup 2026 #34"
+      ],
+      "players": [
+        "tsvaac"
+      ],
+      "uniquePlayers": 1,
+      "uniqueEvents": 1,
+      "coreCards": [
+        {
+          "id": "OP14-060",
+          "inclusionRate": 100.0,
+          "avgCount": 1.0
+        },
+        {
+          "id": "OP10-065",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP14-067",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP10-066",
+          "inclusionRate": 100.0,
+          "avgCount": 1.0
+        },
+        {
+          "id": "ST18-001",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP14-072",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP14-063",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP14-061",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP14-074",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP10-072",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP12-076",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "EB04-038",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP10-071",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP14-069",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP13-076",
+          "inclusionRate": 100.0,
+          "avgCount": 3.0
+        },
+        {
+          "id": "OP15-077",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP15-078",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP07-076",
+          "inclusionRate": 100.0,
+          "avgCount": 3.0
+        },
+        {
+          "id": "OP14-078",
+          "inclusionRate": 100.0,
+          "avgCount": 1.0
+        }
+      ],
+      "flexCards": [],
+      "points": 8
+    },
+    {
+      "leader": "EB04-001 Jewelry Bonney",
+      "leaderId": "EB04-001",
+      "totalAppearances": 1,
+      "wins": 0,
+      "second": 0,
+      "third": 0,
+      "fourth": 1,
+      "top4": 1,
+      "top8": 0,
+      "top16": 0,
+      "top32": 0,
+      "events": [
+        "[ENG OP15] Chinoize Cup 2026 #34"
+      ],
+      "players": [
+        "Dissonance075"
+      ],
+      "uniquePlayers": 1,
+      "uniqueEvents": 1,
+      "coreCards": [
+        {
+          "id": "EB04-001",
+          "inclusionRate": 100.0,
+          "avgCount": 1.0
+        },
+        {
+          "id": "EB04-002",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP06-106",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "ST21-003",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP12-112",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP15-113",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "EB03-053",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "EB04-058",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "EB04-007",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "EB04-054",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP13-108",
+          "inclusionRate": 100.0,
+          "avgCount": 3.0
+        },
+        {
+          "id": "EB04-061",
+          "inclusionRate": 100.0,
+          "avgCount": 3.0
+        },
+        {
+          "id": "OP06-115",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP07-114",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP07-115",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "EB01-059",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        }
+      ],
+      "flexCards": [],
+      "points": 6
+    },
+    {
+      "leader": "OP13-002 Portgas.D.Ace",
+      "leaderId": "OP13-002",
+      "totalAppearances": 1,
+      "wins": 0,
+      "second": 0,
+      "third": 0,
+      "fourth": 0,
+      "top4": 0,
+      "top8": 1,
+      "top16": 0,
+      "top32": 0,
+      "events": [
+        "[ENG OP15] Chinoize Cup 2026 #34"
+      ],
+      "players": [
+        "Lexinator22"
+      ],
+      "uniquePlayers": 1,
+      "uniqueEvents": 1,
+      "coreCards": [
+        {
+          "id": "OP13-002",
+          "inclusionRate": 100.0,
+          "avgCount": 1.0
+        },
+        {
+          "id": "OP13-016",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP13-043",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "ST22-002",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "ST15-004",
+          "inclusionRate": 100.0,
+          "avgCount": 3.0
+        },
+        {
+          "id": "PRB02-008",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP08-040",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP10-045",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP13-054",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP08-047",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "ST23-001",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP07-051",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "EB04-007",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP13-042",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP09-118",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "EB04-008",
+          "inclusionRate": 100.0,
+          "avgCount": 1.0
+        },
+        {
+          "id": "ST22-015",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        }
+      ],
+      "flexCards": [],
+      "points": 4
+    },
+    {
+      "leader": "OP11-041 Nami",
+      "leaderId": "OP11-041",
+      "totalAppearances": 1,
+      "wins": 0,
+      "second": 0,
+      "third": 0,
+      "fourth": 0,
+      "top4": 0,
+      "top8": 1,
+      "top16": 0,
+      "top32": 0,
+      "events": [
+        "[ENG OP15] Chinoize Cup 2026 #34"
+      ],
+      "players": [
+        "Spartacus2224"
+      ],
+      "uniquePlayers": 1,
+      "uniqueEvents": 1,
+      "coreCards": [
+        {
+          "id": "OP11-041",
+          "inclusionRate": 100.0,
+          "avgCount": 1.0
+        },
+        {
+          "id": "P-096",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP06-106",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP11-106",
+          "inclusionRate": 100.0,
+          "avgCount": 3.0
+        },
+        {
+          "id": "OP15-047",
+          "inclusionRate": 100.0,
+          "avgCount": 1.0
+        },
+        {
+          "id": "OP06-104",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP12-112",
+          "inclusionRate": 100.0,
+          "avgCount": 3.0
+        },
+        {
+          "id": "PRB02-008",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP15-113",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "EB03-053",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "EB04-058",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP09-107",
+          "inclusionRate": 100.0,
+          "avgCount": 1.0
+        },
+        {
+          "id": "EB03-055",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP10-112",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "OP13-042",
+          "inclusionRate": 100.0,
+          "avgCount": 2.0
+        },
+        {
+          "id": "EB03-060",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP07-115",
+          "inclusionRate": 100.0,
+          "avgCount": 4.0
+        },
+        {
+          "id": "OP07-056",
+          "inclusionRate": 100.0,
+          "avgCount": 1.0
+        },
+        {
+          "id": "OP06-058",
+          "inclusionRate": 100.0,
+          "avgCount": 1.0
+        }
+      ],
+      "flexCards": [],
+      "points": 4
+    }
+  ]
 }

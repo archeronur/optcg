@@ -200,9 +200,15 @@
       "id": "op15",
       "name": "OP15",
       "url": "https://egmanevents.com/one-piece-op15-tournaments",
-      "eventCount": 0,
-      "totalDecks": 0,
-      "topLeaders": []
+      "eventCount": 1,
+      "totalDecks": 8,
+      "topLeaders": [
+        "OP15-002 Lucy",
+        "OP15-058 Enel",
+        "OP14-060 Donquixote Doflamingo",
+        "EB04-001 Jewelry Bonney",
+        "OP13-002 Portgas.D.Ace"
+      ]
     }
   ]
 }
