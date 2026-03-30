@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 function decodeHtmlEntities(s) {
   return s.replaceAll("&amp;", "&").replaceAll("&quot;", '"').replaceAll("&#39;", "'");
@@ -119,7 +120,9 @@ function extractTopNLeaders(html, topN) {
   const heading = `Top ${topN} Leaders`;
   const start = html.indexOf(heading);
   if (start === -1) return {};
-  const end = html.indexOf("Event Details", start);
+  // Stop before "Total Leaders" when both exist — otherwise counts overwrite Top N.
+  let end = html.indexOf("Total Leaders", start);
+  if (end === -1) end = html.indexOf("Event Details", start);
   const slice = end === -1 ? html.slice(start) : html.slice(start, end);
 
   const leaderRe =
@@ -420,8 +423,12 @@ async function main() {
   console.log(`Added ${newEvents.length} new OP14 events. Updated op14.json + summary.json.`);
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+export { computeLeaderStats };
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+}
 
