@@ -73,6 +73,14 @@ function extractDeckUrlAndLeaderFromDeckListsTable(html, deckListsHeading) {
     const placing = placingMatch ? stripTags(decodeHtmlEntities(placingMatch[1])) : "";
     if (!placing) continue;
 
+    // Best-effort player extraction: in Egman tables, player is typically the last cell.
+    const cellRe = /<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/g;
+    const cells = [...rowHtml.matchAll(cellRe)]
+      .map((m) => stripTags(decodeHtmlEntities(m[1] || "")))
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const player = cells.length ? cells[cells.length - 1] : "";
+
     let leaderAnchorMatch;
     let chosen = null;
     while ((leaderAnchorMatch = leaderAnchorRe.exec(rowHtml))) {
@@ -101,7 +109,7 @@ function extractDeckUrlAndLeaderFromDeckListsTable(html, deckListsHeading) {
       placing,
       leader: chosen.leaderId,
       leaderId: chosen.leaderId,
-      player: "",
+      player,
       deckUrl: chosen.deckUrl,
       cards,
     });
@@ -142,7 +150,11 @@ function extractTopNLeaders(html, topN) {
 function extractEventBasics(html) {
   const typeRe = /\/category\/[^"]+">([^<]+Event[^<]*)</;
   const typeMatch = html.match(typeRe);
-  const type = typeMatch ? stripTags(decodeHtmlEntities(typeMatch[1])) : "";
+  let type = typeMatch ? stripTags(decodeHtmlEntities(typeMatch[1])) : "";
+  if (!type) {
+    if (html.includes("Large Official Event")) type = "Large Official Event";
+    else if (html.includes("Unofficial Event")) type = "Unofficial Event";
+  }
 
   const h1Match = html.match(/<h1[^>]*>(.*?)<\/h1>/s);
   const name = h1Match ? stripTags(decodeHtmlEntities(h1Match[1])) : "";
@@ -155,7 +167,8 @@ function extractEventBasics(html) {
   const monthDay = html.match(
     /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}\b/,
   );
-  const dateBase = eventDetailsDate || (slashDate ? slashDate[0] : monthDay ? monthDay[0] : "");
+  // Prefer the short "Mar 30" label over ambiguous numeric dates found in HTML.
+  const dateBase = eventDetailsDate || (monthDay ? monthDay[0] : slashDate ? slashDate[0] : "");
 
   const writtenByMatch = html.match(/Written By\s*([^<\n\r]+)</);
   const writer = writtenByMatch ? stripTags(decodeHtmlEntities(writtenByMatch[1])) : "";

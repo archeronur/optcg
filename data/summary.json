@@ -186,8 +186,8 @@
       "id": "op14",
       "name": "OP14 - The Azure Sea's Seven",
       "url": "https://egmanevents.com/one-piece-op14-tournaments",
-      "eventCount": 21,
-      "totalDecks": 345,
+      "eventCount": 22,
+      "totalDecks": 353,
       "topLeaders": [
         "OP14-020",
         "OP13-079",
@@ -200,14 +200,14 @@
       "id": "op15",
       "name": "OP15",
       "url": "https://egmanevents.com/one-piece-op15-tournaments",
-      "eventCount": 1,
-      "totalDecks": 8,
+      "eventCount": 4,
+      "totalDecks": 32,
       "topLeaders": [
-        "OP15-002 Lucy",
-        "OP15-058 Enel",
-        "OP14-060 Donquixote Doflamingo",
-        "EB04-001 Jewelry Bonney",
-        "OP13-002 Portgas.D.Ace"
+        "OP15-002",
+        "OP15-058",
+        "OP13-002",
+        "OP11-041",
+        "OP14-020"
       ]
     }
   ]

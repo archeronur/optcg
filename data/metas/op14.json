@@ -4,6 +4,644 @@
   "url": "https://egmanevents.com/one-piece-op14-tournaments",
   "events": [
     {
+      "name": "[ENG EB03] CoreTCG Pomona Treasure Cup",
+      "url": "https://egmanevents.com/one-piece-op14-tournaments/coretcg-pomona-treasure-cup",
+      "type": "Large Official Event",
+      "date": "Mar 30",
+      "players": 1024,
+      "rounds": "10 Rounds of Swiss",
+      "leaderDistribution": {
+        "OP13-079": 2,
+        "OP12-061": 2,
+        "OP11-040": 1,
+        "OP13-002": 1,
+        "OP11-041": 1,
+        "OP12-041": 1
+      },
+      "decks": [
+        {
+          "placing": "1st",
+          "leader": "OP11-040",
+          "leaderId": "OP11-040",
+          "player": "ewin",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP11-040:1,OP13-043:4,OP05-067:4,ST18-001:4,EB01-061:4,OP06-047:1,OP11-054:4,EB03-034:3,P-107:4,OP01-070:4,OP06-119:4,OP09-078:4,OP11-080:4,OP08-076:3,OP04-056:3&type=optcg",
+          "cards": [
+            {
+              "id": "OP11-040",
+              "count": 1
+            },
+            {
+              "id": "OP13-043",
+              "count": 4
+            },
+            {
+              "id": "OP05-067",
+              "count": 4
+            },
+            {
+              "id": "ST18-001",
+              "count": 4
+            },
+            {
+              "id": "EB01-061",
+              "count": 4
+            },
+            {
+              "id": "OP06-047",
+              "count": 1
+            },
+            {
+              "id": "OP11-054",
+              "count": 4
+            },
+            {
+              "id": "EB03-034",
+              "count": 3
+            },
+            {
+              "id": "P-107",
+              "count": 4
+            },
+            {
+              "id": "OP01-070",
+              "count": 4
+            },
+            {
+              "id": "OP06-119",
+              "count": 4
+            },
+            {
+              "id": "OP09-078",
+              "count": 4
+            },
+            {
+              "id": "OP11-080",
+              "count": 4
+            },
+            {
+              "id": "OP08-076",
+              "count": 3
+            },
+            {
+              "id": "OP04-056",
+              "count": 3
+            }
+          ]
+        },
+        {
+          "placing": "2nd",
+          "leader": "OP13-079",
+          "leaderId": "OP13-079",
+          "player": "CardBoardThugLife",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP13-079:1,OP05-097:1,OP11-097:1,OP05-082:3,OP14-096:3,OP13-080:4,OP13-082:4,OP13-083:4,OP13-084:4,OP13-086:4,OP13-089:4,OP13-091:4,OP13-092:3,OP13-096:4,OP13-098:4,OP13-099:1,OP13-087:2&type=optcg",
+          "cards": [
+            {
+              "id": "OP13-079",
+              "count": 1
+            },
+            {
+              "id": "OP05-097",
+              "count": 1
+            },
+            {
+              "id": "OP11-097",
+              "count": 1
+            },
+            {
+              "id": "OP05-082",
+              "count": 3
+            },
+            {
+              "id": "OP14-096",
+              "count": 3
+            },
+            {
+              "id": "OP13-080",
+              "count": 4
+            },
+            {
+              "id": "OP13-082",
+              "count": 4
+            },
+            {
+              "id": "OP13-083",
+              "count": 4
+            },
+            {
+              "id": "OP13-084",
+              "count": 4
+            },
+            {
+              "id": "OP13-086",
+              "count": 4
+            },
+            {
+              "id": "OP13-089",
+              "count": 4
+            },
+            {
+              "id": "OP13-091",
+              "count": 4
+            },
+            {
+              "id": "OP13-092",
+              "count": 3
+            },
+            {
+              "id": "OP13-096",
+              "count": 4
+            },
+            {
+              "id": "OP13-098",
+              "count": 4
+            },
+            {
+              "id": "OP13-099",
+              "count": 1
+            },
+            {
+              "id": "OP13-087",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "placing": "3rd",
+          "leader": "OP12-061",
+          "leaderId": "OP12-061",
+          "player": "Clayton H",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP12-061:1,ST18-001:2,OP12-115:4,OP10-065:4,OP05-077:3,P-093:4,EB03-062:4,P-088:4,ST10-010:4,OP09-069:4,OP12-112:4,OP12-108:4,OP12-073:4,OP14-078:1,EB04-038:4&type=optcg",
+          "cards": [
+            {
+              "id": "OP12-061",
+              "count": 1
+            },
+            {
+              "id": "ST18-001",
+              "count": 2
+            },
+            {
+              "id": "OP12-115",
+              "count": 4
+            },
+            {
+              "id": "OP10-065",
+              "count": 4
+            },
+            {
+              "id": "OP05-077",
+              "count": 3
+            },
+            {
+              "id": "P-093",
+              "count": 4
+            },
+            {
+              "id": "EB03-062",
+              "count": 4
+            },
+            {
+              "id": "P-088",
+              "count": 4
+            },
+            {
+              "id": "ST10-010",
+              "count": 4
+            },
+            {
+              "id": "OP09-069",
+              "count": 4
+            },
+            {
+              "id": "OP12-112",
+              "count": 4
+            },
+            {
+              "id": "OP12-108",
+              "count": 4
+            },
+            {
+              "id": "OP12-073",
+              "count": 4
+            },
+            {
+              "id": "OP14-078",
+              "count": 1
+            },
+            {
+              "id": "EB04-038",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "placing": "4th",
+          "leader": "OP13-079",
+          "leaderId": "OP13-079",
+          "player": "Brayan",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP13-079:1,OP05-097:1,OP11-097:2,OP13-097:1,OP05-082:2,OP14-096:3,OP13-080:4,OP13-082:4,OP13-083:4,OP13-084:4,OP13-086:4,OP13-089:4,OP13-091:4,OP13-092:4,OP13-096:4,OP13-098:4,OP13-099:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP13-079",
+              "count": 1
+            },
+            {
+              "id": "OP05-097",
+              "count": 1
+            },
+            {
+              "id": "OP11-097",
+              "count": 2
+            },
+            {
+              "id": "OP13-097",
+              "count": 1
+            },
+            {
+              "id": "OP05-082",
+              "count": 2
+            },
+            {
+              "id": "OP14-096",
+              "count": 3
+            },
+            {
+              "id": "OP13-080",
+              "count": 4
+            },
+            {
+              "id": "OP13-082",
+              "count": 4
+            },
+            {
+              "id": "OP13-083",
+              "count": 4
+            },
+            {
+              "id": "OP13-084",
+              "count": 4
+            },
+            {
+              "id": "OP13-086",
+              "count": 4
+            },
+            {
+              "id": "OP13-089",
+              "count": 4
+            },
+            {
+              "id": "OP13-091",
+              "count": 4
+            },
+            {
+              "id": "OP13-092",
+              "count": 4
+            },
+            {
+              "id": "OP13-096",
+              "count": 4
+            },
+            {
+              "id": "OP13-098",
+              "count": 4
+            },
+            {
+              "id": "OP13-099",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "5th",
+          "leader": "OP13-002",
+          "leaderId": "OP13-002",
+          "player": "Dangief",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP13-002:1,OP13-007:3,OP13-016:4,OP13-042:4,OP13-046:2,OP13-043:4,OP13-054:4,OP09-118:2,OP08-040:2,OP08-047:4,OP06-047:1,ST22-002:4,ST22-015:4,OP04-056:3,PRB02-008:4,ST23-001:2,OP02-004:1,OP01-027:1,OP10-045:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP13-002",
+              "count": 1
+            },
+            {
+              "id": "OP13-007",
+              "count": 3
+            },
+            {
+              "id": "OP13-016",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 4
+            },
+            {
+              "id": "OP13-046",
+              "count": 2
+            },
+            {
+              "id": "OP13-043",
+              "count": 4
+            },
+            {
+              "id": "OP13-054",
+              "count": 4
+            },
+            {
+              "id": "OP09-118",
+              "count": 2
+            },
+            {
+              "id": "OP08-040",
+              "count": 2
+            },
+            {
+              "id": "OP08-047",
+              "count": 4
+            },
+            {
+              "id": "OP06-047",
+              "count": 1
+            },
+            {
+              "id": "ST22-002",
+              "count": 4
+            },
+            {
+              "id": "ST22-015",
+              "count": 4
+            },
+            {
+              "id": "OP04-056",
+              "count": 3
+            },
+            {
+              "id": "PRB02-008",
+              "count": 4
+            },
+            {
+              "id": "ST23-001",
+              "count": 2
+            },
+            {
+              "id": "OP02-004",
+              "count": 1
+            },
+            {
+              "id": "OP01-027",
+              "count": 1
+            },
+            {
+              "id": "OP10-045",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "6th",
+          "leader": "OP12-061",
+          "leaderId": "OP12-061",
+          "player": "min’s boyfriend",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP12-061:1,EB03-062:4,OP12-073:3,EB04-038:4,OP14-061:2,ST10-010:3,P-093:4,P-088:4,OP12-112:4,OP05-069:2,ST18-001:2,OP12-108:4,OP09-069:4,OP10-065:4,OP05-077:2,OP04-115:4&type=optcg",
+          "cards": [
+            {
+              "id": "OP12-061",
+              "count": 1
+            },
+            {
+              "id": "EB03-062",
+              "count": 4
+            },
+            {
+              "id": "OP12-073",
+              "count": 3
+            },
+            {
+              "id": "EB04-038",
+              "count": 4
+            },
+            {
+              "id": "OP14-061",
+              "count": 2
+            },
+            {
+              "id": "ST10-010",
+              "count": 3
+            },
+            {
+              "id": "P-093",
+              "count": 4
+            },
+            {
+              "id": "P-088",
+              "count": 4
+            },
+            {
+              "id": "OP12-112",
+              "count": 4
+            },
+            {
+              "id": "OP05-069",
+              "count": 2
+            },
+            {
+              "id": "ST18-001",
+              "count": 2
+            },
+            {
+              "id": "OP12-108",
+              "count": 4
+            },
+            {
+              "id": "OP09-069",
+              "count": 4
+            },
+            {
+              "id": "OP10-065",
+              "count": 4
+            },
+            {
+              "id": "OP05-077",
+              "count": 2
+            },
+            {
+              "id": "OP04-115",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "placing": "7th",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "Nicky Goldman’s biggest fan",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP11-041:1,OP14-104:4,OP14-102:4,OP14-110:4,OP14-111:2,OP12-112:4,OP08-047:2,EB03-053:4,EB03-055:4,EB03-060:4,OP03-048:2,OP06-047:1,OP06-106:2,PRB02-008:1,OP06-104:4,OP04-056:3,OP06-058:1,P-096:4&type=optcg",
+          "cards": [
+            {
+              "id": "OP11-041",
+              "count": 1
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "OP14-110",
+              "count": 4
+            },
+            {
+              "id": "OP14-111",
+              "count": 2
+            },
+            {
+              "id": "OP12-112",
+              "count": 4
+            },
+            {
+              "id": "OP08-047",
+              "count": 2
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "EB03-060",
+              "count": 4
+            },
+            {
+              "id": "OP03-048",
+              "count": 2
+            },
+            {
+              "id": "OP06-047",
+              "count": 1
+            },
+            {
+              "id": "OP06-106",
+              "count": 2
+            },
+            {
+              "id": "PRB02-008",
+              "count": 1
+            },
+            {
+              "id": "OP06-104",
+              "count": 4
+            },
+            {
+              "id": "OP04-056",
+              "count": 3
+            },
+            {
+              "id": "OP06-058",
+              "count": 1
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "placing": "8th",
+          "leader": "OP12-041",
+          "leaderId": "OP12-041",
+          "player": "Dr. Yugioh",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=EB04-038:1,EB03-031:4,OP12-070:4,OP07-064:4,OP12-041:1,ST18-001:1,OP13-043:3,OP06-047:1,EB04-041:4,OP12-060:4,OP11-061:1,OP12-078:1,OP12-079:4,EB04-029:4,OP11-060:2,OP09-078:4,OP12-059:3,OP06-058:2,OP04-056:2,OP13-076:1&type=optcg",
+          "cards": [
+            {
+              "id": "EB04-038",
+              "count": 1
+            },
+            {
+              "id": "EB03-031",
+              "count": 4
+            },
+            {
+              "id": "OP12-070",
+              "count": 4
+            },
+            {
+              "id": "OP07-064",
+              "count": 4
+            },
+            {
+              "id": "OP12-041",
+              "count": 1
+            },
+            {
+              "id": "ST18-001",
+              "count": 1
+            },
+            {
+              "id": "OP13-043",
+              "count": 3
+            },
+            {
+              "id": "OP06-047",
+              "count": 1
+            },
+            {
+              "id": "EB04-041",
+              "count": 4
+            },
+            {
+              "id": "OP12-060",
+              "count": 4
+            },
+            {
+              "id": "OP11-061",
+              "count": 1
+            },
+            {
+              "id": "OP12-078",
+              "count": 1
+            },
+            {
+              "id": "OP12-079",
+              "count": 4
+            },
+            {
+              "id": "EB04-029",
+              "count": 4
+            },
+            {
+              "id": "OP11-060",
+              "count": 2
+            },
+            {
+              "id": "OP09-078",
+              "count": 4
+            },
+            {
+              "id": "OP12-059",
+              "count": 3
+            },
+            {
+              "id": "OP06-058",
+              "count": 2
+            },
+            {
+              "id": "OP04-056",
+              "count": 2
+            },
+            {
+              "id": "OP13-076",
+              "count": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "[ENG EB03] CoreTCG Pomona Regionals",
       "url": "https://egmanevents.com/one-piece-op14-tournaments/coretcg-pomona-regionals",
       "type": "Large Official Event",
@@ -27562,18 +28200,20 @@
     {
       "leader": "OP13-079",
       "leaderId": "OP13-079",
-      "totalAppearances": 62,
+      "totalAppearances": 64,
       "wins": 1,
-      "second": 4,
+      "second": 5,
       "third": 4,
-      "fourth": 1,
-      "top4": 10,
+      "fourth": 2,
+      "top4": 12,
       "top8": 18,
       "top16": 11,
       "top32": 22,
-      "uniquePlayers": 60,
-      "uniqueEvents": 17,
+      "uniquePlayers": 61,
+      "uniqueEvents": 18,
       "players": [
+        "CardBoardThugLife",
+        "Brayan",
         "EmperorOng",
         "Slizzy Rede",
         "Spence Gibson",
@@ -27581,7 +28221,6 @@
         "Adderall",
         "jerry",
         "Dean",
-        "Brayan",
         "jodeine",
         "Xtotx",
         "DavyJones",
@@ -27636,6 +28275,7 @@
         "Frodon"
       ],
       "events": [
+        "[ENG EB03] CoreTCG Pomona Treasure Cup",
         "[ENG EB03] CoreTCG Pomona Regionals",
         "[ENG EB03] Play!TCG Mesquite Regionals",
         "[ENG EB03] Olli Baba Bonn Regionals",
@@ -27654,26 +28294,27 @@
         "[ENG OP14] Chinoize Cup 2026 #3",
         "[ENG OP14] Chinoize Cup 2026 #2"
       ],
-      "points": 192,
+      "points": 206,
       "winRate": 2,
-      "conversionRate": 45,
+      "conversionRate": 47,
       "metaShare": 18
     },
     {
       "leader": "OP13-002",
       "leaderId": "OP13-002",
-      "totalAppearances": 42,
+      "totalAppearances": 43,
       "wins": 4,
       "second": 0,
       "third": 0,
       "fourth": 3,
       "top4": 7,
-      "top8": 10,
+      "top8": 11,
       "top16": 6,
       "top32": 17,
-      "uniquePlayers": 40,
-      "uniqueEvents": 15,
+      "uniquePlayers": 41,
+      "uniqueEvents": 16,
       "players": [
+        "Dangief",
         "Tzuwy",
         "Saz",
         "Teacabo",
@@ -27716,6 +28357,7 @@
         "lukas123"
       ],
       "events": [
+        "[ENG EB03] CoreTCG Pomona Treasure Cup",
         "[ENG EB03] CoreTCG Pomona Regionals",
         "[ENG EB03] Play!TCG Mesquite Regionals",
         "[ENG EB03] Olli Baba Bonn Regionals",
@@ -27732,26 +28374,28 @@
         "[ENG OP14] Chinoize Cup 2026 #3",
         "[ENG OP14] Chinoize Cup 2026 #2"
       ],
-      "points": 127,
-      "winRate": 10,
-      "conversionRate": 40,
+      "points": 131,
+      "winRate": 9,
+      "conversionRate": 42,
       "metaShare": 12
     },
     {
       "leader": "OP12-061",
       "leaderId": "OP12-061",
-      "totalAppearances": 26,
+      "totalAppearances": 28,
       "wins": 1,
       "second": 2,
-      "third": 0,
+      "third": 1,
       "fourth": 5,
-      "top4": 8,
-      "top8": 4,
+      "top4": 9,
+      "top8": 5,
       "top16": 5,
       "top32": 9,
-      "uniquePlayers": 25,
-      "uniqueEvents": 8,
+      "uniquePlayers": 27,
+      "uniqueEvents": 9,
       "players": [
+        "Clayton H",
+        "min’s boyfriend",
         "Matt",
         "SSL Mauzio",
         "Marc",
@@ -27779,6 +28423,7 @@
         "Krullzor"
       ],
       "events": [
+        "[ENG EB03] CoreTCG Pomona Treasure Cup",
         "[ENG EB03] CoreTCG Pomona Regionals",
         "[ENG EB03] Play!TCG Mesquite Regionals",
         "[ENG EB03] Olli Baba Bonn Regionals",
@@ -27788,9 +28433,9 @@
         "[ENG OP14] North America Finals",
         "[ENG OP14] Chinoize Cup 2026 #3"
       ],
-      "points": 91,
+      "points": 102,
       "winRate": 4,
-      "conversionRate": 46,
+      "conversionRate": 50,
       "metaShare": 8
     },
     {
@@ -27856,18 +28501,19 @@
     {
       "leader": "OP12-041",
       "leaderId": "OP12-041",
-      "totalAppearances": 23,
+      "totalAppearances": 24,
       "wins": 1,
       "second": 2,
       "third": 0,
       "fourth": 1,
       "top4": 4,
-      "top8": 7,
+      "top8": 8,
       "top16": 6,
       "top32": 6,
-      "uniquePlayers": 19,
-      "uniqueEvents": 11,
+      "uniquePlayers": 20,
+      "uniqueEvents": 12,
       "players": [
+        "Dr. Yugioh",
         "SenPie",
         "Lafinte",
         "Monkey",
@@ -27889,6 +28535,7 @@
         "duschdmarke"
       ],
       "events": [
+        "[ENG EB03] CoreTCG Pomona Treasure Cup",
         "[ENG EB03] CoreTCG Pomona Regionals",
         "[ENG EB03] Play!TCG Mesquite Regionals",
         "[ENG EB03] Olli Baba Bonn Regionals",
@@ -27901,26 +28548,27 @@
         "[JPN OP14] Japan Season 2 Area Finals",
         "[ENG OP14] Chinoize Cup 2026 #1"
       ],
-      "points": 78,
+      "points": 82,
       "winRate": 4,
-      "conversionRate": 48,
+      "conversionRate": 50,
       "metaShare": 7
     },
     {
       "leader": "OP11-040",
       "leaderId": "OP11-040",
-      "totalAppearances": 17,
-      "wins": 1,
+      "totalAppearances": 18,
+      "wins": 2,
       "second": 1,
       "third": 0,
       "fourth": 2,
-      "top4": 4,
+      "top4": 5,
       "top8": 6,
       "top16": 1,
       "top32": 5,
       "uniquePlayers": 17,
-      "uniqueEvents": 12,
+      "uniqueEvents": 13,
       "players": [
+        "ewin",
         "Monkey",
         "freshnalgas",
         "Endevr",
@@ -27928,7 +28576,6 @@
         "Mark Guan",
         "John O’Donnell",
         "CDCe",
-        "ewin",
         "Martino Casazza",
         "Antonio Bachetti Spurio",
         "Jadon Wong",
@@ -27940,6 +28587,7 @@
         "mblawluffy"
       ],
       "events": [
+        "[ENG EB03] CoreTCG Pomona Treasure Cup",
         "[ENG EB03] CoreTCG Pomona Regionals",
         "[ENG EB03] Play!TCG Mesquite Regionals",
         "[ENG EB03] TAK Games’ Melbourne Regionals",
@@ -27953,9 +28601,9 @@
         "[ENG OP14] Chinoize Cup 2026 #5",
         "[ENG OP14] Chinoize Cup 2026 #4"
       ],
-      "points": 61,
-      "winRate": 6,
-      "conversionRate": 59,
+      "points": 71,
+      "winRate": 11,
+      "conversionRate": 61,
       "metaShare": 5
     },
     {
@@ -28039,6 +28687,50 @@
       "metaShare": 3
     },
     {
+      "leader": "OP11-041",
+      "leaderId": "OP11-041",
+      "totalAppearances": 13,
+      "wins": 0,
+      "second": 1,
+      "third": 1,
+      "fourth": 0,
+      "top4": 2,
+      "top8": 4,
+      "top16": 1,
+      "top32": 6,
+      "uniquePlayers": 13,
+      "uniqueEvents": 8,
+      "players": [
+        "Nicky Goldman’s biggest fan",
+        "SoraHart",
+        "Son Nick",
+        "Imran",
+        "Alcorto",
+        "ShanksMcCall",
+        "Nicholas",
+        "Mollie Pringle",
+        "Tanner Wortham",
+        "Simpiii",
+        "BrainDRot",
+        "Lexinator22",
+        "Gefen H"
+      ],
+      "events": [
+        "[ENG EB03] CoreTCG Pomona Treasure Cup",
+        "[ENG EB03] Play!TCG Mesquite Regionals",
+        "[ENG EB03] Olli Baba Bonn Regionals",
+        "[ENG EB03] TAK Games’ Melbourne Regionals",
+        "[ENG EB03] Egman Events EB03 Triple Win-A-Box",
+        "[ENG EB03] Chinoize Cup 2026 #21",
+        "[ENG EB03] Chinoize Cup 2026 #20",
+        "[ENG EB03] Chinoize Cup 2026 #19"
+      ],
+      "points": 39,
+      "winRate": 0,
+      "conversionRate": 46,
+      "metaShare": 4
+    },
+    {
       "leader": "ST29-001",
       "leaderId": "ST29-001",
       "totalAppearances": 9,
@@ -28076,48 +28768,6 @@
       "points": 39,
       "winRate": 0,
       "conversionRate": 67,
-      "metaShare": 3
-    },
-    {
-      "leader": "OP11-041",
-      "leaderId": "OP11-041",
-      "totalAppearances": 12,
-      "wins": 0,
-      "second": 1,
-      "third": 1,
-      "fourth": 0,
-      "top4": 2,
-      "top8": 3,
-      "top16": 1,
-      "top32": 6,
-      "uniquePlayers": 12,
-      "uniqueEvents": 7,
-      "players": [
-        "SoraHart",
-        "Son Nick",
-        "Imran",
-        "Alcorto",
-        "ShanksMcCall",
-        "Nicholas",
-        "Mollie Pringle",
-        "Tanner Wortham",
-        "Simpiii",
-        "BrainDRot",
-        "Lexinator22",
-        "Gefen H"
-      ],
-      "events": [
-        "[ENG EB03] Play!TCG Mesquite Regionals",
-        "[ENG EB03] Olli Baba Bonn Regionals",
-        "[ENG EB03] TAK Games’ Melbourne Regionals",
-        "[ENG EB03] Egman Events EB03 Triple Win-A-Box",
-        "[ENG EB03] Chinoize Cup 2026 #21",
-        "[ENG EB03] Chinoize Cup 2026 #20",
-        "[ENG EB03] Chinoize Cup 2026 #19"
-      ],
-      "points": 35,
-      "winRate": 0,
-      "conversionRate": 42,
       "metaShare": 3
     },
     {
