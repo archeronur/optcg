@@ -152,7 +152,8 @@ function extractEventBasics(html) {
   const eventDetailsDate = eventDetailsDateMatch ? eventDetailsDateMatch[0] : "";
   const slashDate = html.match(/\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/);
   const monthDay = html.match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}\b/);
-  const dateBase = eventDetailsDate || (slashDate ? slashDate[0] : monthDay ? monthDay[0] : "");
+  // Prefer the short "Mar 31" label over ambiguous numeric dates found in HTML.
+  const dateBase = eventDetailsDate || (monthDay ? monthDay[0] : slashDate ? slashDate[0] : "");
 
   const playersMatch = html.match(/(\d+)\s+players/i);
   const players = playersMatch ? parseInt(playersMatch[1], 10) : 0;
