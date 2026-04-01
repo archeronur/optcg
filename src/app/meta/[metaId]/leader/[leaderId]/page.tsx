@@ -12,7 +12,7 @@ import { hydrateTrackerCards } from "@/lib/trackerCardHydrate";
 import { isLegacyMetaThroughOp05 } from "@/lib/metaEra";
 import { parseColors, getColorInfo } from "@/lib/colors";
 import { getCard } from "@/lib/cards";
-import { computeLeaderStatsFromMeta } from "@/lib/leaderRanking";
+import { classifyPlacing, computeLeaderStatsFromMeta } from "@/lib/leaderRanking";
 import CardImage from "@/components/CardImage";
 import CardGrid from "@/components/CardGrid";
 import AllAppearancesSection from "@/components/AllAppearancesSection";
@@ -32,8 +32,23 @@ export async function generateStaticParams() {
 }
 
 function placingToNumber(placing: string): number {
-  const n = parseInt(placing);
-  return isNaN(n) ? 999 : n;
+  const normalized = String(placing ?? "").trim().toLowerCase();
+  if (!normalized) return 999;
+
+  const topMatch = normalized.match(/top\s*(\d+)/i);
+  if (topMatch?.[1]) {
+    const topN = Number.parseInt(topMatch[1], 10);
+    if (!Number.isNaN(topN)) return topN;
+  }
+
+  const ordinalMatch = normalized.match(/^(\d+)(st|nd|rd|th)?$/i);
+  if (ordinalMatch?.[1]) {
+    const ordinal = Number.parseInt(ordinalMatch[1], 10);
+    if (!Number.isNaN(ordinal)) return ordinal;
+  }
+
+  const n = Number.parseInt(normalized, 10);
+  return Number.isNaN(n) ? 999 : n;
 }
 
 export default async function LeaderDetailPage({
@@ -95,24 +110,16 @@ export default async function LeaderDetailPage({
     const placingStr = String(deck.placing ?? "").trim();
     if (!placingStr) continue;
 
-    const ord = placingStr.match(/\b(1st|2nd|3rd|4th)\b/i);
-    if (ord?.[1]) {
-      const key = ord[1].toLowerCase() as PlacingGroupKey;
-      placingGroups[key] = (placingGroups[key] ?? 0) + 1;
-      continue;
-    }
+    const bucket = classifyPlacing(placingStr);
+    if (!bucket) continue;
 
-    const top4 = placingStr.match(/top\s*4\b/i);
-    if (top4) {
-      placingGroups["4th"] = (placingGroups["4th"] ?? 0) + 1;
-      continue;
-    }
-
-    const top = placingStr.match(/top\s*(4|8|16|32)\b/i);
-    if (top?.[1]) {
-      const key = (`top${top[1]}`.toLowerCase() as PlacingGroupKey);
-      placingGroups[key] = (placingGroups[key] ?? 0) + 1;
-    }
+    if (bucket === "first") placingGroups["1st"] += 1;
+    else if (bucket === "second") placingGroups["2nd"] += 1;
+    else if (bucket === "third") placingGroups["3rd"] += 1;
+    else if (bucket === "fourth") placingGroups["4th"] += 1;
+    else if (bucket === "top8") placingGroups.top8 += 1;
+    else if (bucket === "top16") placingGroups.top16 += 1;
+    else if (bucket === "top32") placingGroups.top32 += 1;
   }
 
   const placingCategories: Array<{

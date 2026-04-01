@@ -2276,7 +2276,8 @@
   border-radius: 20px;
   max-width: 900px;
   width: 100%;
-  max-height: 90vh;
+  /* iOS address-bar safe: prefer dynamic viewport units */
+  max-height: min(90dvh, 900px);
   overflow-y: auto;
   position: relative;
   box-shadow: 
@@ -3165,7 +3166,12 @@
    ======================== */
 @media (max-width: 768px) {
   .modal-overlay {
-    --mobile-top-offset: calc(env(safe-area-inset-top, 0px) + 88px);
+    /* Keep modal visible on short screens / Safari UI */
+    --mobile-top-offset: clamp(
+      calc(env(safe-area-inset-top, 0px) + 12px),
+      12dvh,
+      calc(env(safe-area-inset-top, 0px) + 72px)
+    );
     padding: var(--mobile-top-offset) 0 0;
     align-items: flex-end;
     overflow: hidden;
@@ -4441,8 +4447,14 @@
   align-items: center;
   justify-content: center;
   z-index: 12010;
-  padding: 20px;
+  /* Prevent off-screen on very small viewports + safe areas */
+  padding: calc(env(safe-area-inset-top, 0px) + 16px)
+    calc(env(safe-area-inset-right, 0px) + 16px)
+    calc(env(safe-area-inset-bottom, 0px) + 16px)
+    calc(env(safe-area-inset-left, 0px) + 16px);
   animation: fadeIn 0.2s ease;
+  overflow: hidden;
+  overscroll-behavior: contain;
 }
 
 .confirm-dialog {
@@ -4456,6 +4468,10 @@
     0 25px 50px rgba(0, 0, 0, 0.4),
     0 0 100px rgba(102, 126, 234, 0.2);
   animation: slideUp 0.3s ease;
+  /* Fit in viewport; scroll inside when content is long */
+  max-height: calc(100dvh - (env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px) + 32px));
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .confirm-dialog-icon {

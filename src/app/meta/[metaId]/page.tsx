@@ -4,7 +4,7 @@ import { getMetaData, getAllMetaIds, slugify } from "@/lib/data";
 import { getLeaderImage, getLeaderColor } from "@/lib/cardHelpers";
 import { parseColors, getColorInfo } from "@/lib/colors";
 import { formatEventDate } from "@/lib/eventDate";
-import { computeLeaderStatsFromMeta } from "@/lib/leaderRanking";
+import { classifyPlacing, computeLeaderStatsFromMeta } from "@/lib/leaderRanking";
 import CardImage from "@/components/CardImage";
 import T from "@/components/T";
 
@@ -163,9 +163,7 @@ export default async function MetaOverviewPage({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {eventsWithDecks.map((event) => {
               const eventSlug = slugify(event.name);
-              const winner = event.decks.find(
-                (d) => d.placing === "1st" || d.placing === "1",
-              );
+              const winner = event.decks.find((d) => classifyPlacing(d.placing) === "first");
               const winnerLid = winner?.leaderId ?? "";
               const winnerImage = winnerLid ? getLeaderImage(winnerLid) : "";
 

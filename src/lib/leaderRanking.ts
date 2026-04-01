@@ -12,7 +12,34 @@ export const POINT_WEIGHTS = {
 
 type Bucket = "first" | "second" | "third" | "fourth" | "top8" | "top16" | "top32";
 
-function classifyPlacing(placing: string): Bucket | null {
+function parseRankFromPlacing(placing: string): number | null {
+  const p = String(placing || "").trim().toLowerCase();
+  if (!p) return null;
+
+  // If the source writes "top16", keep it numeric for range checks.
+  const topMatch = p.match(/top\s*(\d+)\b/);
+  if (topMatch?.[1]) {
+    const topN = Number.parseInt(topMatch[1], 10);
+    return Number.isNaN(topN) ? null : topN;
+  }
+
+  // Handles "9th", "10th", also common typos like "7h".
+  const startNumberMatch = p.match(/^(\d+)\s*[a-z]*$/i);
+  if (startNumberMatch?.[1]) {
+    const n = Number.parseInt(startNumberMatch[1], 10);
+    return Number.isNaN(n) ? null : n;
+  }
+
+  const anywhereNumberMatch = p.match(/\b(\d+)\b/);
+  if (anywhereNumberMatch?.[1]) {
+    const n = Number.parseInt(anywhereNumberMatch[1], 10);
+    return Number.isNaN(n) ? null : n;
+  }
+
+  return null;
+}
+
+export function classifyPlacing(placing: string): Bucket | null {
   const p = String(placing || "").trim().toLowerCase();
   if (!p) return null;
   if (p === "1st") return "first";
@@ -21,9 +48,20 @@ function classifyPlacing(placing: string): Bucket | null {
   if (p === "4th") return "fourth";
   // Many event pages only publish "Top 4" instead of separate 3rd/4th.
   if (/top\s*4\b/.test(p)) return "fourth";
+
   if (["5th", "6th", "7th", "8th"].includes(p) || /top\s*8\b/.test(p)) return "top8";
   if (/top\s*16\b/.test(p)) return "top16";
   if (/top\s*32\b/.test(p)) return "top32";
+
+  const rank = parseRankFromPlacing(p);
+  if (rank == null) return null;
+  if (rank === 1) return "first";
+  if (rank === 2) return "second";
+  if (rank === 3) return "third";
+  if (rank === 4) return "fourth";
+  if (rank >= 5 && rank <= 8) return "top8";
+  if (rank >= 9 && rank <= 16) return "top16";
+  if (rank >= 17 && rank <= 32) return "top32";
   return null;
 }
 
