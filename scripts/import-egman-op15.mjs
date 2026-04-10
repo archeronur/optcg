@@ -192,7 +192,10 @@ async function main() {
     const topN =
       html.includes("Top 32 Deck Lists") ? 32 : html.includes("Top 16 Deck Lists") ? 16 : 8;
     const topLeaders = extractTopNLeaders(html, topN);
-    const deckListsHeading = `Top ${topN} Deck Lists`;
+    const deckListsHeading =
+      html.includes(`Top ${topN} Deck Lists`) ? `Top ${topN} Deck Lists`
+      : html.includes(`Top ${topN} and Unique Top 16`) ? `Top ${topN} and Unique Top 16`
+      : `Top ${topN} Deck Lists`;
     const decks = extractDeckUrlAndLeaderFromDeckListsTable(html, deckListsHeading);
 
     if (!basics.name || decks.length === 0) {
