@@ -203,6 +203,27 @@ const translations = {
     proxyPrint: { en: "Proxy Print", tr: "Proxy Baskı" },
     language: { en: "Language", tr: "Dil" },
   },
+  coinFlip: {
+    pageTitle: { en: "Coin Flip", tr: "Yazı Tura" },
+    tagline: {
+      en: "Can't decide who goes first? Let the coin settle it.",
+      tr: "Kim başlıyor diye tartışma — parayı at, coin karar versin.",
+    },
+    tapToFlip: { en: "Tap the coin to flip", tr: "Atmak için paraya dokun" },
+    tapAgain: { en: "Tap again", tr: "Tekrar dokun" },
+    flipping: { en: "Flipping…", tr: "Havada…" },
+    resultLabel: { en: "Result", tr: "Sonuç" },
+    announceOnePiece: { en: "ONE PIECE!", tr: "ONE PIECE!" },
+    announceMugiwara: { en: "MUGIWARA!", tr: "MUGIWARA!" },
+    flipN: { en: "Flip #{n}", tr: "{n}. atış" },
+    easterEggHint: { en: "Coin flip — mobile only", tr: "Yazı tura — sadece mobilde" },
+    mobileOnlyTitle: { en: "Made for mobile", tr: "Mobil için" },
+    mobileOnlyBody: {
+      en: "This little coin flip is only available on phones. Open this page on your mobile device.",
+      tr: "Bu mini yazı-tura sayfası sadece telefon için. Tarayıcıyı mobil cihazınızdan açın.",
+    },
+    backHome: { en: "Back home", tr: "Anasayfa" },
+  },
 } as const;
 
 export type TranslationSection = keyof typeof translations;

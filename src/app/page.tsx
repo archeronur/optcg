@@ -354,6 +354,21 @@ export default function LandingPage() {
             </a>
             <T section="tracker" k="dataFromSuffix" />
           </p>
+
+          {/* Easter egg — only visible on phones */}
+          <Link
+            href="/coin-flip"
+            className="coin-easter-egg group mt-5 inline-flex items-center gap-2 rounded-full border border-white/5 bg-white/[0.02] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-gray-600 transition-all hover:border-white/15 hover:text-accent md:hidden"
+          >
+            <span
+              aria-hidden="true"
+              className="inline-block text-sm leading-none transition-transform group-hover:rotate-180 group-hover:text-accent"
+              style={{ animation: "coinSpin 6s linear infinite" }}
+            >
+              🪙
+            </span>
+            <T section="coinFlip" k="easterEggHint" />
+          </Link>
         </footer>
       </div>
     </div>
