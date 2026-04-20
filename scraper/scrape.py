@@ -46,11 +46,11 @@ META_NAMES = {
     "op08": "OP08 - Two Legends",
     "op09": "OP09 - The Four Emperors",
     "op10": "OP10 - Royal Blood",
-    "op11": "OP11 - Uta",
+    "op11": "OP11 - A Fist of Divine Speed",
     "op12": "OP12 - A Transgenerational Bond",
     "op13": "OP13 - The Warring Kingdoms",
     "op14": "OP14 - The Azure Sea's Seven",
-    "op15": "OP15",
+    "op15": "OP15 - Adventure on KAMI's Island",
 }
 
 session = requests.Session()
