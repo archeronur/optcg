@@ -6,17 +6,43 @@ export type Language = "en" | "tr";
 
 const translations = {
   landing: {
+    eyebrow: { en: "One Piece Trading Card Game", tr: "One Piece Trading Card Game" },
     title: { en: "One Piece TCG Tools", tr: "One Piece TCG Araçları" },
-    subtitle: { en: "Choose the tool you want to use", tr: "Kullanmak istediğiniz aracı seçin" },
+    subtitle: {
+      en: "Competitive event data and professional proxy printing — all in one place.",
+      tr: "Rekabetçi event verisi ve profesyonel proxy baskı — tek bir yerde.",
+    },
     trackerTitle: { en: "Event Tracker", tr: "Event Tracker" },
-    trackerDesc: { en: "Event results, deck lists, and leader analytics from Egman Events data.", tr: "Egman Events verilerinden event sonuçları, deck listleri ve lider analizleri." },
+    trackerDesc: {
+      en: "Browse events, explore decklists, and compare leader performance across every OP set.",
+      tr: "Tüm OP setlerindeki eventleri gez, decklist'leri incele, lider performansını karşılaştır.",
+    },
     proxyTitle: { en: "Proxy Print", tr: "Proxy Baskı" },
-    proxyDesc: { en: "Professional proxy printing tool for One Piece TCG cards. Create printable PDF deck sheets.", tr: "One Piece TCG kartları için profesyonel proxy baskı aracı. Yazdırılabilir PDF deck sayfaları oluşturun." },
+    proxyDesc: {
+      en: "Turn any decklist into a print-ready PDF with official card art, laid out on A4 sheets.",
+      tr: "Her decklist'i resmi kart görselleriyle A4'e yerleştirilmiş, baskıya hazır PDF'e dönüştür.",
+    },
     events: { en: "Events", tr: "Eventler" },
     decks: { en: "Decks", tr: "Deckler" },
     sets: { en: "Sets", tr: "Setler" },
+    leaders: { en: "Leaders", tr: "Liderler" },
     goToTracker: { en: "Open Tracker", tr: "Tracker'ı Aç" },
     goToProxy: { en: "Open Proxy Print", tr: "Proxy Baskıyı Aç" },
+    trackerFeature1: { en: "All {sets} sets, live from Egman Events", tr: "Egman Events'ten {sets} setin tümü" },
+    trackerFeature2: { en: "Leader rankings, win rates & meta share", tr: "Lider sıralaması, kazanma oranı ve meta payı" },
+    trackerFeature3: { en: "Deck lists, diffs & cost / counter curves", tr: "Deck list'leri, farkları ve maliyet / counter dağılımları" },
+    proxyFeature1: { en: "Official card images at print quality", tr: "Baskı kalitesinde resmi kart görselleri" },
+    proxyFeature2: { en: "A4 sheets, 3×3 grid, cut guides", tr: "A4 sayfa, 3×3 grid, kesim kılavuzları" },
+    proxyFeature3: { en: "Works offline in your browser", tr: "Tarayıcınızda çevrimdışı çalışır" },
+    latestMeta: { en: "Latest meta", tr: "Son meta" },
+    latestMetaDesc: {
+      en: "The leaders driving the most recent results.",
+      tr: "Son sonuçları şekillendiren liderler.",
+    },
+    openMeta: { en: "Open meta →", tr: "Meta'yı aç →" },
+    allSets: { en: "Browse every set", tr: "Tüm setleri gez" },
+    viewAll: { en: "View all", tr: "Tümünü gör" },
+    footerTagline: { en: "Built for the One Piece TCG community.", tr: "One Piece TCG topluluğu için yapıldı." },
   },
   tracker: {
     home: { en: "Home", tr: "Ana Sayfa" },
