@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import T from "@/components/T";
 import { useI18n } from "@/lib/i18n";
@@ -9,9 +9,43 @@ type Side = "onePiece" | "mugiwara";
 
 const MOBILE_BREAKPOINT = 820;
 const FLIP_DURATION_MS = 1800;
+/** Window of recent flips inspected for the anti-streak correction. */
+const HISTORY_WINDOW = 6;
 
-function pickOutcome(): Side {
-  return Math.random() < 0.5 ? "onePiece" : "mugiwara";
+/** Cryptographically strong uniform float in [0, 1). Falls back to
+ *  `Math.random()` when `crypto.getRandomValues` is unavailable. */
+function secureRandom(): number {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.getRandomValues === "function"
+  ) {
+    const buf = new Uint32Array(1);
+    crypto.getRandomValues(buf);
+    return buf[0] / 0x1_0000_0000;
+  }
+  return Math.random();
+}
+
+/** Pick the next coin face using a balanced RNG with a gentle anti-streak
+ *  correction: when the last `HISTORY_WINDOW` results lean heavily toward
+ *  one side, the other side becomes (slightly) more likely. Over long runs
+ *  this converges to ~50/50 while eliminating the feeling of unfair streaks
+ *  that pure `Math.random()` can produce. */
+function pickOutcome(history: Side[]): Side {
+  const recent = history.slice(-HISTORY_WINDOW);
+  const onePieceCount = recent.filter((s) => s === "onePiece").length;
+  const mugiwaraCount = recent.length - onePieceCount;
+  const diff = onePieceCount - mugiwaraCount; // + ⇒ onePiece-heavy
+
+  // Map the imbalance to a probability nudge. Capped at 65/35 so results
+  // still feel surprising, not deterministic.
+  let onePieceProb = 0.5;
+  if (diff >= 3) onePieceProb = 0.35;
+  else if (diff <= -3) onePieceProb = 0.65;
+  else if (diff >= 2) onePieceProb = 0.42;
+  else if (diff <= -2) onePieceProb = 0.58;
+
+  return secureRandom() < onePieceProb ? "onePiece" : "mugiwara";
 }
 
 /** Compute the next absolute rotation so that the coin settles showing `target`.
@@ -36,6 +70,9 @@ export default function CoinFlipPage() {
   const [isFlipping, setIsFlipping] = useState(false);
   const [result, setResult] = useState<Side | null>(null);
   const [flipCount, setFlipCount] = useState(0);
+  /** Rolling window of recent outcomes — only used by `pickOutcome`'s
+   *  anti-streak correction, so a ref avoids unnecessary re-renders. */
+  const historyRef = useRef<Side[]>([]);
 
   useEffect(() => {
     const check = () =>
@@ -52,8 +89,9 @@ export default function CoinFlipPage() {
 
   const flip = useCallback(() => {
     if (isFlipping) return;
-    const outcome = pickOutcome();
-    const spins = 4 + Math.floor(Math.random() * 3);
+    const outcome = pickOutcome(historyRef.current);
+    historyRef.current = [...historyRef.current, outcome].slice(-HISTORY_WINDOW);
+    const spins = 4 + Math.floor(secureRandom() * 3);
     setRotation((prev) => computeNextRotation(prev, outcome, spins));
     setIsFlipping(true);
     setResult(null);
