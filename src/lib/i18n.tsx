@@ -196,6 +196,9 @@ const translations = {
     charactersShort: { en: "characters", tr: "karakter" },
     noCounter: { en: "No counter", tr: "Countersız" },
     noCharactersInDeck: { en: "No character cards", tr: "Karakter kartı yok" },
+    costLow: { en: "Low (0-2)", tr: "Düşük (0-2)" },
+    costMid: { en: "Mid (3-5)", tr: "Orta (3-5)" },
+    costHigh: { en: "High (6+)", tr: "Yüksek (6+)" },
   },
   nav: {
     backToHome: { en: "Home", tr: "Ana Sayfa" },
