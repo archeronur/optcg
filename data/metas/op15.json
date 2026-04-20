@@ -4,6 +4,4252 @@
   "url": "https://egmanevents.com/one-piece-op15-tournaments",
   "events": [
     {
+      "name": "[ENG OP15.5] PEC Occitania Lille Regionals",
+      "url": "https://egmanevents.com/one-piece-op15-tournaments/pec-occitania-lille-regionals",
+      "type": "Large Official Event",
+      "date": "Apr 12",
+      "players": 1024,
+      "rounds": "",
+      "leaderDistribution": {
+        "OP15-058": 15,
+        "OP11-041": 7,
+        "OP15-002": 5,
+        "OP13-002": 1,
+        "OP13-001": 1,
+        "EB03-001": 1,
+        "OP05-098": 1,
+        "EB02-010": 1
+      },
+      "decks": [
+        {
+          "placing": "1st",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "Luigi Amato",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=EB03-055:4,OP14-104:4,OP13-042:4,OP14-102:4,OP14-110:4,OP14-111:4,OP15-113:1,OP15-047:1,OP06-104:3,EB03-053:4,OP11-106:4,OP12-112:2,EB04-058:4,P-096:4,EB03-060:3,OP11-041:1&type=optcg",
+          "cards": [
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 4
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "OP14-110",
+              "count": 4
+            },
+            {
+              "id": "OP14-111",
+              "count": 4
+            },
+            {
+              "id": "OP15-113",
+              "count": 1
+            },
+            {
+              "id": "OP15-047",
+              "count": 1
+            },
+            {
+              "id": "OP06-104",
+              "count": 3
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "OP11-106",
+              "count": 4
+            },
+            {
+              "id": "OP12-112",
+              "count": 2
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "EB03-060",
+              "count": 3
+            },
+            {
+              "id": "OP11-041",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "2nd",
+          "leader": "OP15-058",
+          "leaderId": "OP15-058",
+          "player": "Progress2126",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-061:4,OP15-066:4,OP15-067:4,OP15-077:4,OP15-076:4,OP15-075:4,OP15-078:4,OP15-118:4,OP12-063:4,OP13-076:2,OP12-071:3,OP10-067:3,OP05-077:3,OP07-064:3,OP15-058:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP15-066",
+              "count": 4
+            },
+            {
+              "id": "OP15-067",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 4
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP15-075",
+              "count": 4
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP15-118",
+              "count": 4
+            },
+            {
+              "id": "OP12-063",
+              "count": 4
+            },
+            {
+              "id": "OP13-076",
+              "count": 2
+            },
+            {
+              "id": "OP12-071",
+              "count": 3
+            },
+            {
+              "id": "OP10-067",
+              "count": 3
+            },
+            {
+              "id": "OP05-077",
+              "count": 3
+            },
+            {
+              "id": "OP07-064",
+              "count": 3
+            },
+            {
+              "id": "OP15-058",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 4",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "fedemeco",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=EB04-058:4,EB03-053:4,EB03-060:4,P-096:4,EB03-055:4,OP06-106:2,OP14-102:4,OP14-104:4,OP14-110:4,OP15-047:1,OP14-111:4,OP11-106:4,OP13-042:2,OP06-104:4,OP15-113:1,OP11-041:1&type=optcg",
+          "cards": [
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB03-060",
+              "count": 4
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP06-106",
+              "count": 2
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "OP14-110",
+              "count": 4
+            },
+            {
+              "id": "OP15-047",
+              "count": 1
+            },
+            {
+              "id": "OP14-111",
+              "count": 4
+            },
+            {
+              "id": "OP11-106",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 2
+            },
+            {
+              "id": "OP06-104",
+              "count": 4
+            },
+            {
+              "id": "OP15-113",
+              "count": 1
+            },
+            {
+              "id": "OP11-041",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 4",
+          "leader": "EB02-010",
+          "leaderId": "EB02-010",
+          "player": "IceLoom",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=EB02-017:4,PRB02-012:4,ST18-001:4,PRB02-005:3,ST18-004:4,OP14-031:2,EB02-035:4,OP07-064:4,OP15-032:2,OP13-118:2,EB02-061:1,OP15-078:4,OP09-078:4,OP13-040:4,OP08-036:2,OP05-076:2,EB02-010:1&type=optcg",
+          "cards": [
+            {
+              "id": "EB02-017",
+              "count": 4
+            },
+            {
+              "id": "PRB02-012",
+              "count": 4
+            },
+            {
+              "id": "ST18-001",
+              "count": 4
+            },
+            {
+              "id": "PRB02-005",
+              "count": 3
+            },
+            {
+              "id": "ST18-004",
+              "count": 4
+            },
+            {
+              "id": "OP14-031",
+              "count": 2
+            },
+            {
+              "id": "EB02-035",
+              "count": 4
+            },
+            {
+              "id": "OP07-064",
+              "count": 4
+            },
+            {
+              "id": "OP15-032",
+              "count": 2
+            },
+            {
+              "id": "OP13-118",
+              "count": 2
+            },
+            {
+              "id": "EB02-061",
+              "count": 1
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP09-078",
+              "count": 4
+            },
+            {
+              "id": "OP13-040",
+              "count": 4
+            },
+            {
+              "id": "OP08-036",
+              "count": 2
+            },
+            {
+              "id": "OP05-076",
+              "count": 2
+            },
+            {
+              "id": "EB02-010",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 8",
+          "leader": "OP13-002",
+          "leaderId": "OP13-002",
+          "player": "TrenoFelice",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP08-040:2,OP08-044:1,ST22-002:4,ST15-004:2,OP13-042:4,OP09-118:2,ST23-001:2,OP13-043:4,EB04-007:3,OP13-016:4,OP07-051:3,PRB02-008:4,OP13-054:4,OP08-047:4,OP10-045:1,ST22-015:4,EB04-008:2,OP13-002:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP08-040",
+              "count": 2
+            },
+            {
+              "id": "OP08-044",
+              "count": 1
+            },
+            {
+              "id": "ST22-002",
+              "count": 4
+            },
+            {
+              "id": "ST15-004",
+              "count": 2
+            },
+            {
+              "id": "OP13-042",
+              "count": 4
+            },
+            {
+              "id": "OP09-118",
+              "count": 2
+            },
+            {
+              "id": "ST23-001",
+              "count": 2
+            },
+            {
+              "id": "OP13-043",
+              "count": 4
+            },
+            {
+              "id": "EB04-007",
+              "count": 3
+            },
+            {
+              "id": "OP13-016",
+              "count": 4
+            },
+            {
+              "id": "OP07-051",
+              "count": 3
+            },
+            {
+              "id": "PRB02-008",
+              "count": 4
+            },
+            {
+              "id": "OP13-054",
+              "count": 4
+            },
+            {
+              "id": "OP08-047",
+              "count": 4
+            },
+            {
+              "id": "OP10-045",
+              "count": 1
+            },
+            {
+              "id": "ST22-015",
+              "count": 4
+            },
+            {
+              "id": "EB04-008",
+              "count": 2
+            },
+            {
+              "id": "OP13-002",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 8",
+          "leader": "OP15-002",
+          "leaderId": "OP15-002",
+          "player": "Magyo",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-040:4,OP15-053:4,OP15-046:4,OP15-054:4,OP10-059:4,OP15-052:4,OP15-020:4,OP15-021:4,OP15-056:2,OP10-045:4,OP10-049:2,OP10-060:4,OP05-015:3,OP09-118:1,OP05-019:2,OP15-002:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-040",
+              "count": 4
+            },
+            {
+              "id": "OP15-053",
+              "count": 4
+            },
+            {
+              "id": "OP15-046",
+              "count": 4
+            },
+            {
+              "id": "OP15-054",
+              "count": 4
+            },
+            {
+              "id": "OP10-059",
+              "count": 4
+            },
+            {
+              "id": "OP15-052",
+              "count": 4
+            },
+            {
+              "id": "OP15-020",
+              "count": 4
+            },
+            {
+              "id": "OP15-021",
+              "count": 4
+            },
+            {
+              "id": "OP15-056",
+              "count": 2
+            },
+            {
+              "id": "OP10-045",
+              "count": 4
+            },
+            {
+              "id": "OP10-049",
+              "count": 2
+            },
+            {
+              "id": "OP10-060",
+              "count": 4
+            },
+            {
+              "id": "OP05-015",
+              "count": 3
+            },
+            {
+              "id": "OP09-118",
+              "count": 1
+            },
+            {
+              "id": "OP05-019",
+              "count": 2
+            },
+            {
+              "id": "OP15-002",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 8",
+          "leader": "OP15-058",
+          "leaderId": "OP15-058",
+          "player": "Yonas",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-061:4,OP15-067:4,OP12-071:4,OP15-071:4,OP12-063:3,OP10-067:3,OP07-064:3,OP15-118:4,OP15-075:4,OP15-076:4,OP15-077:4,OP15-078:4,OP13-076:2,OP05-077:3,OP15-058:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP15-067",
+              "count": 4
+            },
+            {
+              "id": "OP12-071",
+              "count": 4
+            },
+            {
+              "id": "OP15-071",
+              "count": 4
+            },
+            {
+              "id": "OP12-063",
+              "count": 3
+            },
+            {
+              "id": "OP10-067",
+              "count": 3
+            },
+            {
+              "id": "OP07-064",
+              "count": 3
+            },
+            {
+              "id": "OP15-118",
+              "count": 4
+            },
+            {
+              "id": "OP15-075",
+              "count": 4
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 4
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP13-076",
+              "count": 2
+            },
+            {
+              "id": "OP05-077",
+              "count": 3
+            },
+            {
+              "id": "OP15-058",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 8",
+          "leader": "OP13-001",
+          "leaderId": "OP13-001",
+          "player": "Julius Schürhoff",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=EB04-002:4,OP01-016:3,OP13-016:4,OP15-035:4,ST21-003:2,OP14-022:4,OP14-031:4,OP13-027:4,OP13-118:4,OP15-032:2,EB04-007:4,OP13-040:3,OP05-038:4,OP08-036:4,OP13-001:1&type=optcg",
+          "cards": [
+            {
+              "id": "EB04-002",
+              "count": 4
+            },
+            {
+              "id": "OP01-016",
+              "count": 3
+            },
+            {
+              "id": "OP13-016",
+              "count": 4
+            },
+            {
+              "id": "OP15-035",
+              "count": 4
+            },
+            {
+              "id": "ST21-003",
+              "count": 2
+            },
+            {
+              "id": "OP14-022",
+              "count": 4
+            },
+            {
+              "id": "OP14-031",
+              "count": 4
+            },
+            {
+              "id": "OP13-027",
+              "count": 4
+            },
+            {
+              "id": "OP13-118",
+              "count": 4
+            },
+            {
+              "id": "OP15-032",
+              "count": 2
+            },
+            {
+              "id": "EB04-007",
+              "count": 4
+            },
+            {
+              "id": "OP13-040",
+              "count": 3
+            },
+            {
+              "id": "OP05-038",
+              "count": 4
+            },
+            {
+              "id": "OP08-036",
+              "count": 4
+            },
+            {
+              "id": "OP13-001",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 16",
+          "leader": "OP15-058",
+          "leaderId": "OP15-058",
+          "player": "Gabi313",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-060:2,OP15-118:4,OP15-061:4,OP15-066:4,OP12-071:4,OP15-071:4,OP12-063:4,OP07-064:2,OP15-074:2,OP15-075:4,OP15-076:4,OP15-077:4,OP15-078:4,OP13-076:2,OP05-077:2,OP15-058:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-060",
+              "count": 2
+            },
+            {
+              "id": "OP15-118",
+              "count": 4
+            },
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP15-066",
+              "count": 4
+            },
+            {
+              "id": "OP12-071",
+              "count": 4
+            },
+            {
+              "id": "OP15-071",
+              "count": 4
+            },
+            {
+              "id": "OP12-063",
+              "count": 4
+            },
+            {
+              "id": "OP07-064",
+              "count": 2
+            },
+            {
+              "id": "OP15-074",
+              "count": 2
+            },
+            {
+              "id": "OP15-075",
+              "count": 4
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 4
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP13-076",
+              "count": 2
+            },
+            {
+              "id": "OP05-077",
+              "count": 2
+            },
+            {
+              "id": "OP15-058",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 16",
+          "leader": "OP15-058",
+          "leaderId": "OP15-058",
+          "player": "Gionni",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP05-077:2,OP12-063:4,OP15-061:4,OP15-071:4,OP15-067:2,OP12-071:2,OP15-066:4,OP15-060:2,OP15-118:4,OP13-076:2,OP15-078:4,OP15-076:4,OP15-077:4,OP15-075:4,OP15-074:2,OP10-067:2,OP15-058:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP05-077",
+              "count": 2
+            },
+            {
+              "id": "OP12-063",
+              "count": 4
+            },
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP15-071",
+              "count": 4
+            },
+            {
+              "id": "OP15-067",
+              "count": 2
+            },
+            {
+              "id": "OP12-071",
+              "count": 2
+            },
+            {
+              "id": "OP15-066",
+              "count": 4
+            },
+            {
+              "id": "OP15-060",
+              "count": 2
+            },
+            {
+              "id": "OP15-118",
+              "count": 4
+            },
+            {
+              "id": "OP13-076",
+              "count": 2
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 4
+            },
+            {
+              "id": "OP15-075",
+              "count": 4
+            },
+            {
+              "id": "OP15-074",
+              "count": 2
+            },
+            {
+              "id": "OP10-067",
+              "count": 2
+            },
+            {
+              "id": "OP15-058",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 16",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "SSL Mauzio",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=EB04-058:4,OP15-047:2,OP15-113:4,OP15-119:2,OP14-108:3,OP13-042:4,OP12-112:3,OP11-106:4,OP10-112:2,OP07-051:2,OP06-106:4,PRB02-008:1,EB03-053:4,EB03-055:4,EB03-060:3,P-096:4,OP11-041:1&type=optcg",
+          "cards": [
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "OP15-047",
+              "count": 2
+            },
+            {
+              "id": "OP15-113",
+              "count": 4
+            },
+            {
+              "id": "OP15-119",
+              "count": 2
+            },
+            {
+              "id": "OP14-108",
+              "count": 3
+            },
+            {
+              "id": "OP13-042",
+              "count": 4
+            },
+            {
+              "id": "OP12-112",
+              "count": 3
+            },
+            {
+              "id": "OP11-106",
+              "count": 4
+            },
+            {
+              "id": "OP10-112",
+              "count": 2
+            },
+            {
+              "id": "OP07-051",
+              "count": 2
+            },
+            {
+              "id": "OP06-106",
+              "count": 4
+            },
+            {
+              "id": "PRB02-008",
+              "count": 1
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "EB03-060",
+              "count": 3
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "OP11-041",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 16",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "INTERISTASBARAZZINO",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=EB04-058:4,OP11-106:4,OP15-047:1,OP15-113:1,OP14-104:4,OP14-102:4,OP14-110:3,OP14-111:4,OP13-042:3,OP12-112:2,EB03-053:4,EB03-055:4,OP06-104:4,P-096:4,EB03-060:4,OP11-041:1&type=optcg",
+          "cards": [
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "OP11-106",
+              "count": 4
+            },
+            {
+              "id": "OP15-047",
+              "count": 1
+            },
+            {
+              "id": "OP15-113",
+              "count": 1
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "OP14-110",
+              "count": 3
+            },
+            {
+              "id": "OP14-111",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 3
+            },
+            {
+              "id": "OP12-112",
+              "count": 2
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP06-104",
+              "count": 4
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "EB03-060",
+              "count": 4
+            },
+            {
+              "id": "OP11-041",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 16",
+          "leader": "OP15-058",
+          "leaderId": "OP15-058",
+          "player": "stathisv13",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-118:4,OP15-060:3,OP15-061:4,OP15-066:4,OP15-071:4,OP12-071:4,OP12-063:3,OP07-064:2,OP15-075:4,OP15-076:4,OP15-077:4,OP15-078:4,OP15-074:2,OP05-077:2,OP13-076:2,OP15-058:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-118",
+              "count": 4
+            },
+            {
+              "id": "OP15-060",
+              "count": 3
+            },
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP15-066",
+              "count": 4
+            },
+            {
+              "id": "OP15-071",
+              "count": 4
+            },
+            {
+              "id": "OP12-071",
+              "count": 4
+            },
+            {
+              "id": "OP12-063",
+              "count": 3
+            },
+            {
+              "id": "OP07-064",
+              "count": 2
+            },
+            {
+              "id": "OP15-075",
+              "count": 4
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 4
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP15-074",
+              "count": 2
+            },
+            {
+              "id": "OP05-077",
+              "count": 2
+            },
+            {
+              "id": "OP13-076",
+              "count": 2
+            },
+            {
+              "id": "OP15-058",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 16",
+          "leader": "OP15-058",
+          "leaderId": "OP15-058",
+          "player": "Voice",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-061:4,OP15-066:4,OP15-067:2,OP15-071:4,OP15-076:4,OP15-075:4,OP15-077:4,OP15-078:4,OP15-118:4,OP13-076:2,OP12-071:4,OP10-067:3,OP09-072:2,OP07-064:2,OP05-077:3,OP15-058:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP15-066",
+              "count": 4
+            },
+            {
+              "id": "OP15-067",
+              "count": 2
+            },
+            {
+              "id": "OP15-071",
+              "count": 4
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP15-075",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 4
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP15-118",
+              "count": 4
+            },
+            {
+              "id": "OP13-076",
+              "count": 2
+            },
+            {
+              "id": "OP12-071",
+              "count": 4
+            },
+            {
+              "id": "OP10-067",
+              "count": 3
+            },
+            {
+              "id": "OP09-072",
+              "count": 2
+            },
+            {
+              "id": "OP07-064",
+              "count": 2
+            },
+            {
+              "id": "OP05-077",
+              "count": 3
+            },
+            {
+              "id": "OP15-058",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 16",
+          "leader": "OP15-002",
+          "leaderId": "OP15-002",
+          "player": "Brian D. TCG",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-020:4,OP15-021:3,OP15-040:4,OP15-046:4,OP15-053:4,OP15-052:4,OP15-054:4,OP15-056:2,OP15-057:3,OP12-060:2,OP10-045:4,OP10-060:4,OP10-059:3,OP09-118:1,OP05-019:3,OP07-051:1,OP15-002:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-020",
+              "count": 4
+            },
+            {
+              "id": "OP15-021",
+              "count": 3
+            },
+            {
+              "id": "OP15-040",
+              "count": 4
+            },
+            {
+              "id": "OP15-046",
+              "count": 4
+            },
+            {
+              "id": "OP15-053",
+              "count": 4
+            },
+            {
+              "id": "OP15-052",
+              "count": 4
+            },
+            {
+              "id": "OP15-054",
+              "count": 4
+            },
+            {
+              "id": "OP15-056",
+              "count": 2
+            },
+            {
+              "id": "OP15-057",
+              "count": 3
+            },
+            {
+              "id": "OP12-060",
+              "count": 2
+            },
+            {
+              "id": "OP10-045",
+              "count": 4
+            },
+            {
+              "id": "OP10-060",
+              "count": 4
+            },
+            {
+              "id": "OP10-059",
+              "count": 3
+            },
+            {
+              "id": "OP09-118",
+              "count": 1
+            },
+            {
+              "id": "OP05-019",
+              "count": 3
+            },
+            {
+              "id": "OP07-051",
+              "count": 1
+            },
+            {
+              "id": "OP15-002",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 16",
+          "leader": "OP05-098",
+          "leaderId": "OP05-098",
+          "player": "MerryTCG",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP05-098:1,OP14-100:1,EB01-059:4,EB03-053:2,OP06-115:4,OP09-117:1,EB01-056:2,OP14-111:4,OP14-110:4,OP14-104:4,OP06-104:3,OP14-102:4,OP15-113:4,OP11-106:4,EB04-061:1,EB04-058:4,EB02-052:4&type=optcg",
+          "cards": [
+            {
+              "id": "OP05-098",
+              "count": 1
+            },
+            {
+              "id": "OP14-100",
+              "count": 1
+            },
+            {
+              "id": "EB01-059",
+              "count": 4
+            },
+            {
+              "id": "EB03-053",
+              "count": 2
+            },
+            {
+              "id": "OP06-115",
+              "count": 4
+            },
+            {
+              "id": "OP09-117",
+              "count": 1
+            },
+            {
+              "id": "EB01-056",
+              "count": 2
+            },
+            {
+              "id": "OP14-111",
+              "count": 4
+            },
+            {
+              "id": "OP14-110",
+              "count": 4
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "OP06-104",
+              "count": 3
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "OP15-113",
+              "count": 4
+            },
+            {
+              "id": "OP11-106",
+              "count": 4
+            },
+            {
+              "id": "EB04-061",
+              "count": 1
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "EB02-052",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "placing": "Top 32",
+          "leader": "OP15-002",
+          "leaderId": "OP15-002",
+          "player": "Mirco Morscio",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-040:4,OP15-053:4,OP15-046:4,OP15-054:4,OP15-057:2,OP10-059:2,OP15-021:3,OP15-020:4,OP15-056:2,OP10-045:4,OP15-052:4,OP10-060:4,OP05-019:3,OP10-049:2,OP12-060:3,OP09-118:1,OP15-002:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-040",
+              "count": 4
+            },
+            {
+              "id": "OP15-053",
+              "count": 4
+            },
+            {
+              "id": "OP15-046",
+              "count": 4
+            },
+            {
+              "id": "OP15-054",
+              "count": 4
+            },
+            {
+              "id": "OP15-057",
+              "count": 2
+            },
+            {
+              "id": "OP10-059",
+              "count": 2
+            },
+            {
+              "id": "OP15-021",
+              "count": 3
+            },
+            {
+              "id": "OP15-020",
+              "count": 4
+            },
+            {
+              "id": "OP15-056",
+              "count": 2
+            },
+            {
+              "id": "OP10-045",
+              "count": 4
+            },
+            {
+              "id": "OP15-052",
+              "count": 4
+            },
+            {
+              "id": "OP10-060",
+              "count": 4
+            },
+            {
+              "id": "OP05-019",
+              "count": 3
+            },
+            {
+              "id": "OP10-049",
+              "count": 2
+            },
+            {
+              "id": "OP12-060",
+              "count": 3
+            },
+            {
+              "id": "OP09-118",
+              "count": 1
+            },
+            {
+              "id": "OP15-002",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 32",
+          "leader": "OP15-058",
+          "leaderId": "OP15-058",
+          "player": "Ebisu",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-060:3,OP15-061:4,OP15-066:4,OP15-071:4,OP15-074:2,OP15-075:4,OP15-076:4,OP15-077:4,OP15-078:4,OP15-118:4,OP13-076:2,OP12-063:3,OP12-071:4,OP07-064:2,OP05-077:2,OP15-058:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-060",
+              "count": 3
+            },
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP15-066",
+              "count": 4
+            },
+            {
+              "id": "OP15-071",
+              "count": 4
+            },
+            {
+              "id": "OP15-074",
+              "count": 2
+            },
+            {
+              "id": "OP15-075",
+              "count": 4
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 4
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP15-118",
+              "count": 4
+            },
+            {
+              "id": "OP13-076",
+              "count": 2
+            },
+            {
+              "id": "OP12-063",
+              "count": 3
+            },
+            {
+              "id": "OP12-071",
+              "count": 4
+            },
+            {
+              "id": "OP07-064",
+              "count": 2
+            },
+            {
+              "id": "OP05-077",
+              "count": 2
+            },
+            {
+              "id": "OP15-058",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 32",
+          "leader": "OP15-058",
+          "leaderId": "OP15-058",
+          "player": "PaoloSitta",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-060:2,OP15-061:4,OP15-066:4,OP15-067:2,OP15-071:4,OP15-077:4,OP15-074:2,OP15-075:4,OP15-076:4,OP15-078:4,OP15-118:4,OP12-063:4,OP12-071:2,OP05-077:2,OP13-076:2,OP10-067:2,OP15-058:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-060",
+              "count": 2
+            },
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP15-066",
+              "count": 4
+            },
+            {
+              "id": "OP15-067",
+              "count": 2
+            },
+            {
+              "id": "OP15-071",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 4
+            },
+            {
+              "id": "OP15-074",
+              "count": 2
+            },
+            {
+              "id": "OP15-075",
+              "count": 4
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP15-118",
+              "count": 4
+            },
+            {
+              "id": "OP12-063",
+              "count": 4
+            },
+            {
+              "id": "OP12-071",
+              "count": 2
+            },
+            {
+              "id": "OP05-077",
+              "count": 2
+            },
+            {
+              "id": "OP13-076",
+              "count": 2
+            },
+            {
+              "id": "OP10-067",
+              "count": 2
+            },
+            {
+              "id": "OP15-058",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 32",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "Matte_rimo",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-047:1,OP15-119:1,EB04-058:3,OP14-104:4,OP14-102:4,OP14-110:3,OP14-111:4,OP13-042:3,OP11-106:4,OP12-112:2,P-096:4,EB03-053:4,EB03-055:4,OP06-104:4,EB03-060:4,PRB02-008:1,OP11-041:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-047",
+              "count": 1
+            },
+            {
+              "id": "OP15-119",
+              "count": 1
+            },
+            {
+              "id": "EB04-058",
+              "count": 3
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "OP14-110",
+              "count": 3
+            },
+            {
+              "id": "OP14-111",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 3
+            },
+            {
+              "id": "OP11-106",
+              "count": 4
+            },
+            {
+              "id": "OP12-112",
+              "count": 2
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP06-104",
+              "count": 4
+            },
+            {
+              "id": "EB03-060",
+              "count": 4
+            },
+            {
+              "id": "PRB02-008",
+              "count": 1
+            },
+            {
+              "id": "OP11-041",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 32",
+          "leader": "EB03-001",
+          "leaderId": "EB03-001",
+          "player": "Arca",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP13-012:4,EB03-024:4,OP11-054:4,EB03-006:3,OP10-011:4,ST23-001:4,EB04-024:4,EB04-023:3,OP13-058:2,OP09-009:4,OP06-007:3,OP05-118:1,OP08-118:3,EB04-007:2,OP10-045:4,OP06-058:1,EB03-001:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP13-012",
+              "count": 4
+            },
+            {
+              "id": "EB03-024",
+              "count": 4
+            },
+            {
+              "id": "OP11-054",
+              "count": 4
+            },
+            {
+              "id": "EB03-006",
+              "count": 3
+            },
+            {
+              "id": "OP10-011",
+              "count": 4
+            },
+            {
+              "id": "ST23-001",
+              "count": 4
+            },
+            {
+              "id": "EB04-024",
+              "count": 4
+            },
+            {
+              "id": "EB04-023",
+              "count": 3
+            },
+            {
+              "id": "OP13-058",
+              "count": 2
+            },
+            {
+              "id": "OP09-009",
+              "count": 4
+            },
+            {
+              "id": "OP06-007",
+              "count": 3
+            },
+            {
+              "id": "OP05-118",
+              "count": 1
+            },
+            {
+              "id": "OP08-118",
+              "count": 3
+            },
+            {
+              "id": "EB04-007",
+              "count": 2
+            },
+            {
+              "id": "OP10-045",
+              "count": 4
+            },
+            {
+              "id": "OP06-058",
+              "count": 1
+            },
+            {
+              "id": "EB03-001",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 32",
+          "leader": "OP15-058",
+          "leaderId": "OP15-058",
+          "player": "Frle",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-061:4,OP15-066:4,OP15-071:4,OP15-074:1,OP15-075:4,OP15-076:4,OP15-077:4,OP15-078:4,OP15-118:4,OP12-071:4,OP07-064:3,OP13-076:1,OP05-077:3,OP09-072:3,OP10-067:3,OP15-058:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP15-066",
+              "count": 4
+            },
+            {
+              "id": "OP15-071",
+              "count": 4
+            },
+            {
+              "id": "OP15-074",
+              "count": 1
+            },
+            {
+              "id": "OP15-075",
+              "count": 4
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 4
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP15-118",
+              "count": 4
+            },
+            {
+              "id": "OP12-071",
+              "count": 4
+            },
+            {
+              "id": "OP07-064",
+              "count": 3
+            },
+            {
+              "id": "OP13-076",
+              "count": 1
+            },
+            {
+              "id": "OP05-077",
+              "count": 3
+            },
+            {
+              "id": "OP09-072",
+              "count": 3
+            },
+            {
+              "id": "OP10-067",
+              "count": 3
+            },
+            {
+              "id": "OP15-058",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 32",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "Max711",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=EB04-058:3,OP15-047:1,OP14-102:4,OP14-110:4,OP14-111:4,OP13-042:2,OP14-104:4,EB03-053:4,P-096:4,EB03-060:4,OP07-056:1,OP06-106:2,OP11-106:4,EB03-055:4,OP06-104:4,PRB02-008:1,OP11-041:1&type=optcg",
+          "cards": [
+            {
+              "id": "EB04-058",
+              "count": 3
+            },
+            {
+              "id": "OP15-047",
+              "count": 1
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "OP14-110",
+              "count": 4
+            },
+            {
+              "id": "OP14-111",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 2
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "EB03-060",
+              "count": 4
+            },
+            {
+              "id": "OP07-056",
+              "count": 1
+            },
+            {
+              "id": "OP06-106",
+              "count": 2
+            },
+            {
+              "id": "OP11-106",
+              "count": 4
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP06-104",
+              "count": 4
+            },
+            {
+              "id": "PRB02-008",
+              "count": 1
+            },
+            {
+              "id": "OP11-041",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 32",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "LOL345kian",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP14-102:4,OP14-104:4,OP14-110:4,OP14-111:3,EB03-055:4,P-096:4,EB03-053:4,OP06-104:4,EB03-060:4,OP11-106:4,EB04-058:4,OP15-047:1,OP12-112:2,OP13-042:3,PRB02-008:1,OP11-041:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "OP14-110",
+              "count": 4
+            },
+            {
+              "id": "OP14-111",
+              "count": 3
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "OP06-104",
+              "count": 4
+            },
+            {
+              "id": "EB03-060",
+              "count": 4
+            },
+            {
+              "id": "OP11-106",
+              "count": 4
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "OP15-047",
+              "count": 1
+            },
+            {
+              "id": "OP12-112",
+              "count": 2
+            },
+            {
+              "id": "OP13-042",
+              "count": 3
+            },
+            {
+              "id": "PRB02-008",
+              "count": 1
+            },
+            {
+              "id": "OP11-041",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 32",
+          "leader": "OP15-058",
+          "leaderId": "OP15-058",
+          "player": "Flèche",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-058:1,OP15-061:4,OP15-066:4,OP15-071:4,OP15-076:4,OP15-075:4,OP15-077:4,OP15-078:4,OP15-118:4,OP12-071:4,OP05-077:3,OP09-072:3,OP10-067:3,OP13-076:2,OP07-064:3&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-058",
+              "count": 1
+            },
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP15-066",
+              "count": 4
+            },
+            {
+              "id": "OP15-071",
+              "count": 4
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP15-075",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 4
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP15-118",
+              "count": 4
+            },
+            {
+              "id": "OP12-071",
+              "count": 4
+            },
+            {
+              "id": "OP05-077",
+              "count": 3
+            },
+            {
+              "id": "OP09-072",
+              "count": 3
+            },
+            {
+              "id": "OP10-067",
+              "count": 3
+            },
+            {
+              "id": "OP13-076",
+              "count": 2
+            },
+            {
+              "id": "OP07-064",
+              "count": 3
+            }
+          ]
+        },
+        {
+          "placing": "Top 32",
+          "leader": "OP15-002",
+          "leaderId": "OP15-002",
+          "player": "Corentin",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-040:4,OP15-046:4,OP15-053:4,OP15-054:4,OP15-056:2,OP15-057:2,OP15-021:4,OP15-020:4,OP09-118:1,OP10-045:4,OP10-060:4,OP05-006:2,OP05-015:2,OP05-019:3,OP15-052:4,OP10-059:2,OP15-002:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-040",
+              "count": 4
+            },
+            {
+              "id": "OP15-046",
+              "count": 4
+            },
+            {
+              "id": "OP15-053",
+              "count": 4
+            },
+            {
+              "id": "OP15-054",
+              "count": 4
+            },
+            {
+              "id": "OP15-056",
+              "count": 2
+            },
+            {
+              "id": "OP15-057",
+              "count": 2
+            },
+            {
+              "id": "OP15-021",
+              "count": 4
+            },
+            {
+              "id": "OP15-020",
+              "count": 4
+            },
+            {
+              "id": "OP09-118",
+              "count": 1
+            },
+            {
+              "id": "OP10-045",
+              "count": 4
+            },
+            {
+              "id": "OP10-060",
+              "count": 4
+            },
+            {
+              "id": "OP05-006",
+              "count": 2
+            },
+            {
+              "id": "OP05-015",
+              "count": 2
+            },
+            {
+              "id": "OP05-019",
+              "count": 3
+            },
+            {
+              "id": "OP15-052",
+              "count": 4
+            },
+            {
+              "id": "OP10-059",
+              "count": 2
+            },
+            {
+              "id": "OP15-002",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 32",
+          "leader": "OP15-002",
+          "leaderId": "OP15-002",
+          "player": "woodywood",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-020:4,OP15-021:4,OP15-040:4,OP15-046:4,OP15-052:4,OP10-060:4,OP15-053:4,OP15-054:4,OP15-056:4,OP15-057:3,OP05-019:2,OP05-015:3,OP10-045:4,OP09-118:1,OP10-059:1,OP15-002:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-020",
+              "count": 4
+            },
+            {
+              "id": "OP15-021",
+              "count": 4
+            },
+            {
+              "id": "OP15-040",
+              "count": 4
+            },
+            {
+              "id": "OP15-046",
+              "count": 4
+            },
+            {
+              "id": "OP15-052",
+              "count": 4
+            },
+            {
+              "id": "OP10-060",
+              "count": 4
+            },
+            {
+              "id": "OP15-053",
+              "count": 4
+            },
+            {
+              "id": "OP15-054",
+              "count": 4
+            },
+            {
+              "id": "OP15-056",
+              "count": 4
+            },
+            {
+              "id": "OP15-057",
+              "count": 3
+            },
+            {
+              "id": "OP05-019",
+              "count": 2
+            },
+            {
+              "id": "OP05-015",
+              "count": 3
+            },
+            {
+              "id": "OP10-045",
+              "count": 4
+            },
+            {
+              "id": "OP09-118",
+              "count": 1
+            },
+            {
+              "id": "OP10-059",
+              "count": 1
+            },
+            {
+              "id": "OP15-002",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 32",
+          "leader": "OP15-058",
+          "leaderId": "OP15-058",
+          "player": "railz0",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-061:4,OP15-066:4,OP15-067:1,OP12-071:4,OP15-071:3,OP09-072:3,OP10-067:3,OP15-060:1,OP15-118:4,OP07-064:2,OP15-075:4,OP15-077:4,OP15-078:4,OP15-076:4,OP13-076:2,OP05-077:3,OP15-058:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP15-066",
+              "count": 4
+            },
+            {
+              "id": "OP15-067",
+              "count": 1
+            },
+            {
+              "id": "OP12-071",
+              "count": 4
+            },
+            {
+              "id": "OP15-071",
+              "count": 3
+            },
+            {
+              "id": "OP09-072",
+              "count": 3
+            },
+            {
+              "id": "OP10-067",
+              "count": 3
+            },
+            {
+              "id": "OP15-060",
+              "count": 1
+            },
+            {
+              "id": "OP15-118",
+              "count": 4
+            },
+            {
+              "id": "OP07-064",
+              "count": 2
+            },
+            {
+              "id": "OP15-075",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 4
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP13-076",
+              "count": 2
+            },
+            {
+              "id": "OP05-077",
+              "count": 3
+            },
+            {
+              "id": "OP15-058",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 32",
+          "leader": "OP15-058",
+          "leaderId": "OP15-058",
+          "player": "Sempere95",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-066:3,OP15-067:3,OP15-061:4,OP12-071:2,OP15-071:4,OP12-063:3,OP07-064:2,OP15-060:3,OP15-118:4,OP15-074:2,OP15-075:4,OP15-076:4,OP15-077:4,OP15-078:4,OP05-077:2,OP13-076:2,OP15-058:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-066",
+              "count": 3
+            },
+            {
+              "id": "OP15-067",
+              "count": 3
+            },
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP12-071",
+              "count": 2
+            },
+            {
+              "id": "OP15-071",
+              "count": 4
+            },
+            {
+              "id": "OP12-063",
+              "count": 3
+            },
+            {
+              "id": "OP07-064",
+              "count": 2
+            },
+            {
+              "id": "OP15-060",
+              "count": 3
+            },
+            {
+              "id": "OP15-118",
+              "count": 4
+            },
+            {
+              "id": "OP15-074",
+              "count": 2
+            },
+            {
+              "id": "OP15-075",
+              "count": 4
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 4
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP05-077",
+              "count": 2
+            },
+            {
+              "id": "OP13-076",
+              "count": 2
+            },
+            {
+              "id": "OP15-058",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 32",
+          "leader": "OP15-058",
+          "leaderId": "OP15-058",
+          "player": "Miky97",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-060:2,OP15-061:4,OP15-067:3,OP15-071:4,OP15-074:1,OP15-076:4,OP15-077:3,OP15-075:4,OP15-078:4,OP15-118:4,OP15-066:4,OP12-071:3,OP13-076:4,OP05-077:2,OP12-063:2,OP07-064:2,OP15-058:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-060",
+              "count": 2
+            },
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP15-067",
+              "count": 3
+            },
+            {
+              "id": "OP15-071",
+              "count": 4
+            },
+            {
+              "id": "OP15-074",
+              "count": 1
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 3
+            },
+            {
+              "id": "OP15-075",
+              "count": 4
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP15-118",
+              "count": 4
+            },
+            {
+              "id": "OP15-066",
+              "count": 4
+            },
+            {
+              "id": "OP12-071",
+              "count": 3
+            },
+            {
+              "id": "OP13-076",
+              "count": 4
+            },
+            {
+              "id": "OP05-077",
+              "count": 2
+            },
+            {
+              "id": "OP12-063",
+              "count": 2
+            },
+            {
+              "id": "OP07-064",
+              "count": 2
+            },
+            {
+              "id": "OP15-058",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 32",
+          "leader": "OP15-058",
+          "leaderId": "OP15-058",
+          "player": "actiondiri",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-061:4,OP15-066:4,OP12-071:4,OP15-071:4,OP12-063:3,OP10-067:3,OP15-060:2,OP15-118:4,OP07-064:2,OP15-075:3,OP15-076:4,OP15-077:4,OP15-078:4,OP13-076:2,OP05-077:2,OP15-074:1,OP15-058:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP15-066",
+              "count": 4
+            },
+            {
+              "id": "OP12-071",
+              "count": 4
+            },
+            {
+              "id": "OP15-071",
+              "count": 4
+            },
+            {
+              "id": "OP12-063",
+              "count": 3
+            },
+            {
+              "id": "OP10-067",
+              "count": 3
+            },
+            {
+              "id": "OP15-060",
+              "count": 2
+            },
+            {
+              "id": "OP15-118",
+              "count": 4
+            },
+            {
+              "id": "OP07-064",
+              "count": 2
+            },
+            {
+              "id": "OP15-075",
+              "count": 3
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 4
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP13-076",
+              "count": 2
+            },
+            {
+              "id": "OP05-077",
+              "count": 2
+            },
+            {
+              "id": "OP15-074",
+              "count": 1
+            },
+            {
+              "id": "OP15-058",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "placing": "Top 32",
+          "leader": "OP15-058",
+          "leaderId": "OP15-058",
+          "player": "Enricomaria Rustico",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP12-071:2,OP15-067:2,OP15-061:4,OP15-066:4,OP15-071:4,OP12-063:4,OP10-067:2,OP15-060:2,OP15-118:4,OP15-075:4,OP15-076:4,OP15-077:4,OP15-078:4,OP15-074:2,OP13-076:2,OP05-077:2,OP15-058:1&type=optcg",
+          "cards": [
+            {
+              "id": "OP12-071",
+              "count": 2
+            },
+            {
+              "id": "OP15-067",
+              "count": 2
+            },
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP15-066",
+              "count": 4
+            },
+            {
+              "id": "OP15-071",
+              "count": 4
+            },
+            {
+              "id": "OP12-063",
+              "count": 4
+            },
+            {
+              "id": "OP10-067",
+              "count": 2
+            },
+            {
+              "id": "OP15-060",
+              "count": 2
+            },
+            {
+              "id": "OP15-118",
+              "count": 4
+            },
+            {
+              "id": "OP15-075",
+              "count": 4
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 4
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP15-074",
+              "count": 2
+            },
+            {
+              "id": "OP13-076",
+              "count": 2
+            },
+            {
+              "id": "OP05-077",
+              "count": 2
+            },
+            {
+              "id": "OP15-058",
+              "count": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "[ENG OP15.5] Chinoize Cup 2026 #43",
+      "url": "https://egmanevents.com/one-piece-op15-tournaments/chinoizecup-2026-43",
+      "type": "Unofficial Event",
+      "date": "Apr 13",
+      "players": 64,
+      "rounds": "",
+      "leaderDistribution": {
+        "OP11-041": 3,
+        "OP13-001": 2,
+        "OP15-058": 1,
+        "OP15-002": 1,
+        "OP13-002": 1
+      },
+      "decks": [
+        {
+          "placing": "1st",
+          "leader": "OP13-001",
+          "leaderId": "OP13-001",
+          "player": "ricmasterflash",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP13-001:1,EB04-002:4,OP13-016:4,OP15-035:4,OP01-016:2,ST21-003:3,OP14-022:4,OP14-031:4,OP13-027:4,OP13-118:3,OP15-032:3,EB04-007:3,OP13-040:2,OP05-038:4,OP08-036:4,EB02-021:2&type=optcg",
+          "cards": [
+            {
+              "id": "OP13-001",
+              "count": 1
+            },
+            {
+              "id": "EB04-002",
+              "count": 4
+            },
+            {
+              "id": "OP13-016",
+              "count": 4
+            },
+            {
+              "id": "OP15-035",
+              "count": 4
+            },
+            {
+              "id": "OP01-016",
+              "count": 2
+            },
+            {
+              "id": "ST21-003",
+              "count": 3
+            },
+            {
+              "id": "OP14-022",
+              "count": 4
+            },
+            {
+              "id": "OP14-031",
+              "count": 4
+            },
+            {
+              "id": "OP13-027",
+              "count": 4
+            },
+            {
+              "id": "OP13-118",
+              "count": 3
+            },
+            {
+              "id": "OP15-032",
+              "count": 3
+            },
+            {
+              "id": "EB04-007",
+              "count": 3
+            },
+            {
+              "id": "OP13-040",
+              "count": 2
+            },
+            {
+              "id": "OP05-038",
+              "count": 4
+            },
+            {
+              "id": "OP08-036",
+              "count": 4
+            },
+            {
+              "id": "EB02-021",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "placing": "2nd",
+          "leader": "OP13-001",
+          "leaderId": "OP13-001",
+          "player": "Gefen H",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP13-001:1,EB04-002:4,OP13-016:4,OP15-035:4,EB02-017:3,ST21-003:3,OP14-022:4,OP14-031:4,OP13-027:4,OP13-118:4,OP15-032:3,EB04-007:3,OP06-118:2,OP05-038:4,OP08-036:4&type=optcg",
+          "cards": [
+            {
+              "id": "OP13-001",
+              "count": 1
+            },
+            {
+              "id": "EB04-002",
+              "count": 4
+            },
+            {
+              "id": "OP13-016",
+              "count": 4
+            },
+            {
+              "id": "OP15-035",
+              "count": 4
+            },
+            {
+              "id": "EB02-017",
+              "count": 3
+            },
+            {
+              "id": "ST21-003",
+              "count": 3
+            },
+            {
+              "id": "OP14-022",
+              "count": 4
+            },
+            {
+              "id": "OP14-031",
+              "count": 4
+            },
+            {
+              "id": "OP13-027",
+              "count": 4
+            },
+            {
+              "id": "OP13-118",
+              "count": 4
+            },
+            {
+              "id": "OP15-032",
+              "count": 3
+            },
+            {
+              "id": "EB04-007",
+              "count": 3
+            },
+            {
+              "id": "OP06-118",
+              "count": 2
+            },
+            {
+              "id": "OP05-038",
+              "count": 4
+            },
+            {
+              "id": "OP08-036",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "placing": "3rd",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "Tecturo",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP11-041:1,OP14-102:4,P-096:4,OP11-106:4,OP15-047:2,OP14-110:4,OP06-104:3,OP14-111:3,OP12-112:2,OP15-113:1,EB03-053:4,EB04-058:4,EB03-055:4,OP14-104:4,OP13-042:4,EB03-060:3&type=optcg",
+          "cards": [
+            {
+              "id": "OP11-041",
+              "count": 1
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "OP11-106",
+              "count": 4
+            },
+            {
+              "id": "OP15-047",
+              "count": 2
+            },
+            {
+              "id": "OP14-110",
+              "count": 4
+            },
+            {
+              "id": "OP06-104",
+              "count": 3
+            },
+            {
+              "id": "OP14-111",
+              "count": 3
+            },
+            {
+              "id": "OP12-112",
+              "count": 2
+            },
+            {
+              "id": "OP15-113",
+              "count": 1
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 4
+            },
+            {
+              "id": "EB03-060",
+              "count": 3
+            }
+          ]
+        },
+        {
+          "placing": "4th",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "loremassa",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP11-041:1,OP14-102:4,P-096:4,OP11-106:3,OP15-047:1,OP14-110:4,OP12-112:3,OP14-111:3,PRB02-008:2,OP15-113:2,EB03-053:4,EB04-058:4,OP07-051:2,EB03-055:4,OP14-104:4,OP13-042:3,EB03-060:3&type=optcg",
+          "cards": [
+            {
+              "id": "OP11-041",
+              "count": 1
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "OP11-106",
+              "count": 3
+            },
+            {
+              "id": "OP15-047",
+              "count": 1
+            },
+            {
+              "id": "OP14-110",
+              "count": 4
+            },
+            {
+              "id": "OP12-112",
+              "count": 3
+            },
+            {
+              "id": "OP14-111",
+              "count": 3
+            },
+            {
+              "id": "PRB02-008",
+              "count": 2
+            },
+            {
+              "id": "OP15-113",
+              "count": 2
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "OP07-051",
+              "count": 2
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 3
+            },
+            {
+              "id": "EB03-060",
+              "count": 3
+            }
+          ]
+        },
+        {
+          "placing": "5th",
+          "leader": "OP15-058",
+          "leaderId": "OP15-058",
+          "player": "lordRafa",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-058:1,OP15-061:4,OP15-066:4,OP12-071:2,OP15-067:2,OP15-071:4,OP12-063:3,OP10-067:2,OP15-118:4,OP07-064:2,OP15-060:1,OP15-075:4,OP15-076:4,OP15-077:4,OP15-078:4,OP13-076:2,OP15-074:2,OP05-077:2&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-058",
+              "count": 1
+            },
+            {
+              "id": "OP15-061",
+              "count": 4
+            },
+            {
+              "id": "OP15-066",
+              "count": 4
+            },
+            {
+              "id": "OP12-071",
+              "count": 2
+            },
+            {
+              "id": "OP15-067",
+              "count": 2
+            },
+            {
+              "id": "OP15-071",
+              "count": 4
+            },
+            {
+              "id": "OP12-063",
+              "count": 3
+            },
+            {
+              "id": "OP10-067",
+              "count": 2
+            },
+            {
+              "id": "OP15-118",
+              "count": 4
+            },
+            {
+              "id": "OP07-064",
+              "count": 2
+            },
+            {
+              "id": "OP15-060",
+              "count": 1
+            },
+            {
+              "id": "OP15-075",
+              "count": 4
+            },
+            {
+              "id": "OP15-076",
+              "count": 4
+            },
+            {
+              "id": "OP15-077",
+              "count": 4
+            },
+            {
+              "id": "OP15-078",
+              "count": 4
+            },
+            {
+              "id": "OP13-076",
+              "count": 2
+            },
+            {
+              "id": "OP15-074",
+              "count": 2
+            },
+            {
+              "id": "OP05-077",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "placing": "6th",
+          "leader": "OP15-002",
+          "leaderId": "OP15-002",
+          "player": "ImpelDown",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-002:1,OP15-040:4,OP15-052:4,OP15-053:4,OP05-015:3,OP10-045:4,OP10-049:2,OP15-046:4,OP09-118:1,OP10-059:4,OP05-019:2,OP15-021:4,OP15-054:4,OP10-060:4,OP15-020:4,OP15-056:2&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-002",
+              "count": 1
+            },
+            {
+              "id": "OP15-040",
+              "count": 4
+            },
+            {
+              "id": "OP15-052",
+              "count": 4
+            },
+            {
+              "id": "OP15-053",
+              "count": 4
+            },
+            {
+              "id": "OP05-015",
+              "count": 3
+            },
+            {
+              "id": "OP10-045",
+              "count": 4
+            },
+            {
+              "id": "OP10-049",
+              "count": 2
+            },
+            {
+              "id": "OP15-046",
+              "count": 4
+            },
+            {
+              "id": "OP09-118",
+              "count": 1
+            },
+            {
+              "id": "OP10-059",
+              "count": 4
+            },
+            {
+              "id": "OP05-019",
+              "count": 2
+            },
+            {
+              "id": "OP15-021",
+              "count": 4
+            },
+            {
+              "id": "OP15-054",
+              "count": 4
+            },
+            {
+              "id": "OP10-060",
+              "count": 4
+            },
+            {
+              "id": "OP15-020",
+              "count": 4
+            },
+            {
+              "id": "OP15-056",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "placing": "7th",
+          "leader": "OP13-002",
+          "leaderId": "OP13-002",
+          "player": "PROidan",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP13-002:1,OP13-016:4,ST15-004:4,ST22-002:4,OP13-043:2,OP15-047:2,PRB02-008:4,OP08-040:2,OP13-054:4,ST23-001:4,OP08-047:4,OP07-051:3,EB04-007:4,OP13-042:4,OP09-118:1,ST22-015:4&type=optcg",
+          "cards": [
+            {
+              "id": "OP13-002",
+              "count": 1
+            },
+            {
+              "id": "OP13-016",
+              "count": 4
+            },
+            {
+              "id": "ST15-004",
+              "count": 4
+            },
+            {
+              "id": "ST22-002",
+              "count": 4
+            },
+            {
+              "id": "OP13-043",
+              "count": 2
+            },
+            {
+              "id": "OP15-047",
+              "count": 2
+            },
+            {
+              "id": "PRB02-008",
+              "count": 4
+            },
+            {
+              "id": "OP08-040",
+              "count": 2
+            },
+            {
+              "id": "OP13-054",
+              "count": 4
+            },
+            {
+              "id": "ST23-001",
+              "count": 4
+            },
+            {
+              "id": "OP08-047",
+              "count": 4
+            },
+            {
+              "id": "OP07-051",
+              "count": 3
+            },
+            {
+              "id": "EB04-007",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 4
+            },
+            {
+              "id": "OP09-118",
+              "count": 1
+            },
+            {
+              "id": "ST22-015",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "placing": "8th",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "Seki",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP11-041:1,OP14-102:4,P-096:4,OP11-106:4,OP14-110:4,OP14-111:4,OP06-104:3,OP12-112:2,OP15-113:2,EB03-053:4,EB04-058:4,EB03-055:4,OP14-104:4,OP13-042:3,EB03-060:4&type=optcg",
+          "cards": [
+            {
+              "id": "OP11-041",
+              "count": 1
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "OP11-106",
+              "count": 4
+            },
+            {
+              "id": "OP14-110",
+              "count": 4
+            },
+            {
+              "id": "OP14-111",
+              "count": 4
+            },
+            {
+              "id": "OP06-104",
+              "count": 3
+            },
+            {
+              "id": "OP12-112",
+              "count": 2
+            },
+            {
+              "id": "OP15-113",
+              "count": 2
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 3
+            },
+            {
+              "id": "EB03-060",
+              "count": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "[ENG OP15.5] Chinoize Cup 2026 #44",
+      "url": "https://egmanevents.com/one-piece-op15-tournaments/chinoizecup-2026-44",
+      "type": "Unofficial Event",
+      "date": "Apr 16",
+      "players": 64,
+      "rounds": "",
+      "leaderDistribution": {
+        "OP11-041": 3,
+        "OP15-002": 1,
+        "OP14-020": 1,
+        "OP13-002": 1,
+        "OP05-098": 1
+      },
+      "decks": [
+        {
+          "placing": "1st",
+          "leader": "OP15-002",
+          "leaderId": "OP15-002",
+          "player": "Solmyr",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP15-002:1,OP15-040:4,OP15-052:4,OP15-053:4,OP05-015:3,OP10-045:4,OP10-049:2,OP15-046:4,OP09-118:1,OP10-059:4,OP05-019:2,OP15-021:4,OP15-054:4,OP10-060:4,OP15-020:4,OP15-056:2&type=optcg",
+          "cards": [
+            {
+              "id": "OP15-002",
+              "count": 1
+            },
+            {
+              "id": "OP15-040",
+              "count": 4
+            },
+            {
+              "id": "OP15-052",
+              "count": 4
+            },
+            {
+              "id": "OP15-053",
+              "count": 4
+            },
+            {
+              "id": "OP05-015",
+              "count": 3
+            },
+            {
+              "id": "OP10-045",
+              "count": 4
+            },
+            {
+              "id": "OP10-049",
+              "count": 2
+            },
+            {
+              "id": "OP15-046",
+              "count": 4
+            },
+            {
+              "id": "OP09-118",
+              "count": 1
+            },
+            {
+              "id": "OP10-059",
+              "count": 4
+            },
+            {
+              "id": "OP05-019",
+              "count": 2
+            },
+            {
+              "id": "OP15-021",
+              "count": 4
+            },
+            {
+              "id": "OP15-054",
+              "count": 4
+            },
+            {
+              "id": "OP10-060",
+              "count": 4
+            },
+            {
+              "id": "OP15-020",
+              "count": 4
+            },
+            {
+              "id": "OP15-056",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "placing": "2nd",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "Legandes",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP11-041:1,OP14-102:4,P-096:4,OP11-106:4,OP15-047:1,OP14-110:4,OP14-111:4,OP06-104:3,OP12-112:2,OP15-113:1,EB03-053:4,EB04-058:4,EB03-055:4,OP14-104:4,OP13-042:4,EB03-060:3&type=optcg",
+          "cards": [
+            {
+              "id": "OP11-041",
+              "count": 1
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "OP11-106",
+              "count": 4
+            },
+            {
+              "id": "OP15-047",
+              "count": 1
+            },
+            {
+              "id": "OP14-110",
+              "count": 4
+            },
+            {
+              "id": "OP14-111",
+              "count": 4
+            },
+            {
+              "id": "OP06-104",
+              "count": 3
+            },
+            {
+              "id": "OP12-112",
+              "count": 2
+            },
+            {
+              "id": "OP15-113",
+              "count": 1
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 4
+            },
+            {
+              "id": "EB03-060",
+              "count": 3
+            }
+          ]
+        },
+        {
+          "placing": "3rd",
+          "leader": "OP14-020",
+          "leaderId": "OP14-020",
+          "player": "Captivat3",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP14-020:1,OP12-034:4,OP15-035:4,EB01-015:2,ST02-007:2,ST24-002:4,PRB02-006:2,OP12-118:4,OP07-026:3,OP10-030:2,OP13-031:4,OP14-119:3,ST24-004:4,OP13-040:4,OP06-038:3,OP12-037:2,OP08-036:1,OP14-039:2&type=optcg",
+          "cards": [
+            {
+              "id": "OP14-020",
+              "count": 1
+            },
+            {
+              "id": "OP12-034",
+              "count": 4
+            },
+            {
+              "id": "OP15-035",
+              "count": 4
+            },
+            {
+              "id": "EB01-015",
+              "count": 2
+            },
+            {
+              "id": "ST02-007",
+              "count": 2
+            },
+            {
+              "id": "ST24-002",
+              "count": 4
+            },
+            {
+              "id": "PRB02-006",
+              "count": 2
+            },
+            {
+              "id": "OP12-118",
+              "count": 4
+            },
+            {
+              "id": "OP07-026",
+              "count": 3
+            },
+            {
+              "id": "OP10-030",
+              "count": 2
+            },
+            {
+              "id": "OP13-031",
+              "count": 4
+            },
+            {
+              "id": "OP14-119",
+              "count": 3
+            },
+            {
+              "id": "ST24-004",
+              "count": 4
+            },
+            {
+              "id": "OP13-040",
+              "count": 4
+            },
+            {
+              "id": "OP06-038",
+              "count": 3
+            },
+            {
+              "id": "OP12-037",
+              "count": 2
+            },
+            {
+              "id": "OP08-036",
+              "count": 1
+            },
+            {
+              "id": "OP14-039",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "placing": "4th",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "Martix",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP11-041:1,OP14-102:4,P-096:3,OP11-106:3,OP06-106:2,OP14-111:4,OP06-104:3,OP14-110:3,PRB02-008:1,OP13-104:1,EB03-053:4,EB04-058:4,EB03-055:4,OP14-104:4,OP13-042:3,EB03-060:3,OP07-056:1,OP13-117:3&type=optcg",
+          "cards": [
+            {
+              "id": "OP11-041",
+              "count": 1
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "P-096",
+              "count": 3
+            },
+            {
+              "id": "OP11-106",
+              "count": 3
+            },
+            {
+              "id": "OP06-106",
+              "count": 2
+            },
+            {
+              "id": "OP14-111",
+              "count": 4
+            },
+            {
+              "id": "OP06-104",
+              "count": 3
+            },
+            {
+              "id": "OP14-110",
+              "count": 3
+            },
+            {
+              "id": "PRB02-008",
+              "count": 1
+            },
+            {
+              "id": "OP13-104",
+              "count": 1
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 3
+            },
+            {
+              "id": "EB03-060",
+              "count": 3
+            },
+            {
+              "id": "OP07-056",
+              "count": 1
+            },
+            {
+              "id": "OP13-117",
+              "count": 3
+            }
+          ]
+        },
+        {
+          "placing": "5th",
+          "leader": "OP13-002",
+          "leaderId": "OP13-002",
+          "player": "Lexinator22",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP13-002:1,OP13-016:4,OP13-043:4,ST22-002:4,ST15-004:2,OP08-040:4,PRB02-008:4,OP13-054:4,OP08-047:4,ST23-001:3,OP07-051:3,EB04-007:4,OP13-042:4,OP09-118:2,ST22-015:4&type=optcg",
+          "cards": [
+            {
+              "id": "OP13-002",
+              "count": 1
+            },
+            {
+              "id": "OP13-016",
+              "count": 4
+            },
+            {
+              "id": "OP13-043",
+              "count": 4
+            },
+            {
+              "id": "ST22-002",
+              "count": 4
+            },
+            {
+              "id": "ST15-004",
+              "count": 2
+            },
+            {
+              "id": "OP08-040",
+              "count": 4
+            },
+            {
+              "id": "PRB02-008",
+              "count": 4
+            },
+            {
+              "id": "OP13-054",
+              "count": 4
+            },
+            {
+              "id": "OP08-047",
+              "count": 4
+            },
+            {
+              "id": "ST23-001",
+              "count": 3
+            },
+            {
+              "id": "OP07-051",
+              "count": 3
+            },
+            {
+              "id": "EB04-007",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 4
+            },
+            {
+              "id": "OP09-118",
+              "count": 2
+            },
+            {
+              "id": "ST22-015",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "placing": "6th",
+          "leader": "OP05-098",
+          "leaderId": "OP05-098",
+          "player": "Sukhi J",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP05-098:1,OP14-102:4,EB01-056:2,OP11-106:4,OP14-100:1,OP14-110:4,OP14-111:4,OP15-113:4,OP06-104:3,EB04-058:4,EB03-053:2,OP14-104:4,EB02-052:4,EB04-061:1,OP06-115:4,OP09-117:1,EB01-059:4&type=optcg",
+          "cards": [
+            {
+              "id": "OP05-098",
+              "count": 1
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "EB01-056",
+              "count": 2
+            },
+            {
+              "id": "OP11-106",
+              "count": 4
+            },
+            {
+              "id": "OP14-100",
+              "count": 1
+            },
+            {
+              "id": "OP14-110",
+              "count": 4
+            },
+            {
+              "id": "OP14-111",
+              "count": 4
+            },
+            {
+              "id": "OP15-113",
+              "count": 4
+            },
+            {
+              "id": "OP06-104",
+              "count": 3
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "EB03-053",
+              "count": 2
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "EB02-052",
+              "count": 4
+            },
+            {
+              "id": "EB04-061",
+              "count": 1
+            },
+            {
+              "id": "OP06-115",
+              "count": 4
+            },
+            {
+              "id": "OP09-117",
+              "count": 1
+            },
+            {
+              "id": "EB01-059",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "placing": "7th",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "yeMatt",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP11-041:1,OP14-102:4,P-096:4,OP11-106:4,OP15-047:2,OP14-110:4,OP14-111:4,OP06-104:3,OP12-112:2,OP15-113:1,EB03-053:4,EB04-058:4,EB03-055:4,OP14-104:4,OP13-042:3,EB03-060:3&type=optcg",
+          "cards": [
+            {
+              "id": "OP11-041",
+              "count": 1
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "OP11-106",
+              "count": 4
+            },
+            {
+              "id": "OP15-047",
+              "count": 2
+            },
+            {
+              "id": "OP14-110",
+              "count": 4
+            },
+            {
+              "id": "OP14-111",
+              "count": 4
+            },
+            {
+              "id": "OP06-104",
+              "count": 3
+            },
+            {
+              "id": "OP12-112",
+              "count": 2
+            },
+            {
+              "id": "OP15-113",
+              "count": 1
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 3
+            },
+            {
+              "id": "EB03-060",
+              "count": 3
+            }
+          ]
+        },
+        {
+          "placing": "8th",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "iacca7",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP11-041:1,OP14-102:4,P-096:4,OP11-106:4,OP06-106:2,OP15-047:1,OP06-104:4,OP14-110:4,OP14-111:4,PRB02-008:1,EB03-053:4,EB04-058:4,EB03-055:4,OP14-104:3,OP13-042:4,EB03-060:3&type=optcg",
+          "cards": [
+            {
+              "id": "OP11-041",
+              "count": 1
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "OP11-106",
+              "count": 4
+            },
+            {
+              "id": "OP06-106",
+              "count": 2
+            },
+            {
+              "id": "OP15-047",
+              "count": 1
+            },
+            {
+              "id": "OP06-104",
+              "count": 4
+            },
+            {
+              "id": "OP14-110",
+              "count": 4
+            },
+            {
+              "id": "OP14-111",
+              "count": 4
+            },
+            {
+              "id": "PRB02-008",
+              "count": 1
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP14-104",
+              "count": 3
+            },
+            {
+              "id": "OP13-042",
+              "count": 4
+            },
+            {
+              "id": "EB03-060",
+              "count": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "[ENG OP15.5] Chinoize Cup 2026 #45",
+      "url": "https://egmanevents.com/one-piece-op15-tournaments/chinoizecup-2026-45",
+      "type": "Unofficial Event",
+      "date": "Apr 16",
+      "players": 64,
+      "rounds": "",
+      "leaderDistribution": {
+        "OP11-041": 5,
+        "OP13-002": 1,
+        "OP09-022": 1,
+        "OP14-001": 1
+      },
+      "decks": [
+        {
+          "placing": "1st",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "Ninssasin",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP11-041:1,OP15-052:3,P-096:4,OP11-106:4,OP03-048:2,OP15-047:2,OP12-112:4,OP15-113:4,PRB02-008:1,EB03-053:4,EB04-058:4,OP15-119:3,EB03-055:4,OP10-112:2,OP13-042:4,EB03-060:3,OP06-058:2&type=optcg",
+          "cards": [
+            {
+              "id": "OP11-041",
+              "count": 1
+            },
+            {
+              "id": "OP15-052",
+              "count": 3
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "OP11-106",
+              "count": 4
+            },
+            {
+              "id": "OP03-048",
+              "count": 2
+            },
+            {
+              "id": "OP15-047",
+              "count": 2
+            },
+            {
+              "id": "OP12-112",
+              "count": 4
+            },
+            {
+              "id": "OP15-113",
+              "count": 4
+            },
+            {
+              "id": "PRB02-008",
+              "count": 1
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "OP15-119",
+              "count": 3
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP10-112",
+              "count": 2
+            },
+            {
+              "id": "OP13-042",
+              "count": 4
+            },
+            {
+              "id": "EB03-060",
+              "count": 3
+            },
+            {
+              "id": "OP06-058",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "placing": "2nd",
+          "leader": "OP13-002",
+          "leaderId": "OP13-002",
+          "player": "Lexinator22",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP13-002:1,OP13-016:4,OP13-043:4,ST22-002:4,ST15-004:2,OP08-040:4,PRB02-008:4,OP13-054:4,OP08-047:4,ST23-001:3,OP07-051:3,EB04-007:4,OP13-042:4,OP09-118:2,ST22-015:4&type=optcg",
+          "cards": [
+            {
+              "id": "OP13-002",
+              "count": 1
+            },
+            {
+              "id": "OP13-016",
+              "count": 4
+            },
+            {
+              "id": "OP13-043",
+              "count": 4
+            },
+            {
+              "id": "ST22-002",
+              "count": 4
+            },
+            {
+              "id": "ST15-004",
+              "count": 2
+            },
+            {
+              "id": "OP08-040",
+              "count": 4
+            },
+            {
+              "id": "PRB02-008",
+              "count": 4
+            },
+            {
+              "id": "OP13-054",
+              "count": 4
+            },
+            {
+              "id": "OP08-047",
+              "count": 4
+            },
+            {
+              "id": "ST23-001",
+              "count": 3
+            },
+            {
+              "id": "OP07-051",
+              "count": 3
+            },
+            {
+              "id": "EB04-007",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 4
+            },
+            {
+              "id": "OP09-118",
+              "count": 2
+            },
+            {
+              "id": "ST22-015",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "placing": "3rd",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "Tecturo",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP11-041:1,OP14-102:4,P-096:4,OP11-106:4,OP15-047:2,OP14-110:4,OP06-104:3,OP14-111:3,OP12-112:2,OP15-113:1,EB03-053:4,EB04-058:4,EB03-055:4,OP14-104:4,OP13-042:4,EB03-060:3&type=optcg",
+          "cards": [
+            {
+              "id": "OP11-041",
+              "count": 1
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "OP11-106",
+              "count": 4
+            },
+            {
+              "id": "OP15-047",
+              "count": 2
+            },
+            {
+              "id": "OP14-110",
+              "count": 4
+            },
+            {
+              "id": "OP06-104",
+              "count": 3
+            },
+            {
+              "id": "OP14-111",
+              "count": 3
+            },
+            {
+              "id": "OP12-112",
+              "count": 2
+            },
+            {
+              "id": "OP15-113",
+              "count": 1
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 4
+            },
+            {
+              "id": "EB03-060",
+              "count": 3
+            }
+          ]
+        },
+        {
+          "placing": "4th",
+          "leader": "OP09-022",
+          "leaderId": "OP09-022",
+          "player": "ricmasterflash",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP09-022:1,EB01-015:4,OP10-037:4,OP10-033:3,OP09-037:4,EB03-037:3,OP10-025:4,OP10-029:4,OP09-027:3,OP09-031:3,OP10-024:3,OP13-028:3,OP15-078:3,OP13-040:3,OP09-041:2,OP12-037:2,OP07-076:2&type=optcg",
+          "cards": [
+            {
+              "id": "OP09-022",
+              "count": 1
+            },
+            {
+              "id": "EB01-015",
+              "count": 4
+            },
+            {
+              "id": "OP10-037",
+              "count": 4
+            },
+            {
+              "id": "OP10-033",
+              "count": 3
+            },
+            {
+              "id": "OP09-037",
+              "count": 4
+            },
+            {
+              "id": "EB03-037",
+              "count": 3
+            },
+            {
+              "id": "OP10-025",
+              "count": 4
+            },
+            {
+              "id": "OP10-029",
+              "count": 4
+            },
+            {
+              "id": "OP09-027",
+              "count": 3
+            },
+            {
+              "id": "OP09-031",
+              "count": 3
+            },
+            {
+              "id": "OP10-024",
+              "count": 3
+            },
+            {
+              "id": "OP13-028",
+              "count": 3
+            },
+            {
+              "id": "OP15-078",
+              "count": 3
+            },
+            {
+              "id": "OP13-040",
+              "count": 3
+            },
+            {
+              "id": "OP09-041",
+              "count": 2
+            },
+            {
+              "id": "OP12-037",
+              "count": 2
+            },
+            {
+              "id": "OP07-076",
+              "count": 2
+            }
+          ]
+        },
+        {
+          "placing": "5th",
+          "leader": "OP13-001",
+          "leaderId": "OP13-001",
+          "player": "snorlax1cynda",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP13-001:1,EB04-002:4,OP13-016:4,EB02-017:4,OP15-035:4,ST21-003:2,OP14-022:4,OP14-031:4,OP13-027:4,OP13-118:4,OP15-032:2,EB04-007:3,OP06-118:1,OP13-040:2,OP05-038:4,OP08-036:4&type=optcg",
+          "cards": [
+            {
+              "id": "OP13-001",
+              "count": 1
+            },
+            {
+              "id": "EB04-002",
+              "count": 4
+            },
+            {
+              "id": "OP13-016",
+              "count": 4
+            },
+            {
+              "id": "EB02-017",
+              "count": 4
+            },
+            {
+              "id": "OP15-035",
+              "count": 4
+            },
+            {
+              "id": "ST21-003",
+              "count": 2
+            },
+            {
+              "id": "OP14-022",
+              "count": 4
+            },
+            {
+              "id": "OP14-031",
+              "count": 4
+            },
+            {
+              "id": "OP13-027",
+              "count": 4
+            },
+            {
+              "id": "OP13-118",
+              "count": 4
+            },
+            {
+              "id": "OP15-032",
+              "count": 2
+            },
+            {
+              "id": "EB04-007",
+              "count": 3
+            },
+            {
+              "id": "OP06-118",
+              "count": 1
+            },
+            {
+              "id": "OP13-040",
+              "count": 2
+            },
+            {
+              "id": "OP05-038",
+              "count": 4
+            },
+            {
+              "id": "OP08-036",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "placing": "6th",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "Jamie V",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP11-041:1,OP14-102:4,P-096:4,OP11-106:4,OP15-047:1,OP14-111:4,OP12-112:3,OP14-110:3,OP06-104:2,OP15-113:2,EB03-053:4,EB04-058:4,EB03-055:4,OP14-104:4,OP13-042:3,EB03-060:4&type=optcg",
+          "cards": [
+            {
+              "id": "OP11-041",
+              "count": 1
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "OP11-106",
+              "count": 4
+            },
+            {
+              "id": "OP15-047",
+              "count": 1
+            },
+            {
+              "id": "OP14-111",
+              "count": 4
+            },
+            {
+              "id": "OP12-112",
+              "count": 3
+            },
+            {
+              "id": "OP14-110",
+              "count": 3
+            },
+            {
+              "id": "OP06-104",
+              "count": 2
+            },
+            {
+              "id": "OP15-113",
+              "count": 2
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 3
+            },
+            {
+              "id": "EB03-060",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "placing": "7th",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "Gortiz",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP11-041:1,OP14-102:4,P-096:4,OP11-106:3,OP15-047:1,OP14-110:4,OP06-104:3,OP12-112:3,OP14-111:3,PRB02-008:1,OP15-113:1,EB03-053:4,EB04-058:4,EB03-055:4,OP14-104:4,OP13-042:3,EB03-060:4&type=optcg",
+          "cards": [
+            {
+              "id": "OP11-041",
+              "count": 1
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "P-096",
+              "count": 4
+            },
+            {
+              "id": "OP11-106",
+              "count": 3
+            },
+            {
+              "id": "OP15-047",
+              "count": 1
+            },
+            {
+              "id": "OP14-110",
+              "count": 4
+            },
+            {
+              "id": "OP06-104",
+              "count": 3
+            },
+            {
+              "id": "OP12-112",
+              "count": 3
+            },
+            {
+              "id": "OP14-111",
+              "count": 3
+            },
+            {
+              "id": "PRB02-008",
+              "count": 1
+            },
+            {
+              "id": "OP15-113",
+              "count": 1
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 3
+            },
+            {
+              "id": "EB03-060",
+              "count": 4
+            }
+          ]
+        },
+        {
+          "placing": "8th",
+          "leader": "OP11-041",
+          "leaderId": "OP11-041",
+          "player": "Martix",
+          "deckUrl": "https://deckbuilder.egmanevents.com/?deck=OP11-041:1,OP14-102:4,P-096:3,OP11-106:3,OP06-106:2,OP14-111:4,OP06-104:3,OP14-110:3,PRB02-008:1,EB03-053:4,EB04-058:4,EB03-055:4,OP14-104:4,OP13-042:4,EB03-060:3,OP07-056:1,OP08-117:3&type=optcg",
+          "cards": [
+            {
+              "id": "OP11-041",
+              "count": 1
+            },
+            {
+              "id": "OP14-102",
+              "count": 4
+            },
+            {
+              "id": "P-096",
+              "count": 3
+            },
+            {
+              "id": "OP11-106",
+              "count": 3
+            },
+            {
+              "id": "OP06-106",
+              "count": 2
+            },
+            {
+              "id": "OP14-111",
+              "count": 4
+            },
+            {
+              "id": "OP06-104",
+              "count": 3
+            },
+            {
+              "id": "OP14-110",
+              "count": 3
+            },
+            {
+              "id": "PRB02-008",
+              "count": 1
+            },
+            {
+              "id": "EB03-053",
+              "count": 4
+            },
+            {
+              "id": "EB04-058",
+              "count": 4
+            },
+            {
+              "id": "EB03-055",
+              "count": 4
+            },
+            {
+              "id": "OP14-104",
+              "count": 4
+            },
+            {
+              "id": "OP13-042",
+              "count": 4
+            },
+            {
+              "id": "EB03-060",
+              "count": 3
+            },
+            {
+              "id": "OP07-056",
+              "count": 1
+            },
+            {
+              "id": "OP08-117",
+              "count": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "[ENG OP15.5] Egman Event’s Triple Win-A-Box",
       "url": "https://egmanevents.com/one-piece-op15-tournaments/egman-events-triple-win-a-box",
       "type": "Unofficial Event",
@@ -6362,20 +10608,94 @@
   ],
   "leaderStats": [
     {
-      "leader": "OP15-058",
-      "leaderId": "OP15-058",
-      "totalAppearances": 20,
-      "wins": 1,
+      "leader": "OP11-041",
+      "leaderId": "OP11-041",
+      "totalAppearances": 30,
+      "wins": 5,
       "second": 3,
       "third": 3,
-      "fourth": 2,
-      "top4": 9,
-      "top8": 11,
-      "top16": 0,
-      "top32": 0,
-      "uniquePlayers": 16,
+      "fourth": 4,
+      "top4": 15,
+      "top8": 10,
+      "top16": 2,
+      "top32": 3,
+      "uniquePlayers": 25,
       "uniqueEvents": 10,
       "players": [
+        "Luigi Amato",
+        "fedemeco",
+        "SSL Mauzio",
+        "INTERISTASBARAZZINO",
+        "Matte_rimo",
+        "Max711",
+        "LOL345kian",
+        "Tecturo",
+        "loremassa",
+        "Seki",
+        "Legandes",
+        "Martix",
+        "yeMatt",
+        "iacca7",
+        "Ninssasin",
+        "Jamie V",
+        "Gortiz",
+        "Gringoloco",
+        "NikolayBaydanov",
+        "Captivat3",
+        "lonotus",
+        "MenS",
+        "tsvaac",
+        "Wortaxx",
+        "Spartacus2224"
+      ],
+      "events": [
+        "[ENG OP15.5] PEC Occitania Lille Regionals",
+        "[ENG OP15.5] Chinoize Cup 2026 #43",
+        "[ENG OP15.5] Chinoize Cup 2026 #44",
+        "[ENG OP15.5] Chinoize Cup 2026 #45",
+        "[ENG OP15.5] Chinoize Cup 2026 #39",
+        "[ENG OP15.5] Chinoize Cup 2026 #41",
+        "[ENG OP15.5] Chinoize Cup 2026 #42",
+        "[ENG OP15.1] Chinoize Cup 2026 #38",
+        "[ENG OP15] Chinoize Cup 2026 #35",
+        "[ENG OP15] Chinoize Cup 2026 #34"
+      ],
+      "points": 166,
+      "winRate": 17,
+      "conversionRate": 83,
+      "metaShare": 22
+    },
+    {
+      "leader": "OP15-058",
+      "leaderId": "OP15-058",
+      "totalAppearances": 36,
+      "wins": 1,
+      "second": 4,
+      "third": 3,
+      "fourth": 2,
+      "top4": 10,
+      "top8": 13,
+      "top16": 4,
+      "top32": 9,
+      "uniquePlayers": 31,
+      "uniqueEvents": 12,
+      "players": [
+        "Progress2126",
+        "Yonas",
+        "Gabi313",
+        "Gionni",
+        "stathisv13",
+        "Voice",
+        "Ebisu",
+        "PaoloSitta",
+        "Frle",
+        "Flèche",
+        "railz0",
+        "Sempere95",
+        "Miky97",
+        "actiondiri",
+        "Enricomaria Rustico",
+        "lordRafa",
         "Johan Veras",
         "Tanner Wortham",
         "Wortaxx",
@@ -6386,7 +10706,6 @@
         "TheCaptain14",
         "TonyBojji",
         "DZayas",
-        "lordRafa",
         "ricmasterflash",
         "Dissonance075",
         "TheSimbiote",
@@ -6394,6 +10713,8 @@
         "yung_mlody"
       ],
       "events": [
+        "[ENG OP15.5] PEC Occitania Lille Regionals",
+        "[ENG OP15.5] Chinoize Cup 2026 #43",
         "[ENG OP15.5] Egman Event’s Triple Win-A-Box",
         "[ENG OP15.5] Chinoize Cup 2026 #39",
         "[ENG OP15.5] Chinoize Cup 2026 #40",
@@ -6405,26 +10726,33 @@
         "[ENG OP15] Chinoize Cup 2026 #37",
         "[ENG OP15] Chinoize Cup 2026 #34"
       ],
-      "points": 111,
-      "winRate": 5,
-      "conversionRate": 100,
-      "metaShare": 24
+      "points": 144,
+      "winRate": 3,
+      "conversionRate": 64,
+      "metaShare": 26
     },
     {
       "leader": "OP15-002",
       "leaderId": "OP15-002",
-      "totalAppearances": 13,
-      "wins": 1,
+      "totalAppearances": 20,
+      "wins": 2,
       "second": 2,
       "third": 2,
       "fourth": 2,
-      "top4": 7,
-      "top8": 6,
-      "top16": 0,
-      "top32": 0,
-      "uniquePlayers": 12,
-      "uniqueEvents": 6,
+      "top4": 8,
+      "top8": 8,
+      "top16": 1,
+      "top32": 3,
+      "uniquePlayers": 18,
+      "uniqueEvents": 9,
       "players": [
+        "Magyo",
+        "Brian D. TCG",
+        "Mirco Morscio",
+        "Corentin",
+        "woodywood",
+        "ImpelDown",
+        "Solmyr",
         "John O’Donnell",
         "Anthony Irvine",
         "Dearcan",
@@ -6435,10 +10763,12 @@
         "Kevnoa",
         "MaxMaxMax3",
         "Jazb",
-        "Solmyr",
         "keeftcg"
       ],
       "events": [
+        "[ENG OP15.5] PEC Occitania Lille Regionals",
+        "[ENG OP15.5] Chinoize Cup 2026 #43",
+        "[ENG OP15.5] Chinoize Cup 2026 #44",
         "[ENG OP15.5] Egman Event’s Triple Win-A-Box",
         "[ENG OP15.5] Chinoize Cup 2026 #40",
         "[ENG OP15] Chinoize Cup 2026 #35",
@@ -6446,65 +10776,102 @@
         "[ENG OP15] Chinoize Cup 2026 #37",
         "[ENG OP15] Chinoize Cup 2026 #34"
       ],
-      "points": 76,
-      "winRate": 8,
-      "conversionRate": 100,
-      "metaShare": 16
+      "points": 99,
+      "winRate": 10,
+      "conversionRate": 80,
+      "metaShare": 14
     },
     {
-      "leader": "OP11-041",
-      "leaderId": "OP11-041",
-      "totalAppearances": 11,
-      "wins": 3,
+      "leader": "OP13-001",
+      "leaderId": "OP13-001",
+      "totalAppearances": 8,
+      "wins": 2,
       "second": 2,
-      "third": 1,
+      "third": 0,
       "fourth": 1,
-      "top4": 7,
-      "top8": 4,
+      "top4": 5,
+      "top8": 2,
       "top16": 0,
       "top32": 0,
-      "uniquePlayers": 10,
+      "uniquePlayers": 7,
       "uniqueEvents": 6,
       "players": [
-        "Gringoloco",
-        "NikolayBaydanov",
-        "Captivat3",
-        "lonotus",
-        "iacca7",
-        "Legandes",
-        "MenS",
-        "tsvaac",
-        "Wortaxx",
-        "Spartacus2224"
+        "Julius Schürhoff",
+        "ricmasterflash",
+        "Gefen H",
+        "snorlax1cynda",
+        "Carmen Burk",
+        "Adimski",
+        "Admiski"
       ],
       "events": [
+        "[ENG OP15.5] PEC Occitania Lille Regionals",
+        "[ENG OP15.5] Chinoize Cup 2026 #43",
+        "[ENG OP15.5] Chinoize Cup 2026 #45",
+        "[ENG OP15.5] Egman Event’s Triple Win-A-Box",
         "[ENG OP15.5] Chinoize Cup 2026 #39",
-        "[ENG OP15.5] Chinoize Cup 2026 #41",
-        "[ENG OP15.5] Chinoize Cup 2026 #42",
-        "[ENG OP15.1] Chinoize Cup 2026 #38",
-        "[ENG OP15] Chinoize Cup 2026 #35",
+        "[ENG OP15.5] Chinoize Cup 2026 #42"
+      ],
+      "points": 50,
+      "winRate": 25,
+      "conversionRate": 88,
+      "metaShare": 6
+    },
+    {
+      "leader": "OP13-002",
+      "leaderId": "OP13-002",
+      "totalAppearances": 10,
+      "wins": 1,
+      "second": 1,
+      "third": 0,
+      "fourth": 0,
+      "top4": 2,
+      "top8": 8,
+      "top16": 0,
+      "top32": 0,
+      "uniquePlayers": 7,
+      "uniqueEvents": 9,
+      "players": [
+        "TrenoFelice",
+        "PROidan",
+        "Lexinator22",
+        "Hayden Langley",
+        "Diego Djordjevic",
+        "bornax10",
+        "NikolayBaydanov"
+      ],
+      "events": [
+        "[ENG OP15.5] PEC Occitania Lille Regionals",
+        "[ENG OP15.5] Chinoize Cup 2026 #43",
+        "[ENG OP15.5] Chinoize Cup 2026 #44",
+        "[ENG OP15.5] Chinoize Cup 2026 #45",
+        "[ENG OP15.5] Egman Event’s Triple Win-A-Box",
+        "[ENG OP15.5] Chinoize Cup 2026 #40",
+        "[ENG OP15] Chinoize Cup 2026 #36",
+        "[ENG OP15] Chinoize Cup 2026 #37",
         "[ENG OP15] Chinoize Cup 2026 #34"
       ],
-      "points": 75,
-      "winRate": 27,
+      "points": 50,
+      "winRate": 10,
       "conversionRate": 100,
-      "metaShare": 13
+      "metaShare": 7
     },
     {
       "leader": "OP14-020",
       "leaderId": "OP14-020",
-      "totalAppearances": 5,
+      "totalAppearances": 6,
       "wins": 2,
       "second": 1,
-      "third": 0,
+      "third": 1,
       "fourth": 0,
-      "top4": 3,
+      "top4": 4,
       "top8": 2,
       "top16": 0,
       "top32": 0,
-      "uniquePlayers": 5,
-      "uniqueEvents": 4,
+      "uniquePlayers": 6,
+      "uniqueEvents": 5,
       "players": [
+        "Captivat3",
         "Nikita Koba",
         "Raja Twam",
         "Pixsci",
@@ -6512,48 +10879,16 @@
         "OtakuProwder"
       ],
       "events": [
+        "[ENG OP15.5] Chinoize Cup 2026 #44",
         "[ENG OP15.5] Egman Event’s Triple Win-A-Box",
         "[ENG OP15.5] Chinoize Cup 2026 #39",
         "[ENG OP15] Chinoize Cup 2026 #35",
         "[ENG OP15] Chinoize Cup 2026 #37"
       ],
-      "points": 36,
-      "winRate": 40,
+      "points": 43,
+      "winRate": 33,
       "conversionRate": 100,
-      "metaShare": 6
-    },
-    {
-      "leader": "OP13-002",
-      "leaderId": "OP13-002",
-      "totalAppearances": 6,
-      "wins": 1,
-      "second": 0,
-      "third": 0,
-      "fourth": 0,
-      "top4": 1,
-      "top8": 5,
-      "top16": 0,
-      "top32": 0,
-      "uniquePlayers": 5,
-      "uniqueEvents": 5,
-      "players": [
-        "Hayden Langley",
-        "Diego Djordjevic",
-        "bornax10",
-        "NikolayBaydanov",
-        "Lexinator22"
-      ],
-      "events": [
-        "[ENG OP15.5] Egman Event’s Triple Win-A-Box",
-        "[ENG OP15.5] Chinoize Cup 2026 #40",
-        "[ENG OP15] Chinoize Cup 2026 #36",
-        "[ENG OP15] Chinoize Cup 2026 #37",
-        "[ENG OP15] Chinoize Cup 2026 #34"
-      ],
-      "points": 30,
-      "winRate": 17,
-      "conversionRate": 100,
-      "metaShare": 7
+      "metaShare": 4
     },
     {
       "leader": "OP14-079",
@@ -6585,37 +10920,7 @@
       "points": 28,
       "winRate": 20,
       "conversionRate": 100,
-      "metaShare": 6
-    },
-    {
-      "leader": "OP13-001",
-      "leaderId": "OP13-001",
-      "totalAppearances": 4,
-      "wins": 1,
-      "second": 1,
-      "third": 0,
-      "fourth": 1,
-      "top4": 3,
-      "top8": 0,
-      "top16": 0,
-      "top32": 0,
-      "uniquePlayers": 4,
-      "uniqueEvents": 3,
-      "players": [
-        "Carmen Burk",
-        "Adimski",
-        "snorlax1cynda",
-        "Admiski"
-      ],
-      "events": [
-        "[ENG OP15.5] Egman Event’s Triple Win-A-Box",
-        "[ENG OP15.5] Chinoize Cup 2026 #39",
-        "[ENG OP15.5] Chinoize Cup 2026 #42"
-      ],
-      "points": 24,
-      "winRate": 25,
-      "conversionRate": 75,
-      "metaShare": 5
+      "metaShare": 4
     },
     {
       "leader": "OP08-098",
@@ -6645,34 +10950,36 @@
       "points": 24,
       "winRate": 0,
       "conversionRate": 100,
-      "metaShare": 5
+      "metaShare": 3
     },
     {
       "leader": "EB02-010",
       "leaderId": "EB02-010",
-      "totalAppearances": 3,
+      "totalAppearances": 4,
       "wins": 0,
       "second": 0,
       "third": 0,
-      "fourth": 1,
-      "top4": 1,
+      "fourth": 2,
+      "top4": 2,
       "top8": 2,
       "top16": 0,
       "top32": 0,
-      "uniquePlayers": 2,
-      "uniqueEvents": 2,
+      "uniquePlayers": 3,
+      "uniqueEvents": 3,
       "players": [
+        "IceLoom",
         "tinnoy",
         "ShoWTimE"
       ],
       "events": [
+        "[ENG OP15.5] PEC Occitania Lille Regionals",
         "[ENG OP15.5] Chinoize Cup 2026 #39",
         "[ENG OP15.5] Chinoize Cup 2026 #42"
       ],
-      "points": 14,
+      "points": 20,
       "winRate": 0,
       "conversionRate": 100,
-      "metaShare": 4
+      "metaShare": 3
     },
     {
       "leader": "OP14-080",
@@ -6699,7 +11006,7 @@
       "points": 11,
       "winRate": 0,
       "conversionRate": 100,
-      "metaShare": 2
+      "metaShare": 1
     },
     {
       "leader": "OP14-060",
@@ -6747,6 +11054,58 @@
         "[ENG OP15] Chinoize Cup 2026 #36"
       ],
       "points": 7,
+      "winRate": 0,
+      "conversionRate": 100,
+      "metaShare": 1
+    },
+    {
+      "leader": "OP05-098",
+      "leaderId": "OP05-098",
+      "totalAppearances": 2,
+      "wins": 0,
+      "second": 0,
+      "third": 0,
+      "fourth": 0,
+      "top4": 0,
+      "top8": 1,
+      "top16": 1,
+      "top32": 0,
+      "uniquePlayers": 2,
+      "uniqueEvents": 2,
+      "players": [
+        "MerryTCG",
+        "Sukhi J"
+      ],
+      "events": [
+        "[ENG OP15.5] PEC Occitania Lille Regionals",
+        "[ENG OP15.5] Chinoize Cup 2026 #44"
+      ],
+      "points": 6,
+      "winRate": 0,
+      "conversionRate": 50,
+      "metaShare": 1
+    },
+    {
+      "leader": "OP09-022",
+      "leaderId": "OP09-022",
+      "totalAppearances": 1,
+      "wins": 0,
+      "second": 0,
+      "third": 0,
+      "fourth": 1,
+      "top4": 1,
+      "top8": 0,
+      "top16": 0,
+      "top32": 0,
+      "uniquePlayers": 1,
+      "uniqueEvents": 1,
+      "players": [
+        "ricmasterflash"
+      ],
+      "events": [
+        "[ENG OP15.5] Chinoize Cup 2026 #45"
+      ],
+      "points": 6,
       "winRate": 0,
       "conversionRate": 100,
       "metaShare": 1
@@ -6899,6 +11258,31 @@
       "points": 4,
       "winRate": 0,
       "conversionRate": 100,
+      "metaShare": 1
+    },
+    {
+      "leader": "EB03-001",
+      "leaderId": "EB03-001",
+      "totalAppearances": 1,
+      "wins": 0,
+      "second": 0,
+      "third": 0,
+      "fourth": 0,
+      "top4": 0,
+      "top8": 0,
+      "top16": 0,
+      "top32": 1,
+      "uniquePlayers": 1,
+      "uniqueEvents": 1,
+      "players": [
+        "Arca"
+      ],
+      "events": [
+        "[ENG OP15.5] PEC Occitania Lille Regionals"
+      ],
+      "points": 1,
+      "winRate": 0,
+      "conversionRate": 0,
       "metaShare": 1
     },
     {
