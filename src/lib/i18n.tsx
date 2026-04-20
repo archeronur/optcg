@@ -195,6 +195,11 @@ const translations = {
     metric: { en: "Metric", tr: "Metrik" },
     manaCurve: { en: "Cost Curve", tr: "Maliyet Eğrisi" },
     counterDist: { en: "Counter", tr: "Counter" },
+    avgCost: { en: "avg", tr: "ort" },
+    totalShort: { en: "total", tr: "toplam" },
+    charactersShort: { en: "characters", tr: "karakter" },
+    noCounter: { en: "No counter", tr: "Countersız" },
+    noCharactersInDeck: { en: "No character cards", tr: "Karakter kartı yok" },
   },
   nav: {
     backToHome: { en: "Home", tr: "Ana Sayfa" },
