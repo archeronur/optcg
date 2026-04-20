@@ -194,7 +194,7 @@ export default async function LeaderDetailPage({
       </div>
 
       {/* Hero Section */}
-      <div className={`relative mb-10 overflow-hidden rounded-2xl bg-gradient-to-br ${primaryColor.gradient} p-8 sm:p-10`}>
+      <div className={`relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-br ${primaryColor.gradient} p-8 sm:p-10`}>
         <div className="absolute inset-0 bg-black/60" />
         <div className="relative flex flex-col sm:flex-row items-center gap-6">
           <CardImage
@@ -221,6 +221,26 @@ export default async function LeaderDetailPage({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Compare actions */}
+      <div className="mb-10 flex flex-wrap gap-2">
+        <Link
+          href={`/meta/${metaId}/compare?a=${leaderId}`}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
+        >
+          <span aria-hidden="true">⇄</span>
+          <T section="tracker" k="compareWithAnotherLeader" />
+        </Link>
+        {!legacyMeta && leaderDecks.length >= 2 && (
+          <Link
+            href={`/meta/${metaId}/leader/${leaderId}/decks/diff`}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
+          >
+            <span aria-hidden="true">⇆</span>
+            <T section="tracker" k="compareTwoDecks" />
+          </Link>
+        )}
       </div>
 
       {/* Stats Grid */}

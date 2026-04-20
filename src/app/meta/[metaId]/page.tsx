@@ -82,16 +82,24 @@ export default async function MetaOverviewPage({
       {/* Top Leaders */}
       {topLeaders.length > 0 && (
         <section className="mb-12">
-          <div className="mb-4 flex items-center justify-between">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
             <h2 className="text-xl font-bold text-white">
               <T section="tracker" k="topLeaders" />
             </h2>
-            <Link
-              href={`/meta/${metaId}/leaders`}
-              className="text-sm text-accent hover:underline"
-            >
-              <T section="tracker" k="allLeaders" />
-            </Link>
+            <div className="flex items-center gap-3 text-sm">
+              <Link
+                href={`/meta/${metaId}/compare`}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                ⇄ <T section="tracker" k="compareLeaders" />
+              </Link>
+              <Link
+                href={`/meta/${metaId}/leaders`}
+                className="text-accent hover:underline"
+              >
+                <T section="tracker" k="allLeaders" />
+              </Link>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
