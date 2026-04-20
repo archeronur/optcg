@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import CardImage from "./CardImage";
 import CardPopup from "./CardPopup";
+import DeckDistributionCharts from "./DeckDistributionCharts";
 import T from "./T";
 import { parseColors, getColorInfo } from "@/lib/colors";
 import { useI18n } from "@/lib/i18n";
@@ -148,6 +149,8 @@ export default function DeckListViewer({
               </div>
             </button>
           )}
+
+          <DeckDistributionCharts cards={enrichedCards} />
 
           <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 sm:gap-2.5">
             {enrichedCards.map((ec) => (
