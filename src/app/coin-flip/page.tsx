@@ -260,13 +260,13 @@ function OnePieceEmblem() {
   return (
     <div className="flex flex-col items-center justify-center leading-none">
       <span
-        className="text-[13px] font-black uppercase tracking-[0.6em] text-[#5a3405]"
+        className="text-[14px] font-black uppercase tracking-[0.55em] text-[#5a3405]"
         style={{ textShadow: "0 1px 0 rgba(255,235,180,0.55)" }}
       >
         One
       </span>
       <span
-        className="mt-1 text-[40px] font-black uppercase tracking-tight text-[#3a1f02] sm:text-[44px]"
+        className="mt-1.5 text-[40px] font-black uppercase tracking-tight text-[#3a1f02] sm:text-[44px]"
         style={{
           textShadow:
             "0 1px 0 rgba(255,235,180,0.6), 0 2px 6px rgba(0,0,0,0.25)",
@@ -275,10 +275,13 @@ function OnePieceEmblem() {
       >
         PIECE
       </span>
-      <div className="mt-2 flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.35em] text-[#6b3d09]">
-        <span>★</span>
-        <span>TCG</span>
-        <span>★</span>
+      <div
+        aria-hidden="true"
+        className="mt-2.5 flex items-center gap-1.5 text-[#6b3d09]/70"
+      >
+        <span className="h-px w-5 bg-current" />
+        <span className="text-[10px]">★</span>
+        <span className="h-px w-5 bg-current" />
       </div>
     </div>
   );
