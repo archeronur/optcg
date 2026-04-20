@@ -395,51 +395,56 @@ export default async function CompareLeadersPage({
             <h2 className="mb-3 text-lg font-bold text-white sm:text-xl">
               <T section="tracker" k="placingDist" />
             </h2>
-            <div className="grid grid-cols-[1fr_auto_1fr] gap-3">
-              <div className="space-y-2">
-                {PLACING_KEYS.map((p) => {
-                  const av = Number((statsA as unknown as Record<string, number>)[p.key] ?? 0);
-                  const bv = Number((statsB as unknown as Record<string, number>)[p.key] ?? 0);
-                  const cmp = av - bv;
-                  return (
-                    <div
-                      key={`a-${p.key}`}
-                      className="flex items-center justify-end rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2"
-                    >
-                      <span className={`font-extrabold tabular-nums ${winnerClass(cmp, "a")}`}>
+            <div className="glass-card overflow-hidden rounded-xl">
+              {PLACING_KEYS.map((p, idx) => {
+                const av = Number((statsA as unknown as Record<string, number>)[p.key] ?? 0);
+                const bv = Number((statsB as unknown as Record<string, number>)[p.key] ?? 0);
+                const cmp = av - bv;
+                const total = av + bv;
+                const aPct = total > 0 ? (av / total) * 100 : 0;
+                const bPct = total > 0 ? (bv / total) * 100 : 0;
+                return (
+                  <div
+                    key={p.key}
+                    className={`grid grid-cols-[1fr_5.5rem_1fr] items-center gap-2 px-3 py-2.5 sm:gap-4 sm:px-4 ${idx < PLACING_KEYS.length - 1 ? "border-b border-white/[0.04]" : ""}`}
+                  >
+                    {/* A side: value + bar */}
+                    <div className="flex items-center justify-end gap-3">
+                      <div className="hidden h-2 flex-1 overflow-hidden rounded-full bg-white/[0.04] sm:block">
+                        <div
+                          className={`ml-auto h-full rounded-full ${cmp > 0 ? "bg-emerald-400/70" : cmp < 0 ? "bg-gray-500/50" : "bg-sky-400/60"}`}
+                          style={{ width: `${aPct}%`, marginLeft: "auto" }}
+                        />
+                      </div>
+                      <span
+                        className={`min-w-[1.5rem] text-right text-base font-extrabold tabular-nums sm:text-lg ${winnerClass(cmp, "a")}`}
+                      >
                         {av}
                       </span>
                     </div>
-                  );
-                })}
-              </div>
-              <div className="space-y-2">
-                {PLACING_KEYS.map((p) => (
-                  <div
-                    key={`label-${p.key}`}
-                    className="flex min-w-[4rem] items-center justify-center rounded-lg bg-white/5 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-gray-400"
-                  >
-                    {p.prefixHash ? `#${p.label}` : <T section="tracker" k={p.label} />}
-                  </div>
-                ))}
-              </div>
-              <div className="space-y-2">
-                {PLACING_KEYS.map((p) => {
-                  const av = Number((statsA as unknown as Record<string, number>)[p.key] ?? 0);
-                  const bv = Number((statsB as unknown as Record<string, number>)[p.key] ?? 0);
-                  const cmp = av - bv;
-                  return (
-                    <div
-                      key={`b-${p.key}`}
-                      className="flex items-center justify-start rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2"
-                    >
-                      <span className={`font-extrabold tabular-nums ${winnerClass(cmp, "b")}`}>
+
+                    {/* Label pill */}
+                    <div className="flex items-center justify-center rounded-md bg-white/5 px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                      {p.prefixHash ? `#${p.label}` : <T section="tracker" k={p.label} />}
+                    </div>
+
+                    {/* B side: value + bar */}
+                    <div className="flex items-center justify-start gap-3">
+                      <span
+                        className={`min-w-[1.5rem] text-left text-base font-extrabold tabular-nums sm:text-lg ${winnerClass(cmp, "b")}`}
+                      >
                         {bv}
                       </span>
+                      <div className="hidden h-2 flex-1 overflow-hidden rounded-full bg-white/[0.04] sm:block">
+                        <div
+                          className={`h-full rounded-full ${cmp < 0 ? "bg-emerald-400/70" : cmp > 0 ? "bg-gray-500/50" : "bg-sky-400/60"}`}
+                          style={{ width: `${bPct}%` }}
+                        />
+                      </div>
                     </div>
-                  );
-                })}
-              </div>
+                  </div>
+                );
+              })}
             </div>
           </section>
 

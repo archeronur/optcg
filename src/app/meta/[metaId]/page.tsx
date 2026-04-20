@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getMetaData, getAllMetaIds, slugify } from "@/lib/data";
-import { getLeaderImage, getLeaderColor } from "@/lib/cardHelpers";
+import { getLeaderImage, getLeaderColor, getLeaderInfo } from "@/lib/cardHelpers";
 import { parseColors, getColorInfo } from "@/lib/colors";
 import { formatEventDate } from "@/lib/eventDate";
 import { classifyPlacing, computeLeaderStatsFromMeta } from "@/lib/leaderRanking";
@@ -10,10 +10,6 @@ import T from "@/components/T";
 
 export function generateStaticParams() {
   return getAllMetaIds().map((id) => ({ metaId: id }));
-}
-
-function extractLeaderName(leader: string): string {
-  return leader.replace(/^[A-Z0-9]+-\d+\s*/, "");
 }
 
 export default async function MetaOverviewPage({
@@ -105,8 +101,10 @@ export default async function MetaOverviewPage({
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {topLeaders.map((leader, i) => {
               const lid = leader.leaderId;
-              const leaderImage = getLeaderImage(lid);
-              const leaderColor = getLeaderColor(lid);
+              const info = getLeaderInfo(lid);
+              const leaderImage = info.image || getLeaderImage(lid);
+              const leaderName = info.name && info.name !== lid ? info.name : lid;
+              const leaderColor = info.color || getLeaderColor(lid);
               const colors = parseColors(leaderColor);
               const primaryColor = colors[0] ? getColorInfo(colors[0]) : getColorInfo("Black");
 
@@ -120,7 +118,7 @@ export default async function MetaOverviewPage({
                     <div className="relative flex-shrink-0">
                       <CardImage
                         src={leaderImage}
-                        alt={leader.leader}
+                        alt={leaderName}
                         cardId={lid}
                         className="h-20 w-[3.75rem] rounded-lg object-cover shadow-lg ring-1 ring-white/10"
                         loading="lazy"
@@ -131,7 +129,7 @@ export default async function MetaOverviewPage({
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-bold text-white group-hover:text-accent transition-colors">
-                        {extractLeaderName(leader.leader) || lid}
+                        {leaderName}
                       </p>
                       <p className="text-xs text-gray-600">{lid}</p>
                       <div className="mt-1.5 flex gap-1">
@@ -173,7 +171,9 @@ export default async function MetaOverviewPage({
               const eventSlug = slugify(event.name);
               const winner = event.decks.find((d) => classifyPlacing(d.placing) === "first");
               const winnerLid = winner?.leaderId ?? "";
-              const winnerImage = winnerLid ? getLeaderImage(winnerLid) : "";
+              const winnerInfo = winnerLid ? getLeaderInfo(winnerLid) : null;
+              const winnerImage = winnerInfo?.image ?? "";
+              const winnerName = winnerInfo?.name && winnerInfo.name !== winnerLid ? winnerInfo.name : winnerLid;
 
               return (
                 <Link
@@ -185,7 +185,7 @@ export default async function MetaOverviewPage({
                     {winnerImage ? (
                       <CardImage
                         src={winnerImage}
-                        alt={winner?.leader ?? ""}
+                        alt={winnerName}
                         cardId={winnerLid}
                         className="h-16 w-12 rounded-lg object-cover shadow ring-1 ring-white/10 flex-shrink-0"
                         loading="lazy"
@@ -216,7 +216,7 @@ export default async function MetaOverviewPage({
                       </div>
                       {winner && (
                         <p className="mt-2 text-xs text-gray-600">
-                          🏆 {extractLeaderName(winner.leader) || winner.leaderId}
+                          🏆 {winnerName || winner.leaderId}
                         </p>
                       )}
                     </div>
