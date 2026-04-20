@@ -168,21 +168,7 @@ const translations = {
     backToLeader: { en: "Back to leader", tr: "Lidere dön" },
     metric: { en: "Metric", tr: "Metrik" },
     manaCurve: { en: "Cost Curve", tr: "Maliyet Eğrisi" },
-    avgCost: { en: "avg", tr: "ort" },
     counterDist: { en: "Counter", tr: "Counter" },
-    noCounter: { en: "none", tr: "yok" },
-    charactersShort: {
-      en: "{count} characters",
-      tr: "{count} karakter",
-    },
-    noCharactersInDeck: {
-      en: "No characters in this deck",
-      tr: "Bu deckte karakter yok",
-    },
-    counterDataMissing: {
-      en: "Counter data unavailable for these characters",
-      tr: "Bu karakterler için counter verisi yok",
-    },
   },
   nav: {
     backToHome: { en: "Home", tr: "Ana Sayfa" },
