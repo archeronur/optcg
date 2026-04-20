@@ -95,27 +95,6 @@ export default function LandingPage() {
               <T section="landing" k="title" />
             </span>
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-gray-400 sm:text-lg">
-            <T section="landing" k="subtitle" />
-          </p>
-
-          {/* Primary CTAs */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/tracker"
-              className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-accent to-accent-secondary px-6 py-3 text-sm font-bold text-white shadow-lg shadow-accent/30 transition-all hover:shadow-xl hover:shadow-accent/40 sm:text-base"
-            >
-              <T section="landing" k="goToTracker" />
-              <span className="transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
-            </Link>
-            <Link
-              href="/proxy-print"
-              className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-6 py-3 text-sm font-bold text-white backdrop-blur-sm transition-all hover:bg-white/[0.08] sm:text-base"
-            >
-              <T section="landing" k="goToProxy" />
-              <span className="transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
-            </Link>
-          </div>
 
           {/* Stat strip */}
           <div className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-4">

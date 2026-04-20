@@ -8,10 +8,6 @@ const translations = {
   landing: {
     eyebrow: { en: "One Piece Trading Card Game", tr: "One Piece Trading Card Game" },
     title: { en: "One Piece TCG Tools", tr: "One Piece TCG Araçları" },
-    subtitle: {
-      en: "Competitive event data and professional proxy printing — all in one place.",
-      tr: "Rekabetçi event verisi ve profesyonel proxy baskı — tek bir yerde.",
-    },
     trackerTitle: { en: "Event Tracker", tr: "Event Tracker" },
     trackerDesc: {
       en: "Browse events, explore decklists, and compare leader performance across every OP set.",
