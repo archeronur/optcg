@@ -326,140 +326,103 @@ function OnePieceEmblem() {
 }
 
 function MugiwaraEmblem() {
+  // Luffy's iconic straw hat: wide brim, domed crown, red band. No skull,
+  // no bones, no text — just the hat so it cleanly contrasts with the
+  // "ONE PIECE" lettering on the other face.
   return (
     <svg
-      viewBox="-60 -60 120 120"
-      className="h-[86%] w-[86%] drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]"
+      viewBox="-60 -45 120 90"
+      className="h-[86%] w-[86%] drop-shadow-[0_2px_4px_rgba(0,0,0,0.45)]"
       aria-hidden="true"
     >
       <defs>
-        <linearGradient id="hat" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#ffdd92" />
+        <linearGradient id="hat-crown" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ffe6a0" />
           <stop offset="55%" stopColor="#df9a38" />
-          <stop offset="100%" stopColor="#8b5410" />
+          <stop offset="100%" stopColor="#7f4a0c" />
         </linearGradient>
-        <linearGradient id="brim" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#f2be6a" />
-          <stop offset="100%" stopColor="#a06a18" />
+        <linearGradient id="hat-brim" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#f5c572" />
+          <stop offset="100%" stopColor="#955f14" />
         </linearGradient>
-        <linearGradient id="bone" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#fff6d5" />
-          <stop offset="100%" stopColor="#d8c37a" />
-        </linearGradient>
-        <linearGradient id="band" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#d94757" />
-          <stop offset="100%" stopColor="#8f1a2a" />
+        <linearGradient id="hat-band" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#e54b5c" />
+          <stop offset="100%" stopColor="#881926" />
         </linearGradient>
       </defs>
 
-      {/* ── Crossed bones behind skull ─────────────────────── */}
-      <g stroke="#2a1602" strokeWidth="1.3" strokeLinejoin="round">
-        <g transform="rotate(38)">
-          <rect x="-46" y="-4.5" width="92" height="9" rx="4.5" fill="url(#bone)" />
-          <circle cx="-46" cy="-4.5" r="5.5" fill="url(#bone)" />
-          <circle cx="-46" cy="4.5" r="5.5" fill="url(#bone)" />
-          <circle cx="46" cy="-4.5" r="5.5" fill="url(#bone)" />
-          <circle cx="46" cy="4.5" r="5.5" fill="url(#bone)" />
-        </g>
-        <g transform="rotate(-38)">
-          <rect x="-46" y="-4.5" width="92" height="9" rx="4.5" fill="url(#bone)" />
-          <circle cx="-46" cy="-4.5" r="5.5" fill="url(#bone)" />
-          <circle cx="-46" cy="4.5" r="5.5" fill="url(#bone)" />
-          <circle cx="46" cy="-4.5" r="5.5" fill="url(#bone)" />
-          <circle cx="46" cy="4.5" r="5.5" fill="url(#bone)" />
-        </g>
-      </g>
-
-      {/* ── Skull (cranium + jaw as one shape) ─────────────── */}
-      <g stroke="#2a1602" strokeWidth="1.4" strokeLinejoin="round">
-        <path
-          d="M -22 -2 Q -22 -20 0 -20 Q 22 -20 22 -2 L 22 10 Q 20 14 15 14 L 13 20 Q 0 26 -13 20 L -15 14 Q -20 14 -22 10 Z"
-          fill="url(#bone)"
-        />
-        {/* Eye sockets */}
-        <ellipse cx="-9" cy="-2" rx="6" ry="7" fill="#1a0a00" stroke="none" />
-        <ellipse cx="9" cy="-2" rx="6" ry="7" fill="#1a0a00" stroke="none" />
-        {/* Tiny eye-shine */}
-        <circle cx="-7" cy="-4.5" r="1.3" fill="#fff6d5" stroke="none" opacity="0.9" />
-        <circle cx="11" cy="-4.5" r="1.3" fill="#fff6d5" stroke="none" opacity="0.9" />
-        {/* Nose */}
-        <path d="M -2.6 7 L 2.6 7 L 0 12 Z" fill="#1a0a00" stroke="none" />
-        {/* Teeth row */}
-        <path
-          d="M -11 17 L 11 17"
-          stroke="#1a0a00"
-          strokeWidth="1.4"
-          fill="none"
-        />
-        <path
-          d="M -7 17 L -7 22.5 M -3 17 L -3 23.5 M 1 17 L 1 23.5 M 5 17 L 5 22.5"
-          stroke="#1a0a00"
-          strokeWidth="1.4"
-          fill="none"
-        />
-      </g>
-
-      {/* ── Straw hat (dome → band → brim, drawn over skull) ─ */}
-      {/* Dome crown — flattened, wider than before */}
+      {/* Crown (dome) — drawn first so the brim overlaps on top */}
       <path
-        d="M -22 -18 Q -24 -36 0 -38 Q 24 -36 22 -18 Z"
-        fill="url(#hat)"
+        d="M -26 5 Q -30 -34 0 -38 Q 30 -34 26 5 Z"
+        fill="url(#hat-crown)"
         stroke="#2a1602"
-        strokeWidth="1.4"
+        strokeWidth="1.6"
         strokeLinejoin="round"
       />
+
       {/* Crown highlight */}
       <path
-        d="M -16 -30 Q 0 -36 16 -30"
+        d="M -18 -28 Q 0 -36 18 -28"
         fill="none"
         stroke="rgba(255,240,200,0.55)"
-        strokeWidth="2"
+        strokeWidth="2.2"
         strokeLinecap="round"
       />
+
+      {/* Vertical straw fibres on the crown */}
+      <g stroke="#5c3908" strokeWidth="0.7" strokeLinecap="round" opacity="0.38">
+        <line x1="-16" y1="-22" x2="-17" y2="3" />
+        <line x1="-8"  y1="-30" x2="-8"  y2="2" />
+        <line x1="0"   y1="-34" x2="0"   y2="1" />
+        <line x1="8"   y1="-30" x2="8"   y2="2" />
+        <line x1="16"  y1="-22" x2="17"  y2="3" />
+      </g>
+
       {/* Red band */}
       <path
-        d="M -22 -18 Q 0 -24 22 -18 L 22 -13 Q 0 -19 -22 -13 Z"
-        fill="url(#band)"
+        d="M -26 3 Q 0 -3 26 3 L 24 10 Q 0 4 -24 10 Z"
+        fill="url(#hat-band)"
         stroke="#2a1602"
-        strokeWidth="1.1"
+        strokeWidth="1.3"
         strokeLinejoin="round"
       />
-      {/* Band highlight */}
       <path
-        d="M -18 -19.5 Q 0 -23 18 -19.5"
+        d="M -22 1.5 Q 0 -4 22 1.5"
         fill="none"
-        stroke="rgba(255,220,220,0.45)"
-        strokeWidth="1"
+        stroke="rgba(255,220,220,0.55)"
+        strokeWidth="1.1"
         strokeLinecap="round"
       />
-      {/* Brim — wide ellipse sitting on band */}
+
+      {/* Brim — wide ellipse sitting on the band */}
       <ellipse
         cx="0"
-        cy="-14"
-        rx="46"
-        ry="8"
-        fill="url(#brim)"
+        cy="10"
+        rx="50"
+        ry="9"
+        fill="url(#hat-brim)"
         stroke="#2a1602"
-        strokeWidth="1.4"
+        strokeWidth="1.6"
       />
       {/* Brim top sheen */}
       <path
-        d="M -40 -17.5 Q 0 -21 40 -17.5"
+        d="M -44 6 Q 0 1 44 6"
         fill="none"
-        stroke="rgba(255,240,200,0.5)"
-        strokeWidth="1.3"
+        stroke="rgba(255,240,200,0.55)"
+        strokeWidth="1.5"
         strokeLinecap="round"
       />
-      {/* Straw stitches along brim */}
-      <g stroke="#5c3908" strokeWidth="0.8" strokeLinecap="round" opacity="0.55">
-        <line x1="-38" y1="-14.5" x2="-39" y2="-8.5" />
-        <line x1="-28" y1="-11" x2="-28.5" y2="-6" />
-        <line x1="-18" y1="-9" x2="-18" y2="-4.5" />
-        <line x1="-8" y1="-8" x2="-8" y2="-3.5" />
-        <line x1="8" y1="-8" x2="8" y2="-3.5" />
-        <line x1="18" y1="-9" x2="18" y2="-4.5" />
-        <line x1="28" y1="-11" x2="28.5" y2="-6" />
-        <line x1="38" y1="-14.5" x2="39" y2="-8.5" />
+
+      {/* Straw stitches along the brim */}
+      <g stroke="#5c3908" strokeWidth="0.9" strokeLinecap="round" opacity="0.55">
+        <line x1="-42" y1="10"   x2="-43" y2="17" />
+        <line x1="-32" y1="13"   x2="-32.5" y2="18.5" />
+        <line x1="-20" y1="14"   x2="-20" y2="19" />
+        <line x1="-8"  y1="14.5" x2="-8"  y2="19.5" />
+        <line x1="8"   y1="14.5" x2="8"   y2="19.5" />
+        <line x1="20"  y1="14"   x2="20"  y2="19" />
+        <line x1="32"  y1="13"   x2="32.5" y2="18.5" />
+        <line x1="42"  y1="10"   x2="43"  y2="17" />
       </g>
     </svg>
   );
