@@ -4,6 +4,7 @@ import { getMetaData, getAllMetaIds } from "@/lib/data";
 import { getLeaderInfo } from "@/lib/cardHelpers";
 import { parseColors, getColorInfo } from "@/lib/colors";
 import CardImage from "@/components/CardImage";
+import LeaderKOWrapper from "@/components/LeaderKOWrapper";
 import T from "@/components/T";
 import { computeLeaderStatsFromMeta, POINT_WEIGHTS } from "@/lib/leaderRanking";
 
@@ -101,8 +102,11 @@ export default async function LeaderRankingPage({
             const height = rank === 1 ? "h-52" : rank === 2 ? "h-40" : "h-32";
 
             return (
-              <Link
+              <LeaderKOWrapper
                 key={leader.leaderId}
+                className="flex flex-col items-center"
+              >
+              <Link
                 href={`/meta/${metaId}/leader/${leader.leaderId}`}
                 className="group flex flex-col items-center"
               >
@@ -124,6 +128,7 @@ export default async function LeaderRankingPage({
                   </p>
                 </div>
               </Link>
+              </LeaderKOWrapper>
             );
           })}
         </div>
@@ -138,8 +143,8 @@ export default async function LeaderRankingPage({
             const primaryColor = colors[0] ? getColorInfo(colors[0]) : getColorInfo("Black");
 
             return (
+              <LeaderKOWrapper key={leader.leaderId} className="block">
               <Link
-                key={leader.leaderId}
                 href={`/meta/${metaId}/leader/${leader.leaderId}`}
                 className="glass-card hover-lift flex items-center gap-4 rounded-xl p-4 transition-all"
               >
@@ -160,6 +165,7 @@ export default async function LeaderRankingPage({
                   {leader.points ?? 0} <T section="tracker" k="pointsShort" />
                 </span>
               </Link>
+              </LeaderKOWrapper>
             );
           })}
         </div>

@@ -3,6 +3,7 @@ import { getSummary } from "@/lib/data";
 import { getLeaderInfo } from "@/lib/cardHelpers";
 import { parseColors, getColorInfo } from "@/lib/colors";
 import CardImage from "@/components/CardImage";
+import LeaderKOWrapper from "@/components/LeaderKOWrapper";
 import T from "@/components/T";
 import type { MetaSummary } from "@/lib/types";
 
@@ -231,10 +232,10 @@ export default function LandingPage() {
                 const colors = parseColors(l.color);
                 const primary = colors[0] ? getColorInfo(colors[0]) : getColorInfo("Black");
                 return (
+                  <LeaderKOWrapper key={l.id} className="block">
                   <Link
-                    key={l.id}
                     href={`/meta/${latestMeta.id}/leader/${l.id}`}
-                    className={`group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-br ${primary.gradient} p-5 transition-all hover:border-white/20`}
+                    className={`group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-br ${primary.gradient} p-5 transition-all hover:border-white/20 block`}
                   >
                     <div className="absolute inset-0 bg-black/70" />
                     <div className="relative flex items-center gap-4">
@@ -269,6 +270,7 @@ export default function LandingPage() {
                       </div>
                     </div>
                   </Link>
+                  </LeaderKOWrapper>
                 );
               })}
             </div>

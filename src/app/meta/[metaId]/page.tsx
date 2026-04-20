@@ -6,6 +6,7 @@ import { parseColors, getColorInfo } from "@/lib/colors";
 import { formatEventDate } from "@/lib/eventDate";
 import { classifyPlacing, computeLeaderStatsFromMeta } from "@/lib/leaderRanking";
 import CardImage from "@/components/CardImage";
+import LeaderKOWrapper from "@/components/LeaderKOWrapper";
 import T from "@/components/T";
 
 export function generateStaticParams() {
@@ -109,10 +110,10 @@ export default async function MetaOverviewPage({
               const primaryColor = colors[0] ? getColorInfo(colors[0]) : getColorInfo("Black");
 
               return (
+                <LeaderKOWrapper key={lid} className="block">
                 <Link
-                  key={lid}
                   href={`/meta/${metaId}/leader/${lid}`}
-                  className="glass-card hover-lift group rounded-xl p-4 transition-all"
+                  className="glass-card hover-lift group rounded-xl p-4 transition-all block"
                 >
                   <div className="flex items-start gap-3">
                     <div className="relative flex-shrink-0">
@@ -154,6 +155,7 @@ export default async function MetaOverviewPage({
                     </div>
                   </div>
                 </Link>
+                </LeaderKOWrapper>
               );
             })}
           </div>

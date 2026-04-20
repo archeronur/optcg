@@ -16,6 +16,7 @@ import { classifyPlacing, computeLeaderStatsFromMeta } from "@/lib/leaderRanking
 import CardImage from "@/components/CardImage";
 import CardGrid from "@/components/CardGrid";
 import AllAppearancesSection from "@/components/AllAppearancesSection";
+import LeaderKOWrapper from "@/components/LeaderKOWrapper";
 import T from "@/components/T";
 import type { Deck, Card } from "@/lib/types";
 
@@ -197,12 +198,14 @@ export default async function LeaderDetailPage({
       <div className={`relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-br ${primaryColor.gradient} p-8 sm:p-10`}>
         <div className="absolute inset-0 bg-black/60" />
         <div className="relative flex flex-col sm:flex-row items-center gap-6">
-          <CardImage
-            src={info.image}
-            alt={info.name}
-            cardId={leaderId}
-            className="h-40 w-auto rounded-xl shadow-2xl ring-2 ring-white/20"
-          />
+          <LeaderKOWrapper className="inline-block">
+            <CardImage
+              src={info.image}
+              alt={info.name}
+              cardId={leaderId}
+              className="h-40 w-auto rounded-xl shadow-2xl ring-2 ring-white/20"
+            />
+          </LeaderKOWrapper>
           <div className="text-center sm:text-left">
             <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
               {info.name}

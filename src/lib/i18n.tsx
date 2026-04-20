@@ -227,6 +227,12 @@ const translations = {
     },
     backHome: { en: "Back home", tr: "Anasayfa" },
   },
+  easter: {
+    leaderRetired: {
+      en: "This leader has retired. Taking a quick nap…",
+      tr: "Bu lider emekliye ayrıldı. Biraz şekerleme yapıyor…",
+    },
+  },
 } as const;
 
 export type TranslationSection = keyof typeof translations;

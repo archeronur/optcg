@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import CardImage from "./CardImage";
+import LeaderKOWrapper from "./LeaderKOWrapper";
 import { parseColors, getColorInfo } from "@/lib/colors";
 
 interface LeaderBadgeProps {
@@ -77,11 +78,11 @@ export default function LeaderBadge({
 
   if (metaId && leaderId) {
     return (
-      <Link href={`/meta/${metaId}/leader/${leaderId}`}>
-        {content}
-      </Link>
+      <LeaderKOWrapper className="block">
+        <Link href={`/meta/${metaId}/leader/${leaderId}`}>{content}</Link>
+      </LeaderKOWrapper>
     );
   }
 
-  return content;
+  return <LeaderKOWrapper className="block">{content}</LeaderKOWrapper>;
 }
