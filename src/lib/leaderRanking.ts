@@ -1,4 +1,4 @@
-import type { LeaderStats, MetaData } from "@/lib/types";
+import type { CardAnalysis, LeaderStats, MetaData } from "@/lib/types";
 
 export const POINT_WEIGHTS = {
   first: 10,
@@ -89,6 +89,62 @@ function emptyStats(leaderId: string): LeaderStats {
   };
 }
 
+/**
+ * Build per-leader card usage analysis from raw deck lists.
+ *
+ * Older meta JSONs (op06-op13) ship with precomputed `coreCards`/`flexCards`
+ * baked into `meta.leaderStats`. Newer import scripts (op14, op15, …) never
+ * populated these fields, which leaves the Core/Flex sections empty on the
+ * leader detail and Compare pages. We fall back to this derivation so every
+ * meta — past or future — has usage numbers.
+ *
+ * inclusionRate: % of that leader's decks that include the card.
+ * avgCount:      average copies across decks that include it.
+ */
+function computeCardAnalysisByLeader(meta: MetaData): Map<string, CardAnalysis[]> {
+  const decksByLeader = new Map<string, Array<{ cards: { id: string; count: number }[] }>>();
+  for (const event of meta.events ?? []) {
+    for (const deck of event.decks ?? []) {
+      const id = deck.leaderId || deck.leader || "";
+      if (!id) continue;
+      const list = decksByLeader.get(id) ?? [];
+      list.push({ cards: deck.cards ?? [] });
+      decksByLeader.set(id, list);
+    }
+  }
+
+  const result = new Map<string, CardAnalysis[]>();
+  for (const [leaderId, decks] of decksByLeader) {
+    const total = decks.length;
+    if (total === 0) {
+      result.set(leaderId, []);
+      continue;
+    }
+
+    const tally = new Map<string, { decks: number; copies: number }>();
+    for (const { cards } of decks) {
+      for (const c of cards) {
+        if (!c?.id || c.id === leaderId) continue;
+        const entry = tally.get(c.id) ?? { decks: 0, copies: 0 };
+        entry.decks += 1;
+        entry.copies += Number(c.count) || 0;
+        tally.set(c.id, entry);
+      }
+    }
+
+    const analysis: CardAnalysis[] = [];
+    for (const [id, t] of tally) {
+      const rate = Math.round((t.decks / total) * 1000) / 10;
+      if (rate < 2) continue; // drop ultra-fringe inclusions for signal
+      const avg = t.decks > 0 ? Math.round((t.copies / t.decks) * 10) / 10 : 0;
+      analysis.push({ id, inclusionRate: rate, avgCount: avg });
+    }
+    analysis.sort((a, b) => b.inclusionRate - a.inclusionRate);
+    result.set(leaderId, analysis);
+  }
+  return result;
+}
+
 export function computeLeaderStatsFromMeta(meta: MetaData): LeaderStats[] {
   const byLeader = new Map<
     string,
@@ -138,8 +194,29 @@ export function computeLeaderStatsFromMeta(meta: MetaData): LeaderStats[] {
 
   const priorByLeader = new Map(meta.leaderStats.map((s) => [s.leaderId, s]));
 
+  // Lazily compute card analysis only if at least one leader needs the fallback.
+  let dynamicAnalysis: Map<string, CardAnalysis[]> | null = null;
+  const getDynamicAnalysis = () => {
+    if (!dynamicAnalysis) dynamicAnalysis = computeCardAnalysisByLeader(meta);
+    return dynamicAnalysis;
+  };
+
   const out: LeaderStats[] = Array.from(byLeader.values()).map((s) => {
     const prior = priorByLeader.get(s.leaderId);
+    const priorCore = prior?.coreCards ?? [];
+    const priorFlex = prior?.flexCards ?? [];
+    const hasPriorCardData = priorCore.length > 0 || priorFlex.length > 0;
+
+    let coreCards: CardAnalysis[] | undefined = prior?.coreCards;
+    let flexCards: CardAnalysis[] | undefined = prior?.flexCards;
+    if (!hasPriorCardData) {
+      const all = getDynamicAnalysis().get(s.leaderId) ?? [];
+      // Split at 80% to mirror the convention baked into the legacy JSONs.
+      // Render layers re-split at 70%, so the exact threshold here is not
+      // visible to users; we just need both arrays populated.
+      coreCards = all.filter((c) => c.inclusionRate >= 80);
+      flexCards = all.filter((c) => c.inclusionRate < 80);
+    }
     const points =
       s.wins * POINT_WEIGHTS.first +
       (s.second || 0) * POINT_WEIGHTS.second +
@@ -162,8 +239,8 @@ export function computeLeaderStatsFromMeta(meta: MetaData): LeaderStats[] {
         s.totalAppearances > 0 ? Math.round((topCount / s.totalAppearances) * 100) : 0,
       metaShare:
         totalAppearances > 0 ? Math.round((s.totalAppearances / totalAppearances) * 100) : 0,
-      coreCards: prior?.coreCards,
-      flexCards: prior?.flexCards,
+      coreCards,
+      flexCards,
     };
   });
 
